@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+
+{% block title %}Bot Commands Explanation{% endblock %}
+
+{% block content %}
+<h1>Bot Commands and Their Functions</h1>
+
+<section>
+    <h2>/signup</h2>
+    <p><strong>Description:</strong> Registers your in-game name (IGN) and Discord user information in our database.</p>
+    <p><strong>Usage:</strong> <code>/signup IGN username</code></p>
+    <p><strong>Details:</strong> When you use this command, the bot automatically records your Discord user ID and
+        username. This registration is essential for us to add regear benefits to your account.</p>
+</section>
+
+<section>
+    <h2>/payout</h2>
+    <p><strong>Description:</strong> Resets your silver balance to zero in our database after you've been paid in-game.
+    </p>
+    <p><strong>Usage:</strong> This command is used by COUNCIL members or higher.</p>
+    <p><strong>Details:</strong> It marks your balance as paid, ensuring that your database entries are cleared,
+        indicating that your in-game payout has been processed.</p>
+</section>
+
+<section>
+    <h2>/Ball</h2>
+    <p><strong>Description:</strong> Displays your current silver balance from our database.</p>
+    <p><strong>Usage:</strong> Use this command to check your own balance.</p>
+    <p><strong>Details:</strong> The bot uses your Discord ID to automatically retrieve and display your silver balance.
+    </p>
+</section>
+
+<section>
+    <h2>/add_link</h2>
+    <p><strong>Description:</strong> Adds a specific amount of silver to users who appear on a designated killboard.</p>
+    <p><strong>Usage:</strong> Managed by Regear Officers or higher.</p>
+    <p><strong>Details:</strong> This command fetches data from a specific killboard on <a
+            href="https://eu.albionbattles.com" target="_blank">Albion Battles</a> and credits the corresponding
+        Smurfing Monkeys users in our database.</p>
+</section>
+
+<section>
+    <h2>/add</h2>
+    <p><strong>Description:</strong> Allows Regear Officers to adjust a user's balance in the database.</p>
+    <p><strong>Usage:</strong> Modify regear amounts or deduct specific sums.</p>
+    <p><strong>Details:</strong> This command can be used to either add to or subtract from a user's total silver
+        balance in the database.</p>
+</section>
+
+<section>
+    <h2>/wb_countdown</h2>
+    <p><strong>Description:</strong> Sets up a two-day countdown for world boss respawn.</p>
+    <p><strong>Usage:</strong> Schedule a world boss respawn timer.</p>
+    <p><strong>Details:</strong> The countdown is automatically set to expire after 48 hours, matching the respawn
+        interval for world bosses.</p>
+</section>
+
+<section>
+    <h2>/remove_wb</h2>
+    <p><strong>Description:</strong> Removes a specific world boss countdown from the list.</p>
+    <p><strong>Usage:</strong> Specify the countdown index to remove.</p>
+    <p><strong>Details:</strong> The index starts from 1, and each countdown is listed as "Countdown 1," "Countdown 2,"
+        etc.</p>
+</section>
+
+<section>
+    <h2>/content_in</h2>
+    <p><strong>Description:</strong> Sets a timer for Albion .4 resources, vortexes, or other in-game content.</p>
+    <p><strong>Usage:</strong> Input the timer duration to track ongoing content timers.</p>
+    <p><strong>Details:</strong> The command lists all active countdowns for various in-game activities.</p>
+</section>
+
+<section>
+    <h2>/remove</h2>
+    <p><strong>Description:</strong> Removes a specific content countdown from the list.</p>
+    <p><strong>Usage:</strong> Specify the countdown index to remove.</p>
+    <p><strong>Details:</strong> Similar to <code>/remove_wb</code>, the index starts from 1 and each countdown is
+        listed for easy identification.</p>
+</section>
+
+<section>
+    <h2>/siphoned</h2>
+    <p><strong>Description:</strong> Checks a user's siphoned balance.</p>
+    <p><strong>Usage:</strong> Display your siphoned balance from the database.</p>
+    <p><strong>Details:</strong> This command does not use any Discord user information. The database is updated
+        manually each day.</p>
+</section>
+
+<section>
+    <h2>/total_siphoned</h2>
+    <p><strong>Description:</strong> Lists all users and their total siphoned balances.</p>
+    <p><strong>Usage:</strong> View balances either alphabetically or in descending order.</p>
+    <p><strong>Details:</strong> You can choose to display the list alphabetically or by the highest balance first,
+        depending on user preferences.</p>
+</section>
+
+<section>
+    <h2>/check_signup</h2>
+    <p><strong>Description:</strong> Verifies if a user is registered in the database.</p>
+    <p><strong>Usage:</strong> Check your registration status.</p>
+    <p><strong>Details:</strong> Use this command to confirm that your information is stored in the database.</p>
+</section>
+
+<section>
+    <h2>Regear with Emoji Function</h2>
+    <p><strong>Description:</strong> Automatically adds regear amounts based on reactions in specified Discord channels.
+    </p>
+    <p><strong>Functionality:</strong></p>
+    <ul>
+        <li>When a user posts an image, emojis representing regear amounts (e.g., 1, 2, 3, etc.) are automatically added
+            by the bot.
+        </li>
+        <li>Regear Officers can click these emojis to add the specified regear amount to the user's balance.</li>
+        <li>If a regear officer presses a designated 'X' emoji, a thread is opened under that message.</li>
+        <li>Inside the thread, the regear officer can review the regear image and deny it based on the rules.</li>
+        <li>The regear officer selects a reason for denial from a list based on official rules.</li>
+        <li>The user who submitted the image for regear is pinged in the thread with the regears that were denied and
+            the reasons provided.
+        </li>
+        <li>Successful regears are confirmed similarly: <code>10,000 Regear added for user: "username". Regear added by:
+            "Regear Officer's username".</code></li>
+        <li>The bot records the Discord user ID and username of both the image poster and the regear officer involved in
+            the denial.
+        </li>
+    </ul>
+</section>
+
+
+<section>
+    <h2>/setamount</h2>
+    <p><strong>Description:</strong> Sets the regear amount for the Emoji function.</p>
+    <p><strong>Usage:</strong> This command is used by Regear Officers and higher to configure regear amounts.</p>
+    <p><strong>Details:</strong> Establishes the regear values that are automatically assigned when the emoji function
+        is used.</p>
+</section>
+
+<section>
+    <h2>Important Notes</h2>
+    <p><strong>User Consent:</strong> If users do not sign up themselves, the bot will not collect or use any of their
+        data. The bot first checks if it has data stored about a user, and if not, it does not gather or store any
+        information about them.</p>
+</section>
+
+{% endblock %}

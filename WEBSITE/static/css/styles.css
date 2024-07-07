@@ -1,0 +1,72 @@
+/* styles.css */
+body {
+    background-color: #2c2f33; /* Dark grey background similar to Discord's dark theme */
+    color: #ffffff; /* White text for readability */
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: #ffcc00; /* Slightly yellowish color for headings */
+}
+
+a {
+    color: #7289da; /* Blue color for links similar to Discord */
+    text-decoration: none;
+}
+
+a:hover {
+    color: #99aab5; /* Lighter blue color on hover */
+}
+
+.navbar {
+    background-color: #23272a; /* Darker navbar background */
+}
+
+.navbar .nav-link {
+    color: #ffffff; /* White navbar links */
+}
+
+.navbar .nav-link:hover {
+    color: #7289da; /* Blue color on hover */
+}
+
+.container {
+    padding: 20px;
+}
+
+ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+ul li {
+    margin: 10px 0;
+}
+
+ul li a {
+    color: #7289da; /* Blue color for links in list */
+}
+
+ul li a:hover {
+    color: #99aab5; /* Lighter blue on hover */
+}
+
+ol {
+    list-style-type: decimal;
+    padding-left: 20px;
+}
+
+ol li {
+    margin: 10px 0;
+}
+
+/* Add some padding and margin for better spacing */
+p, ul, ol {
+    margin: 10px 0;
+    line-height: 1.6;
+}
+
+
+
