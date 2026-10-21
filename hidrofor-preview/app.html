@@ -2159,6 +2159,28 @@ details.accordion > summary ~ *,
 .service-usage-table th:first-child { text-align: left; }
 .service-usage-table thead th { color: var(--muted); font-weight: 500; }
 @media (min-width: 740px) { .service-usage-grid { grid-template-columns: repeat(2,minmax(0,1fr)); } }
+/* V13-S6: interfață de referință, fără persistare și fără rute POST. */
+.service-calibration-body { padding: 5px 14px 16px; }
+.service-calibration-body > p,.service-calibration-params p { color: var(--muted); font-size: 11px; line-height: 1.6; }
+.service-calibration-controls { display: grid; gap: 10px; margin: 14px 0; }
+.service-calibration-controls label { display: grid; gap: 5px; color: var(--muted); font-size: 11px; }
+.service-calibration-controls input,.service-calibration-controls select { min-width: 0; width: 100%; min-height: 44px; background: var(--surface-soft); color: var(--ink); border: 1px solid var(--line-strong); border-radius: 10px; padding: 10px; font: inherit; }
+.service-calibration-controls input:focus-visible,.service-calibration-controls select:focus-visible,.service-calibration-actions button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.service-calibration-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 12px 0; }
+.service-calibration-actions button { min-height: 44px; padding: 8px; white-space: normal; line-height: 1.4; }
+.service-calibration-actions button:disabled { opacity: .45; cursor: not-allowed; }
+.service-calibration-results { border: 1px solid var(--line); border-radius: 10px; margin: 10px 0; padding: 0 12px; }
+.service-calibration-results > div { display: grid; gap: 4px; border-bottom: 1px solid var(--line); padding: 9px 0; }
+.service-calibration-results > div:last-child { border-bottom: 0; }
+.service-calibration-results dt { color: var(--muted); font-size: 10px; }
+.service-calibration-results dd { margin: 0; overflow-wrap: anywhere; font-size: 12px; font-variant-numeric: tabular-nums; }
+.service-calibration-params { margin: 14px 0; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; }
+.service-calibration-params > summary { font-size: 12px; font-weight: 650; cursor: pointer; }
+.service-calibration-params dl { display: grid; gap: 9px; font-size: 11px; }
+.service-calibration-params dl > div { display: flex; justify-content: space-between; gap: 10px; }
+.service-calibration-params dt { color: var(--muted); }
+.service-calibration-params dd { margin: 0; text-align: right; }
+@media (min-width: 740px) { .service-calibration-controls { grid-template-columns: repeat(3,minmax(0,1fr)); } }
 /* V13-S3: valori API transmise de senzori, read-only. */
 .service-sensors-content { padding: 2px 14px 15px; }
 .service-sensors-help { color: var(--muted); font-size: 11px; line-height: 1.6; margin: 9px 0 13px; }
@@ -6678,6 +6700,51 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
               <p class="service-sensors-help">Dacă lipsesc măsurători interne, coduri de eroare sau date ADC, firmware-ul trebuie să le expună explicit; interfața nu le poate deduce.</p>
             </div>
           </details>
+
+          <!-- V13-S6: verificare cu referință, numai în browser. -->
+          <details class="reveal-panel service-calibration" id="serviceCalibrationDetails">
+            <summary>Calibrare asistată · comparație cu referință <span class="summary-meta">Fără modificări hardware</span></summary>
+            <div class="service-calibration-body">
+              <p><strong>Nu aplică nicio calibrare.</strong> Compară o citire capturată din <code>/api/live</code> cu un aparat de referință. Rezultatele sunt informative și nu modifică firmware-ul, protecțiile sau alte pagini.</p>
+              <div class="service-calibration-controls">
+                <label for="serviceCalNode">Nod
+                  <select id="serviceCalNode">
+                    <option value="central">ESP32 central</option>
+                    <option value="sera1">Sera 1</option>
+                    <option value="sera2">Sera 2</option>
+                  </select>
+                </label>
+                <label for="serviceCalMetric">Mărime
+                  <select id="serviceCalMetric">
+                    <option value="temp">Temperatură (°C)</option>
+                    <option value="hum">Umiditate (%)</option>
+                    <option value="batt">Tensiune baterie (V)</option>
+                  </select>
+                </label>
+                <label for="serviceCalReference">Valoare de referință
+                  <input id="serviceCalReference" type="text" inputmode="decimal" maxlength="16" autocomplete="off" placeholder="Ex.: 23,4">
+                </label>
+              </div>
+              <p id="serviceCalLiveStatus" class="service-calibration-state" role="status" aria-live="polite">Așteptăm măsurătorile…</p>
+              <div class="service-calibration-actions">
+                <button id="serviceCalCapture" type="button" class="btn-secondary" disabled>Capturează citirea API</button>
+                <button id="serviceCalClear" type="button" class="btn-soft">Șterge comparația</button>
+              </div>
+              <dl class="service-calibration-results">
+                <div><dt>Citire capturată (exact din API)</dt><dd id="serviceCalCaptured">—</dd></div>
+                <div><dt>Ora raportată la captură</dt><dd id="serviceCalTime">—</dd></div>
+                <div><dt>Abatere (citire − referință)</dt><dd id="serviceCalDeviation">—</dd></div>
+                <div><dt>Compensație teoretică (referință − citire)</dt><dd id="serviceCalCorrection">—</dd></div>
+              </dl>
+              <p id="serviceCalResultStatus" class="service-calibration-state" aria-live="polite">Nicio comparație efectuată.</p>
+              <details class="service-calibration-params">
+                <summary>Parametri de diagnostic · doar citire</summary>
+                <dl id="serviceCalParamsContent"></dl>
+                <p>Aceste constante aparțin interfeței, nu sunt praguri de protecție din firmware.</p>
+              </details>
+              <p class="service-calibration-disclaimer">Compară senzorul și referința în aceleași condiții, aproape simultan. O singură citire nu stabilește calibrarea. Captura și referința rămân numai în memoria paginii, fără salvare. Pentru calibrare efectivă este necesar un API firmware separat, validat și protejat.</p>
+            </div>
+          </details>
           <!-- V13-S5: numai calcule locale; nu inițiază citiri EEPROM sau comenzi. -->
           <details class="reveal-panel service-usage" id="serviceUsageDetails">
             <summary>Statistici de utilizare hardware <span class="summary-meta">Istoric parțial · read-only</span></summary>
@@ -9729,6 +9796,116 @@ const renderServiceUsage = () => {
 };
 // V13-S5 END
 
+// V13-S6 BEGIN — calcule numai în RAM, fără schimbări API sau setări.
+const v13CalState = {capture:null};
+const v13CalMeta = Object.freeze({
+  temp:{unit:'°C', digits:2, min:-55, max:125, central:'temperatura', remote:'temp', re:/^([+-]?(?:\d+(?:[.,]\d+)?|[.,]\d+))\s*(?:°?\s*C)?$/i},
+  hum:{unit:'%', digits:2, min:0, max:100, central:'umiditate', remote:'hum', re:/^([+-]?(?:\d+(?:[.,]\d+)?|[.,]\d+))\s*%?$/i},
+  batt:{unit:'V', digits:3, min:0, max:60, central:'baterie', remote:'batt', re:/^([+-]?(?:\d+(?:[.,]\d+)?|[.,]\d+))\s*V?$/i}
+});
+const v13CalNumber = raw => {
+  if (typeof raw !== 'string' && typeof raw !== 'number') return null;
+  const value = String(raw).trim();
+  if (!/^[+-]?(?:\d+(?:[.,]\d+)?|[.,]\d+)$/.test(value)) return null;
+  const numeric = Number(value.replace(',','.'));
+  return Number.isFinite(numeric) ? numeric : null;
+};
+const v13CalValue = (raw,metric) => {
+  const m = Object.hasOwn(v13CalMeta,metric) ? v13CalMeta[metric] : null;
+  if (!m || (typeof raw !== 'string' && typeof raw !== 'number')) return null;
+  const match = String(raw).trim().match(m.re);
+  const val = match ? v13CalNumber(match[1]) : null;
+  return val !== null && val >= m.min && val <= m.max ? val : null;
+};
+const v13CalReference = (raw,metric) => {
+  const m = Object.hasOwn(v13CalMeta,metric) ? v13CalMeta[metric] : null;
+  const value = m ? v13CalNumber(raw) : null;
+  return value !== null && value >= m.min && value <= m.max ? value : null;
+};
+const v13CalAvailable = (data,nodeId,metric) => {
+  if (!['central',...GREENHOUSES.map(g => g.id)].includes(nodeId) || !Object.hasOwn(v13CalMeta,metric))
+    return {ok:false,reason:'Selecție invalidă.'};
+  if (!uiState.connected || !i3Fresh() || !data || typeof data !== 'object')
+    return {ok:false,reason:'ESP32 indisponibil sau telemetrie expirată.'};
+  const central = nodeId === 'central', node = central ? data : data[nodeId];
+  if (!node || typeof node !== 'object') return {ok:false,reason:'Lipsesc datele nodului.'};
+  if (!central) {
+    const online = node.online === true || (node.online == null && normalize(node.status) === 'online');
+    if (!online) return {ok:false,reason:'Nod offline. Captura nu este permisă.'};
+    if (greenhouseFreshness(node.lastSeen,online).stateClass)
+      return {ok:false,reason:'Datele serei sunt vechi sau fără oră validă.'};
+  }
+  if (central && metric === 'batt' && (data.baterieOk !== true || data.batteryInaOk !== true))
+    return {ok:false,reason:'INA219 baterie neconfirmat.'};
+  const meta = v13CalMeta[metric], raw = node[central ? meta.central : meta.remote];
+  const reading = v13CalValue(raw,metric);
+  if (reading === null) return {ok:false,reason:'Citire invalidă ori lipsă.'};
+  return {ok:true,reading,raw:String(raw),moment:String(central ? data.dataOra || 'n/a' : node.lastSeen || 'n/a')};
+};
+const v13CalDifference = (capture,referenceRaw) => {
+  if (!capture || !Object.hasOwn(v13CalMeta,capture.metric)) return null;
+  const reference = v13CalReference(referenceRaw,capture.metric);
+  if (reference === null) return null;
+  return {deviation:capture.reading-reference,correction:reference-capture.reading};
+};
+const v13CalFormat = (value,metric) =>
+  (value > 0 ? '+' : '') + value.toFixed(v13CalMeta[metric].digits) + ' ' + v13CalMeta[metric].unit;
+const v13CalSelection = () => ({node:$('serviceCalNode')?.value || '',metric:$('serviceCalMetric')?.value || ''});
+const v13CalReset = () => {
+  v13CalState.capture = null;
+  if ($('serviceCalReference')) $('serviceCalReference').value = '';
+  renderServiceCalibration();
+};
+const renderServiceCalibration = () => {
+  if (!$('serviceCalibrationDetails')?.open) return;
+  const {node,metric} = v13CalSelection();
+  const live = v13CalAvailable(uiState.live,node,metric);
+  const button = $('serviceCalCapture');
+  if (button) button.disabled = !(live.ok && uiState.page === 'sistem' && uiState.serviceSection === 'diagnostic');
+  setText('serviceCalLiveStatus',live.ok
+    ? (forceMock() ? 'DEMO · ' : '') + 'Citire disponibilă: ' + live.raw : live.reason);
+  const cap = v13CalState.capture;
+  setText('serviceCalCaptured',cap ? cap.raw : '—');
+  setText('serviceCalTime',cap ? cap.moment : '—');
+  const diff = v13CalDifference(cap,$('serviceCalReference')?.value);
+  setText('serviceCalDeviation',diff ? v13CalFormat(diff.deviation,cap.metric) : '—');
+  setText('serviceCalCorrection',diff ? v13CalFormat(diff.correction,cap.metric) : '—');
+  setText('serviceCalResultStatus',!cap ? 'Capturează o citire pentru comparație.' :
+    !diff ? 'Introdu o referință numerică validă în intervalul mărimii selectate.' :
+    'Doar comparație, nu calibrare aplicată.' +
+       (live.ok ? ' Recapturează pentru un moment nou.' : ' Conexiunea actuală este indisponibilă; captura este istorică.'));
+};
+const v13CalCapture = () => {
+  const {node,metric} = v13CalSelection();
+  if (!$('serviceCalibrationDetails')?.open || uiState.page !== 'sistem' ||
+      uiState.serviceSection !== 'diagnostic') return false;
+  const result = v13CalAvailable(uiState.live,node,metric);
+  if (!result.ok) {renderServiceCalibration();return false;}
+  v13CalState.capture = Object.freeze({
+    node,metric,reading:result.reading,raw:result.raw,moment:result.moment
+  });
+  renderServiceCalibration();
+  return true;
+};
+const v13CalBind = () => {
+  const parameters = $('serviceCalParamsContent');
+  if (parameters) parameters.innerHTML = [
+    ['Raportare nominală sere · UI',GREENHOUSE_EXPECTED_WAKE_MINUTES+' min'],
+    ['Întârziere avertizată · UI',GREENHOUSE_DELAY_WARN_MINUTES+' min'],
+    ['Întârziere mare · UI',GREENHOUSE_DELAY_LATE_MINUTES+' min'],
+    ['Jurnal comenzi / evenimente · API','max. 40 / 150'],
+    ['Calibrări configurabile în firmware','Nu sunt expuse']
+  ].map(([label,value]) => '<div><dt>'+escapeHtml(label)+'</dt><dd>'+escapeHtml(value)+'</dd></div>').join('');
+  $('serviceCalibrationDetails')?.addEventListener('toggle', () => {
+    if (!$('serviceCalibrationDetails')?.open) v13CalReset(); else renderServiceCalibration();
+  });
+  ['serviceCalNode','serviceCalMetric'].forEach(id => $(id)?.addEventListener('change',v13CalReset));
+  $('serviceCalReference')?.addEventListener('input',renderServiceCalibration);
+  $('serviceCalCapture')?.addEventListener('click',v13CalCapture);
+  $('serviceCalClear')?.addEventListener('click',v13CalReset);
+};
+// V13-S6 END
+
 // V13-S3: diagnoză senzorilor, numai din /api/live (fără POST, EEPROM ori polling).
 // Senzorii digitali SHT/DHT nu oferă ADC brut prin acest API; afișăm textul
 // primit de la firmware și verificăm doar forma/plauzibilitatea elementară.
@@ -9941,6 +10118,7 @@ const renderLive = (data) => {
   renderGreenhouseSignalStats(d);
   renderServiceNodeDiagnostics(d);
   renderServiceSensorDiagnostics(d);
+  renderServiceCalibration();
   renderServiceUsage();
   updateBatteryEstimateUi();
   renderAutoTimer();
@@ -12411,6 +12589,7 @@ const loadLive = () => {
     GREENHOUSES.forEach(({ id, name }) => renderGreenhouseCard(id, name, null));
     renderServiceNodeDiagnostics(null);
     renderServiceSensorDiagnostics(null);
+    renderServiceCalibration();
     renderServiceUsage();
     renderServiceTestPanel();
     renderHome();
@@ -13800,6 +13979,7 @@ const bindEvents = () => {
     });
   });
 
+  v13CalBind();
   $('serviceUsageDetails')?.addEventListener('toggle', renderServiceUsage);
   $('serviceSensorDetails')?.addEventListener('toggle', () => {
     if ($('serviceSensorDetails')?.open) renderServiceSensorDiagnostics(uiState.live);
@@ -14011,6 +14191,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     if (!i3Fresh()) {
       renderServiceTestPanel();
       setConnectionState(false, "Date ESP32 expirate");
+      renderServiceCalibration();
       renderServiceUsage();
       i3SyncControls(); i5RenderWaterStatus();
       setText("autoTimerContext", "Telemetrie expirată · oprirea și timpul rămas sunt neconfirmate.");
