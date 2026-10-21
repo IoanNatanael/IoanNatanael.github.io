@@ -9600,7 +9600,8 @@ const v13WearConfirmation = item => {
   const action = title === 'hidrofor pornit' ? 'on' : title === 'hidrofor oprit' ? 'off' : '';
   if (!action || v13WearKey(item.hidroforKey) !== action) return '';
   const state = v13WearKey(item.hidrofor);
-  if (state && state !== (action === 'on' ? 'pornit' : 'oprit')) return '';
+  // Confirmarea cere si campul explicit de stare, nu doar titlul evenimentului.
+  if (state !== (action === 'on' ? 'pornit' : 'oprit')) return '';
   return action; // doar raportare software explicită, niciodată ciclu fizic
 };
 
@@ -9686,7 +9687,8 @@ const renderServiceUsage = () => {
   const tableFocused = previousTable?.matches(':focus') === true;
   const stats = v13WearStats(uiState.commands, uiState.events, uiState.journalFetch);
   const field = (label, value) => '<div><dt>' + escapeHtml(label) + '</dt><dd>' + escapeHtml(value) + '</dd></div>';
-  const live = uiState.connected ? uiState.live : null;
+  // Un snapshot ramas in cache nu este o confirmare curenta a functionarii.
+  const live = uiState.connected && i3Fresh() ? uiState.live : null;
   const node = live?.hidroforNode;
   const online = node?.configured === true && node.online === true;
   const counter = online && Number.isSafeInteger(node.commandCounter) && node.commandCounter >= 0
@@ -14009,6 +14011,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     if (!i3Fresh()) {
       renderServiceTestPanel();
       setConnectionState(false, "Date ESP32 expirate");
+      renderServiceUsage();
       i3SyncControls(); i5RenderWaterStatus();
       setText("autoTimerContext", "Telemetrie expirată · oprirea și timpul rămas sunt neconfirmate.");
       setText("wellRemaining", "—");
