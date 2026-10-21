@@ -9475,7 +9475,7 @@ const renderServiceNodeDiagnostics = (live) => {
 const serviceSensorNumeric = (value) => {
   if (typeof value === 'number') return Number.isFinite(value) ? value : null;
   if (typeof value !== 'string') return null;
-  const match = value.trim().match(/^([+-]?(?:\\d+(?:[.,]\\d+)?|[.,]\\d+))\\s*(?:°?\\s*C|%|V|A|W)?$/i);
+  const match = value.trim().match(/^([+-]?(?:\d+(?:[.,]\d+)?|[.,]\d+))\s*(?:°?\s*C|%|V|A|W)?$/i);
   return match ? Number(match[1].replace(',', '.')) : null;
 };
 const serviceSensorField = (label, raw, type, stale, apiFlag) => {
