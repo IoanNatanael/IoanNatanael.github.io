@@ -2000,6 +2000,52 @@ details.accordion > summary ~ *,
   display: grid;
   gap: 14px;
 }
+/* V13-S1: diagnoză noduri control, strict read-only. */
+.service-links {
+  margin: 12px 0 16px;
+  padding: 14px;
+}
+.service-links-intro h4 {
+  font-size: 14px;
+  margin: 0 0 4px;
+}
+.service-links-intro > span,
+.service-links-note,
+.service-link-empty {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.5;
+}
+.service-links-note { margin: 12px 0 0; }
+.service-link-grid { display: grid; gap: 10px; margin-top: 12px; }
+.service-link-node {
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface-soft);
+  min-width: 0;
+}
+.service-link-head { display: flex; justify-content: space-between; align-items: start; gap: 8px; }
+.service-link-head strong { font-size: 12px; }
+.service-link-head small { display: block; color: var(--muted); font-size: 10px; margin-top: 3px; }
+.service-link-state {
+  font-size: 10px;
+  line-height: 1.4;
+  font-weight: 650;
+  border-radius: 8px;
+  padding: 4px 7px;
+  max-width: 52%;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+.service-link-state.up { color: var(--good); background: var(--good-soft); }
+.service-link-state.warn { color: var(--warn); background: var(--warn-soft); }
+.service-link-state.down { color: var(--bad); background: var(--bad-soft); }
+.service-link-fields { margin: 10px 0 0; display: grid; gap: 6px; }
+.service-link-fields > div { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+.service-link-fields dt { color: var(--muted); font-size: 11px; }
+.service-link-fields dd { margin: 0; font-size: 11px; text-align: right; overflow-wrap: anywhere; max-width: 60%; }
+@media (min-width: 740px) { .service-link-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 .greenhouse-signal-node {
   padding: 13px;
   border: 1px solid var(--line);
@@ -6478,6 +6524,17 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
           <div class="service-intro">
             <h3>Date și diagnostic</h3>
             <p>Jurnale, statistici și stare memorie. Secțiunile sunt închise implicit.</p>
+          <!-- V13-S1: diagnoză numai în citire, bazată pe /api/live. -->
+          <section class="card service-links" aria-labelledby="serviceLinksTitle">
+            <div class="service-links-intro">
+              <h4 id="serviceLinksTitle">Noduri de control · comunicații</h4>
+              <span>ESP32 și ESP-01S · raportare din API, fără comenzi hardware</span>
+            </div>
+            <div class="service-link-grid" id="serviceNodeDiagnostics" aria-live="polite">
+              <p class="service-link-empty">Așteptăm prima citire din /api/live…</p>
+            </div>
+            <p class="service-links-note">ACK-ul și starea releului sunt raportări software, nu dovada funcționării fizice a motorului. RSSI și latența ESP-NOW nu sunt furnizate de API-ul actual.</p>
+          </section>
           </div>
           <!-- V13-S7: export limitat la ceea ce API-ul actual ofera din EEPROM. -->
           <details class="reveal-panel service-export" id="serviceExportDetails">
@@ -9260,6 +9317,67 @@ const renderGreenhouseSignalStats = (data) => {
   }).join("");
 };
 
+// V13-S1: diagnostic exclusiv de citire; fără rute POST sau timer nou.
+// Nu tratăm ACK-ul ori starea relay din cache drept confirmare fizică.
+const serviceLinkField = (label, value) =>
+  '<div><dt>' + escapeHtml(label) + '</dt><dd>' +
+  escapeHtml(value == null || value === '' ? 'n/a' : String(value)) + '</dd></div>';
+
+const serviceLinkCard = (name, subtitle, state, tone, fields) =>
+  '<article class="service-link-node"><div class="service-link-head"><div><strong>' +
+  escapeHtml(name) + '</strong><small>' + escapeHtml(subtitle) + '</small></div>' +
+  '<span class="service-link-state ' + tone + '">' + escapeHtml(state) + '</span></div>' +
+  '<dl class="service-link-fields">' + fields.join('') + '</dl></article>';
+
+const renderServiceNodeDiagnostics = (live) => {
+  const target = $('serviceNodeDiagnostics');
+  if (!target) return;
+  const data = live && typeof live === 'object' ? live : null;
+  const centralOnline = !!data && uiState.connected;
+  const node = data?.hidroforNode;
+  const nodeProvided = !!node && typeof node === 'object';
+  const configured = nodeProvided && node.configured === true;
+  const hydroOnline = centralOnline && configured && node.online === true;
+  const hydroState = !centralOnline ? 'Fără date ESP32' :
+    !nodeProvided ? 'Telemetrie lipsă' :
+    !configured ? 'Neconfigurat' :
+    hydroOnline ? 'Online raportat' : 'Nod neconfirmat';
+  const hydroTone = hydroOnline ? 'up' : !centralOnline ? 'down' : 'warn';
+  const relay = hydroOnline && ['PORNIT', 'OPRIT'].includes(node.relay)
+    ? node.relay : 'Necunoscut';
+  const mode = hydroOnline && ['AUTO', 'MANUAL'].includes(node.mode)
+    ? node.mode : 'Necunoscut';
+  const commandCounter = hydroOnline && Number.isSafeInteger(node.commandCounter) &&
+    node.commandCounter >= 0 ? node.commandCounter : 'n/a';
+  const ack = hydroOnline ? (node.ack || 'n/a') : 'Neconfirmat';
+  const pending = hydroOnline ? (node.pending === true ? 'Da' : node.pending === false ? 'Nu' : 'n/a') : 'n/a';
+  const stopIntent = hydroOnline ? (node.stopIntent === true ? 'Activ' : node.stopIntent === false ? 'Inactiv' : 'n/a') : 'n/a';
+  const water = hydroOnline && node.water?.fresh === true
+    ? ({WET_READY:'Apă prezentă', WET_STABILIZING:'Se stabilizează', DRY_OPEN:'Fără apă / fir deschis', DRY:'Fără apă'}[node.water.state] ||
+      'Stare neidentificată')
+    : 'Neconfirmat';
+  const source = forceMock() ? 'DEMO · date simulate' : 'ESP32 · /api/live';
+  target.innerHTML =
+    serviceLinkCard('Nod central · ESP32', source,
+      centralOnline ? 'API activ' : 'API indisponibil',
+      centralOnline ? 'up' : 'down', [
+        serviceLinkField('Actualizare', centralOnline ? 'Recepționată' : 'Fără răspuns'),
+        serviceLinkField('Oră RTC raportată', centralOnline ? (data.dataOra || 'n/a') : 'n/a'),
+        serviceLinkField('Uptime raportat', centralOnline ? (data.uptime || data.uptimeSistem || 'n/a') : 'n/a')
+      ]) +
+    serviceLinkCard('Nod hidrofor · ESP-01S', 'Legătură ESP-NOW raportată de ESP32',
+      hydroState, hydroTone, [
+        serviceLinkField('Releu (logic)', relay),
+        serviceLinkField('Mod', mode),
+        serviceLinkField('Ultimul ACK', ack),
+        serviceLinkField('Comandă în curs', pending),
+        serviceLinkField('STOP solicitat', stopIntent),
+        serviceLinkField('Contor comenzi', commandCounter),
+        serviceLinkField('Plutitor', water),
+        serviceLinkField('RSSI / latență', 'Indisponibile în API')
+      ]);
+};
+
 const renderLive = (data) => {
   // Status relay din ESP-01 este de incredere doar cat timp nodul e online.
   // Starea OFF pastrata in cache nu inseamna oprire confirmata ACUM.
@@ -9378,6 +9496,7 @@ const renderLive = (data) => {
     renderGreenhouseCard(greenhouse.id, greenhouse.name, d[greenhouse.id]);
   });
   renderGreenhouseSignalStats(d);
+  renderServiceNodeDiagnostics(d);
   updateBatteryEstimateUi();
   renderAutoTimer();
   renderHome();
@@ -11760,6 +11879,7 @@ const loadLive = () => {
     const fill = $("centralBatteryFill");
     if (fill) fill.style.width = "0%";
     GREENHOUSES.forEach(({ id, name }) => renderGreenhouseCard(id, name, null));
+    renderServiceNodeDiagnostics(null);
     renderHome();
     }
   })();
