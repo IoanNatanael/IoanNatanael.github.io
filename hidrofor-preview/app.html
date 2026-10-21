@@ -6,7 +6,7 @@
       content="width=device-width, initial-scale=1, viewport-fit=cover"
       name="viewport"
     />
-    <title>Hidro · V13-R15 · Preview interfață</title>
+    <title>Hidro · V13-R17 · Preview interfață</title>
     <style>
 :root {
   color-scheme: dark;
@@ -4509,33 +4509,6 @@ body.hidro-i3-real #homeStop { touch-action:manipulation; }
 #service-diagnostic .central-history .data-table-wrap { overflow-x: auto; max-width: 100%; }
 #page-central .central-diagnostics .central-grid { min-width: 0; }
 
-/* V13-S6: pe Acasă păstrăm o singură alertă istorică, fără lista duplicată. */
-.home-alert-summary {
-  margin-top: 24px;
-  padding: 16px 18px;
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  background: var(--surface);
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 7px;
-  min-width: 0;
-}
-.home-alert-summary[data-tone="critical"],
-.home-alert-summary[data-tone="error"] {
-  border-color: #775248;
-  background: #302624;
-}
-.home-alert-summary[data-tone="warn"] {
-  border-color: #75613f;
-  background: #302d24;
-}
-.home-alert-kicker { color: var(--muted); font-size: 11px; letter-spacing: .025em; }
-.home-alert-summary strong { font-size: 14px; font-weight: 550; line-height: 1.45; color: var(--ink); overflow-wrap: anywhere; }
-.home-alert-meta { color: var(--muted); font-size: 11px; line-height: 1.5; overflow-wrap: anywhere; }
-.home-alert-link { margin-top: 3px; padding: 0; text-align: left; }
-
 /* V13-S7: export punctual cu protecția operațiilor de control. */
 .service-export-content { padding: 15px 16px 18px; display:flex; flex-direction:column; gap:12px; }
 .service-export-note { margin:0; color:var(--muted); font-size:12px; line-height:1.6; }
@@ -5519,7 +5492,7 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
         </div>
       </header>
       <main>
-        <aside class="read-only-notice r3-preview-notice" role="note"><strong>PREVIEW V13-R15</strong><span>Interfață DEMO · date simulate; toate butoanele pot fi testate local, fără dispozitive.</span></aside>
+        <aside class="read-only-notice r3-preview-notice" role="note"><strong>PREVIEW V13-R17</strong><span>Interfață DEMO · date simulate; toate butoanele pot fi testate local, fără dispozitive.</span></aside>
         <section class="page active" id="page-home" aria-labelledby="homeTitle">
           <div class="page-head">
             <div class="page-title">
@@ -5823,15 +5796,6 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
                   ><span id="homeSolarHint">Putere instantanee</span></span
                 >
               </button>
-              <section class="home-alert-summary" id="homeAlertSummary" aria-labelledby="homeAlertHeading" data-tone="neutral">
-                <span class="home-alert-kicker" id="homeAlertHeading">Ultima alertă importantă</span>
-                <strong id="homeLastAlertTitle">Se verifică jurnalul…</strong>
-                <span class="home-alert-meta" id="homeLastAlertMeta">Eveniment istoric, nu stare curentă a pompei.</span>
-                <button class="text-link home-alert-link" type="button" data-open-page="sistem" data-open-journal="">
-                  Deschide jurnalul în Service
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-5-5 5 5-5 5"></path></svg>
-                </button>
-              </section>
               <p class="home-footnote">
                 <svg
                   class=""
@@ -13415,28 +13379,6 @@ const renderHome = () => {
   }).format(new Date(currentDashboardTime()));
   setText("homeDate", dateText);
   setText("journalCount", homeEventRows().length + " înregistrări");
-  // V13-S6: Dashboard arată doar cea mai recentă alertă IMPORTANTĂ din
-  // jurnalul deja încărcat; lista completă există în Service. Nu folosim
-  // aceste evenimente istorice pentru a declara o problemă încă activă.
-  const lastAlert = homeEventRows().find(({ item }) =>
-    severityClass(item.severityKey || item.severity || item.resultKey) !== "info" ||
-    ["blocked", "blocata"].includes(normalize(item.resultKey))
-  );
-  const alertCard = $("homeAlertSummary");
-  if (lastAlert) {
-    const { item, kind } = lastAlert;
-    const level = severityClass(item.severityKey || item.severity || item.resultKey);
-    alertCard.dataset.tone = level === "info" ? "warn" : level;
-    setText("homeLastAlertTitle", item.title || item.command || item.action ||
-      (kind === "event" ? "Eveniment important" : "Comandă blocată"));
-    setText("homeLastAlertMeta",
-      (item.source || "Sistem") + " · " + (item.time || "timp necunoscut") +
-      " · din jurnal (nu stare live)");
-  } else {
-    alertCard.dataset.tone = "neutral";
-    setText("homeLastAlertTitle", "Nicio alertă în lista încărcată");
-    setText("homeLastAlertMeta", "Istoricul poate fi incomplet. Starea actuală este afișată mai sus.");
-  }
   renderDashboardStatus();
 };
 const readingDate = (item) => rtcHistoryDate(item);
@@ -14345,7 +14287,7 @@ window.addEventListener("DOMContentLoaded", () => {
     // Forțăm permanent această pagină să rămână o previzualizare, niciodată firmware live.
     window.HIDROFOR_PREVIEW_ONLY = true;
     const badge = byId('demoBadge');
-    if (badge) {badge.hidden=false; badge.textContent='V13-R16 · preview';}
+    if (badge) {badge.hidden=false; badge.textContent='V13-R17 · preview';}
     document.querySelectorAll('a[href^="/ota"],a[href^="/hidrofor-ota"],a[href="/autentificare"]').forEach(anchor=>{
       anchor.addEventListener('click', event=>{ event.preventDefault(); });
       anchor.title = 'Indisponibil în previzualizarea web';
