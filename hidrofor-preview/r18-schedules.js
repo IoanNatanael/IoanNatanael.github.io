@@ -1,4 +1,4 @@
-/* V13-R18 — only WEB UI: reuse existing i9 schedule controls and mock state. */
+/* V13-R20 — WEB ONLY: hide manual refill setting; adaptive algorithm is future firmware work. */
 (() => {
   'use strict';
   const $ = id => document.getElementById(id);
@@ -57,6 +57,13 @@
   let modal, overview, lastTrigger;
   function renderSummary() {
     if (!overview) return;
+    // Remove the fixed refill duration from program listing; still retained internally by the demo.
+    const rows = $('autoScheduleList');
+    if (rows) rows.querySelectorAll('.schedule-meta').forEach(meta => {
+      const text = meta.textContent || '';
+      const clean = text.replace(/\s*·\s*refacere\s+\d+\s*min/iu, '');
+      if (text !== clean) meta.textContent = clean;
+    });
     const data = getSchedules();
     const enabled = data.items.filter(e => !!e.enabled);
     const active = data.available && !data.suspended;
@@ -99,7 +106,7 @@
       const minutes = $('r18ScheduleMinutes');
       const refill = $('r18ScheduleRefill');
       if (minutes) minutes.value = $('autoTimerInput')?.value || '10';
-      if (refill) refill.value = $('autoRefillMinutes')?.value || '10';
+      if (refill) refill.value = '10';
     }
   }
   function open(view, trigger) {
@@ -119,6 +126,20 @@
     // The legacy Now / Schedule tabs no longer belong to the AUTO screen.
     container.querySelector('.r13-start-picker')?.remove();
     now.hidden = false;
+    // Reuse the current input for all old API handlers, but remove its visible card.
+    // 10 min is only the temporary WEB demo fallback, not a learned interval.
+    const refillCard = container.querySelector('.r12-refill-box');
+    const refillField = $('autoRefillMinutes');
+    if (refillCard && refillField) {
+      refillField.type = 'hidden';
+      refillField.value = '10';
+      refillCard.replaceWith(refillField);
+    }
+    document.title = document.title.replace(/V13-R\d+/,'V13-R20');
+    const previewTitle = document.querySelector('.r3-preview-notice strong');
+    if (previewTitle) previewTitle.textContent = 'PREVIEW V13-R20';
+    const badge = $('demoBadge');
+    if (badge) badge.textContent = 'V13-R20 · preview';
     overview = document.createElement('div');
     overview.className='r18-schedule-overview-wrap';
     overview.innerHTML = `
@@ -147,11 +168,8 @@
     if (formPanel) {
       const extra = document.createElement('div');extra.className='r18-create-extra';
       extra.innerHTML=`<label>Durata udării (min)<input id="r18ScheduleMinutes" type="number" min="1" max="120" step="1" inputmode="numeric" value="10"></label>
-        <label>Refacerea apei (min)<input id="r18ScheduleRefill" type="number" min="1" max="120" step="1" inputmode="numeric" value="10"></label>`;
+        <input id="r18ScheduleRefill" type="hidden" value="10">`;
       formPanel.prepend(extra);
-      const footnote=document.createElement('p');footnote.className='r18-create-hint';
-      footnote.textContent='Durata și pauza alese se aplică și selecției AUTO.';
-      pane.querySelector('.r13-schedule-submit')?.after(footnote);
     }
     const openList=$('r18OpenSchedules'); const add=$('r18QuickAdd');
     openList.addEventListener('click',()=>open('list',openList));
@@ -173,7 +191,7 @@
       const refill=Number($('r18ScheduleRefill')?.value);
       if(!Number.isInteger(duration)||duration<1||duration>120||!Number.isInteger(refill)||refill<1||refill>120){
         event.stopImmediatePropagation();event.preventDefault();
-        if (typeof showAutoToast==='function') showAutoToast('Durata și refacerea trebuie să fie între 1 și 120 min');
+        if (typeof showAutoToast==='function') showAutoToast('Durata udării trebuie să fie între 1 și 120 min');
         return;
       }
       if ($('autoTimerInput')) $('autoTimerInput').value=String(duration);

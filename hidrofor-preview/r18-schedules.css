@@ -83,3 +83,7 @@
  .r18-time-chip {padding:7px 8px;}
 }
 @media(prefers-reduced-motion:reduce){#page-hidrofor .r18-overview-card{transition:none}}
+
+/* V13-R20: Fixed recovery pause is an internal demo value; UI control removed. */
+#page-hidrofor .r12-refill-box {display:none!important;}
+.r18-dialog .r18-create-extra {grid-template-columns:minmax(0,1fr);}
