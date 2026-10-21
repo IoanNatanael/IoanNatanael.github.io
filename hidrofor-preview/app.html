@@ -12370,6 +12370,7 @@ const i5RenderWaterStatus = () => {
     WET_READY: [forceMock() ? "Apă prezentă · plutitor simulat" : "Apă prezentă · plutitor confirmat", "good"],
     WET_STABILIZING: ["Apa revine · se stabilizează 3 secunde", "warn"],
     DRY_OPEN: ["Nivel critic / fir deschis · pornirea blocată", "bad"],
+    DRY: ["Fără apă · plutitor simulat", "bad"], // stare proprie previzualizării WEB ONLY
     UNKNOWN: ["Plutitor indisponibil · pornirea blocată", "neutral"]
   }[state] || ["Plutitor indisponibil · pornirea blocată", "neutral"];
   ["hydroFloatStatus", "homeFloatStatus"].forEach(id => {
