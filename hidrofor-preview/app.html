@@ -2140,6 +2140,25 @@ details.accordion > summary ~ *,
 .service-test-stop { color: var(--bad); font-weight: 700; border-color: #70414a; }
 .service-test-stop:disabled { opacity: .6; }
 .service-test-footnote { font-size: 10px; line-height: 1.6; margin: 12px 0 0; color: var(--muted); }
+/* V13-S5: statistici locale din loturile deja încărcate, fără acțiuni hardware. */
+.service-usage-body { padding: 2px 14px 16px; }
+.service-usage-body p { color: var(--muted); font-size: 11px; line-height: 1.6; overflow-wrap: anywhere; }
+.service-usage-body h4 { font-size: 12px; margin: 16px 0 8px; }
+.service-usage-grid { display: grid; gap: 10px; }
+.service-usage-card { border: 1px solid var(--line); border-radius: 12px; padding: 12px; min-width: 0; background: var(--surface-soft); }
+.service-usage-card h4 { margin-top: 0; }
+.service-usage-card dl { margin: 0; }
+.service-usage-card dl > div { display: grid; gap: 4px; padding: 8px 0; border-top: 1px solid var(--line); }
+.service-usage-card dt { color: var(--muted); font-size: 11px; }
+.service-usage-card dd { margin: 0; font-size: 12px; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
+.service-usage-table { overflow-x: auto; }
+.service-usage-table:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.service-usage-table table { width: 100%; border-collapse: collapse; font-size: 11px; }
+.service-usage-table caption { text-align: left; color: var(--muted); padding: 7px 0; }
+.service-usage-table th, .service-usage-table td { padding: 9px 7px; border-bottom: 1px solid var(--line); text-align: right; }
+.service-usage-table th:first-child { text-align: left; }
+.service-usage-table thead th { color: var(--muted); font-weight: 500; }
+@media (min-width: 740px) { .service-usage-grid { grid-template-columns: repeat(2,minmax(0,1fr)); } }
 /* V13-S3: valori API transmise de senzori, read-only. */
 .service-sensors-content { padding: 2px 14px 15px; }
 .service-sensors-help { color: var(--muted); font-size: 11px; line-height: 1.6; margin: 9px 0 13px; }
@@ -6659,6 +6678,16 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
               <p class="service-sensors-help">Dacă lipsesc măsurători interne, coduri de eroare sau date ADC, firmware-ul trebuie să le expună explicit; interfața nu le poate deduce.</p>
             </div>
           </details>
+          <!-- V13-S5: numai calcule locale; nu inițiază citiri EEPROM sau comenzi. -->
+          <details class="reveal-panel service-usage" id="serviceUsageDetails">
+            <summary>Statistici de utilizare hardware <span class="summary-meta">Istoric parțial · read-only</span></summary>
+            <div class="service-usage-body">
+              <p><strong>Nu există în sursele actuale un contor persistent real de ore motor sau cicluri releu.</strong> Aceste statistici descriu utilizarea raportată în istoricul disponibil, nu uzura fizică, durata de viață rămasă ori un total de la instalare.</p>
+              <div id="serviceUsageContent" aria-live="off"><p>Așteptăm loturile de comenzi și evenimente…</p></div>
+              <p>Comenzile solicitate, rezultatele API și evenimentele de stare sunt numărate separat. Un rezultat OK, un ACK sau o stare logică de releu nu dovedește funcționarea fizică a motorului.</p>
+              <p>Fără acumulare în browser sau resetare hardware. Ștergerea jurnalului, suprascrierea înregistrărilor și limita API reduc istoricul vizibil; nu resetează uzura hardware.</p>
+            </div>
+          </details>
           <!-- V13-S7: export limitat la ceea ce API-ul actual ofera din EEPROM. -->
           <details class="reveal-panel service-export" id="serviceExportDetails">
             <summary>Export date persistente · CSV / JSON</summary>
@@ -9515,6 +9544,189 @@ const renderServiceNodeDiagnostics = (live) => {
       ]);
 };
 
+// V13-S5 BEGIN: funcții pure pe snapshot-uri; fără fetch, timer sau persistență.
+const v13WearRecord = value => !!value && typeof value === 'object' && !Array.isArray(value);
+const v13WearText = value => typeof value === 'string' ? value.trim() : '';
+const v13WearKey = value => v13WearText(value).normalize('NFD')
+  .replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/\s+/g, ' ');
+
+const v13WearTime = value => {
+  // RTC local, scalar calendaristic pentru diferențe, NU timestamp UTC real.
+  // Nu folosim timezone-ul telefonului și nu normalizăm date imposibile.
+  const m = v13WearText(value).match(/^(\d{2})[.\- ](\d{2})[.\- ](\d{4})\s+(\d{2}):(\d{2}):(\d{2})$/);
+  if (!m) return null;
+  const [, day, month, year, hour, minute, second] = m.map(Number);
+  if (year < 2000 || year > 2099 || hour > 23 || minute > 59 || second > 59) return null;
+  const time = Date.UTC(year, month - 1, day, hour, minute, second);
+  const date = new Date(time);
+  return date.getUTCFullYear() === year && date.getUTCMonth() === month - 1 &&
+    date.getUTCDate() === day ? time : null;
+};
+
+const v13WearClockChange = (start, end) => {
+  // Excludem conservator întreaga zi a schimbării orei Europe/Bucharest.
+  // Feed-ul nu conține offset, deci ora repetată de toamnă e ambiguă.
+  for (let year = new Date(start).getUTCFullYear(); year <= new Date(end).getUTCFullYear(); year++) {
+    for (const month of [2, 9]) {
+      const lastDay = new Date(Date.UTC(year, month + 1, 0));
+      const day = Date.UTC(year, month, lastDay.getUTCDate() - lastDay.getUTCDay());
+      if (start < day + 86400000 && end >= day) return true;
+    }
+  }
+  return false;
+};
+
+const v13WearAction = item => {
+  switch (v13WearKey(item.title)) {
+    case 'pornire hidrofor': return 'on';
+    case 'oprire hidrofor': case 'stop fortat hidrofor': return 'off';
+    case 'mod automat hidrofor': return 'auto';
+    default: return 'other';
+  }
+};
+
+const v13WearResult = item => {
+  const key = v13WearKey(item.resultKey || item.result);
+  if (['ok', 'executata'].includes(key)) return 'ok';
+  if (['blocked', 'blocata'].includes(key)) return 'blocked';
+  if (['error', 'eroare', 'failed', 'esuata'].includes(key)) return 'error';
+  return 'unknown'; // lipsa rezultatului nu devine succes
+};
+
+const v13WearConfirmation = item => {
+  if (v13WearKey(item.source) !== 'hidrofor' ||
+      v13WearKey(item.severityKey || item.severity) !== 'info') return '';
+  const title = v13WearKey(item.title);
+  const action = title === 'hidrofor pornit' ? 'on' : title === 'hidrofor oprit' ? 'off' : '';
+  if (!action || v13WearKey(item.hidroforKey) !== action) return '';
+  const state = v13WearKey(item.hidrofor);
+  if (state && state !== (action === 'on' ? 'pornit' : 'oprit')) return '';
+  return action; // doar raportare software explicită, niciodată ciclu fizic
+};
+
+const v13WearFeed = (items, status, cap) => {
+  const rows = status === 'ok' && Array.isArray(items) ? items.slice(0, cap) : [];
+  const valid = rows.filter(v13WearRecord);
+  const times = valid.map(item => v13WearTime(item.time)).filter(time => time !== null);
+  return { status, rows, valid, cap, invalidRows: rows.length - valid.length,
+    invalidTimes: valid.length - times.length,
+    first: times.length ? Math.min(...times) : null,
+    last: times.length ? Math.max(...times) : null };
+};
+
+const v13WearStats = (commands, events, status = {}) => {
+  const commandFeed = v13WearFeed(commands, status.commands, 40);
+  const eventFeed = v13WearFeed(events, status.events, 150);
+  const requests = Object.fromEntries(['on', 'off', 'auto', 'other'].map(action =>
+    [action, {total:0, ok:0, blocked:0, error:0, unknown:0}]));
+  commandFeed.valid.forEach(item => {
+    const row = requests[v13WearAction(item)];
+    row.total++;
+    row[v13WearResult(item)]++;
+  });
+  const reports = {on:0, off:0};
+  eventFeed.valid.forEach(item => {
+    const action = v13WearConfirmation(item);
+    if (action) reports[action]++;
+  });
+  // API-ul/simulatorul livrează newest-first. O inversare poate fi salt RTC;
+  // sortarea ei ar fabrica o cronologie, deci suprimăm estimarea întregului lot.
+  const ordered = !eventFeed.invalidRows && !eventFeed.invalidTimes &&
+    eventFeed.rows.every((item, index, rows) => index === 0 ||
+      v13WearTime(rows[index - 1].time) >= v13WearTime(item.time));
+  const timeline = ordered ? eventFeed.valid.slice().reverse().map(item => ({
+    time:v13WearTime(item.time), action:v13WearConfirmation(item)
+  })) : [];
+  let pairs = 0, durationMs = 0, excludedPairs = 0;
+  // Numai vecini ON -> OFF din același lot, fără niciun eveniment intermediar.
+  // Nu unim comenzi cu evenimente, poll-uri, începutul lotului sau starea live.
+  for (let index = 1; index < timeline.length; index++) {
+    const start = timeline[index - 1], end = timeline[index];
+    if (start.action !== 'on' || end.action !== 'off') continue;
+    const tied = start.time === end.time || timeline[index - 2]?.time === start.time ||
+      timeline[index + 1]?.time === end.time;
+    if (tied || v13WearClockChange(start.time, end.time)) { excludedPairs++; continue; }
+    pairs++;
+    durationMs += end.time - start.time;
+  }
+  return {commandFeed, eventFeed, requests, reports, ordered, pairs, excludedPairs,
+    durationMs: pairs ? durationMs : null};
+};
+
+const v13WearDuration = ms => {
+  if (!Number.isFinite(ms) || ms < 0) return 'Indisponibil';
+  const seconds = Math.floor(ms / 1000);
+  return Math.floor(seconds / 3600) + ' h ' + Math.floor(seconds % 3600 / 60) +
+    ' min ' + seconds % 60 + ' s';
+};
+const v13WearReportedDuration = value => {
+  // Formatul explicit al mockLivePayload: HH:mm:ss. Nu ghicim unități.
+  const text = v13WearText(value);
+  return /^\d{2,6}:[0-5]\d:[0-5]\d$/.test(text) ? text : 'Indisponibil';
+};
+
+const v13WearWindow = feed => {
+  if (feed.status !== 'ok') return feed.status === 'loading' ? 'Se încarcă…' : 'Sursă indisponibilă; nu înseamnă zero utilizări.';
+  const label = time => {
+    const date = new Date(time), pad = number => String(number).padStart(2, '0');
+    return pad(date.getUTCDate()) + '-' + pad(date.getUTCMonth() + 1) + '-' + date.getUTCFullYear() +
+      ' ' + pad(date.getUTCHours()) + ':' + pad(date.getUTCMinutes()) + ':' + pad(date.getUTCSeconds());
+  };
+  return feed.rows.length + ' / maximum ' + feed.cap + ' înregistrări primite. ' +
+    (feed.first === null ? 'Fără interval RTC valid.' : 'RTC local: ' + label(feed.first) + ' → ' + label(feed.last) + '.') +
+    (feed.rows.length === feed.cap ? ' Limită API atinsă; pot exista înregistrări mai vechi.' : ' Doar lotul primit, fără garanție de istoric complet.') +
+    ' Date invalide: ' + feed.invalidTimes + '; înregistrări invalide: ' + feed.invalidRows + '.';
+};
+
+const renderServiceUsage = () => {
+  const target = $('serviceUsageContent');
+  if (!target || !$('serviceUsageDetails')?.open) return;
+  const previousTable = target.querySelector?.('.service-usage-table');
+  const scrollLeft = previousTable?.scrollLeft || 0;
+  const tableFocused = previousTable?.matches(':focus') === true;
+  const stats = v13WearStats(uiState.commands, uiState.events, uiState.journalFetch);
+  const field = (label, value) => '<div><dt>' + escapeHtml(label) + '</dt><dd>' + escapeHtml(value) + '</dd></div>';
+  const live = uiState.connected ? uiState.live : null;
+  const node = live?.hidroforNode;
+  const online = node?.configured === true && node.online === true;
+  const counter = online && Number.isSafeInteger(node.commandCounter) && node.commandCounter >= 0
+    ? String(node.commandCounter) : 'Indisponibil';
+  const running = online && node.ack === 'OK' && node.pending === false && node.stopIntent === false &&
+    node.relay === 'PORNIT' && live.stareHidrofor === 'PORNIT';
+  const rows = [['on','Pornire'], ['off','Oprire / STOP'], ['auto','Mod automat'], ['other','Alte comenzi']]
+    .map(([key, label]) => '<tr><th scope="row">' + label + '</th>' +
+      ['total','ok','blocked','error','unknown'].map(col => '<td>' + stats.requests[key][col] + '</td>').join('') + '</tr>').join('');
+  const commandTable = stats.commandFeed.status === 'ok' ?
+    '<div class="service-usage-table" tabindex="0" role="region" aria-label="Comenzi solicitate și rezultate, tabel derulabil"><table><caption>Înregistrări din commands-feed; fără asociere presupusă cu ACK-uri.</caption>' +
+    '<thead><tr><th scope="col">Solicitare</th><th scope="col">Total</th><th scope="col">OK raportat</th><th scope="col">Blocate</th><th scope="col">Eșuate</th><th scope="col">Rezultat necunoscut</th></tr></thead><tbody>' + rows + '</tbody></table></div><p>Pe ecrane mici, glisează tabelul orizontal pentru toate rezultatele.</p>' : '';
+  const markup = '<p><strong>' + (forceMock() ? 'DEMO · date simulate, fără măsurări hardware.' : 'Date raportate de API; fără măsurare directă a uzurii.') + '</strong></p>' +
+    '<h4>Comenzi solicitate · lot independent</h4><p>' + escapeHtml(v13WearWindow(stats.commandFeed)) + '</p>' + commandTable +
+    '<h4>Evenimente de stare · lot independent</h4><p>' + escapeHtml(v13WearWindow(stats.eventFeed)) + '</p>' +
+    '<div class="service-usage-grid"><article class="service-usage-card"><h4>Confirmări software din jurnal</h4><dl>' +
+    field('PORNIT / OPRIT explicit raportate', stats.eventFeed.status === 'ok' ? stats.reports.on + ' / ' + stats.reports.off : 'Indisponibile') +
+    field('Perechi consecutive PORNIT → OPRIT utilizabile', stats.eventFeed.status === 'ok' && stats.ordered ? String(stats.pairs) : 'Indisponibile') +
+    field('Timp însumat · estimare parțială din jurnal', v13WearDuration(stats.durationMs)) + '</dl>' +
+    '<p>Doar titlurile explicite „Hidrofor pornit/oprit”, sursa Hidrofor, nivel Info și stare logică concordantă. Nu sunt cicluri releu măsurate.</p></article>' +
+    '<article class="service-usage-card"><h4>Ultimul snapshot live</h4><dl>' +
+    field('Contor software comenzi raportat de nod', counter) +
+    field('Ultimul ACK · snapshot, nu număr de confirmări', online ? v13WearText(node.ack) || 'Indisponibil' : 'Indisponibil') +
+    field('Pornirea curentă · durată raportată, HH:mm:ss', running ? v13WearReportedDuration(live.timpHidrofor) : 'Indisponibilă / fără pornire curentă confirmată logic') +
+    '</dl><p>Contorul software nu reprezintă numărul de acționări fizice; persistența și resetările lui nu sunt garantate. Durata curentă nu se adaugă la estimarea din jurnal.</p></article></div>' +
+    '<p>' + escapeHtml(!stats.ordered && stats.eventFeed.status === 'ok'
+      ? 'Estimare suspendată: date lipsă/invalide sau ordine incompatibilă cu feed-ul newest-first (posibil salt RTC).'
+      : stats.pairs ? 'Estimarea însumează numai perechile complete eligibile din acest lot.' : 'Nu există perechi complete eligibile; durata rămâne indisponibilă, nu zero.') +
+    ' Perechi excluse pentru timestamp comun ori zi de schimbare a orei: ' + stats.excludedPairs + '.</p>' +
+    '<p>Orice eveniment intermediar întrerupe perechea. Pornirile/opririle izolate și intervalele deschise sunt omise. Fără extrapolare până acum sau între loturi. Calcul pe ora RTC locală; golurile din jurnal și ajustările de ceas neidentificate pot afecta estimarea. Fără corelare unică prin ID între cereri și confirmări.</p>';
+  if (target.innerHTML === markup) return;
+  target.innerHTML = markup;
+  const nextTable = target.querySelector?.('.service-usage-table');
+  if (nextTable) {
+    nextTable.scrollLeft = scrollLeft;
+    if (tableFocused) nextTable.focus({preventScroll:true});
+  }
+};
+// V13-S5 END
+
 // V13-S3: diagnoză senzorilor, numai din /api/live (fără POST, EEPROM ori polling).
 // Senzorii digitali SHT/DHT nu oferă ADC brut prin acest API; afișăm textul
 // primit de la firmware și verificăm doar forma/plauzibilitatea elementară.
@@ -9727,6 +9939,7 @@ const renderLive = (data) => {
   renderGreenhouseSignalStats(d);
   renderServiceNodeDiagnostics(d);
   renderServiceSensorDiagnostics(d);
+  renderServiceUsage();
   updateBatteryEstimateUi();
   renderAutoTimer();
   renderHome();
@@ -10383,6 +10596,7 @@ const renderCommands = (items) => {
   setText("commandsCount", uiState.commands.length);
   renderSystemEvents();
   renderHydroHistory();
+  renderServiceUsage();
 };
 
 const renderEvents = (items) => {
@@ -10390,6 +10604,7 @@ const renderEvents = (items) => {
   setText("eventsCount", uiState.events.length);
   renderSystemEvents();
   renderHydroHistory();
+  renderServiceUsage();
 };
 
 const renderHydroHistory = () => {
@@ -12194,6 +12409,7 @@ const loadLive = () => {
     GREENHOUSES.forEach(({ id, name }) => renderGreenhouseCard(id, name, null));
     renderServiceNodeDiagnostics(null);
     renderServiceSensorDiagnostics(null);
+    renderServiceUsage();
     renderServiceTestPanel();
     renderHome();
     }
@@ -13582,6 +13798,7 @@ const bindEvents = () => {
     });
   });
 
+  $('serviceUsageDetails')?.addEventListener('toggle', renderServiceUsage);
   $('serviceSensorDetails')?.addEventListener('toggle', () => {
     if ($('serviceSensorDetails')?.open) renderServiceSensorDiagnostics(uiState.live);
   });
