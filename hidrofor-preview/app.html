@@ -2121,6 +2121,25 @@ details.accordion > summary ~ *,
   padding: 10px 12px; font: inherit; font-size: 12px;
 }
 .service-journal-search input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+/* V13-S4: test asistat, control prin comenzile I3 existente. */
+.service-test-body { padding: 2px 14px 16px; }
+.service-test-warning { background: var(--warn-soft); color: var(--ink); border: 1px solid #715a39; border-radius: 10px; padding: 11px 12px; font-size: 11px; line-height: 1.6; margin: 12px 0; }
+.service-test-checks { display: grid; gap: 0; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.service-test-checks > div { padding: 10px 12px; display: flex; align-items: baseline; justify-content: space-between; gap: 10px; border-bottom: 1px solid var(--line); font-size: 11px; }
+.service-test-checks > div:last-child { border-bottom: 0; }
+.service-test-checks span { color: var(--muted); }
+.service-test-checks strong { text-align: right; font-size: 11px; }
+.service-test-checks strong.ready { color: var(--good); }
+.service-test-checks strong.blocked { color: var(--bad); }
+.service-test-arm { margin-top: 12px; display: flex; align-items: flex-start; gap: 10px; cursor: pointer; font-size: 11px; line-height: 1.6; }
+.service-test-arm input { width: 17px; height: 17px; flex: 0 0 auto; margin: 1px 0 0; accent-color: var(--accent); }
+.service-test-hint { font-size: 11px; line-height: 1.5; color: var(--muted); margin: 11px 0 0; }
+.service-test-actions { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; margin-top: 12px; }
+.service-test-actions button { min-height: 45px; padding: 9px; white-space: normal; line-height: 1.4; }
+.service-test-start:disabled { opacity: .42; cursor: not-allowed; }
+.service-test-stop { color: var(--bad); font-weight: 700; border-color: #70414a; }
+.service-test-stop:disabled { opacity: .6; }
+.service-test-footnote { font-size: 10px; line-height: 1.6; margin: 12px 0 0; color: var(--muted); }
 /* V13-S3: valori API transmise de senzori, read-only. */
 .service-sensors-content { padding: 2px 14px 15px; }
 .service-sensors-help { color: var(--muted); font-size: 11px; line-height: 1.6; margin: 9px 0 13px; }
@@ -6485,6 +6504,33 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
             <h3>Control și mentenanță</h3>
             <p>Actualizări și instrumente administrative. Operațiile sensibile cer autentificare și confirmare.</p>
           </div>
+
+          <!-- V13-S4: testele folosesc exclusiv comenzile deja implementate. -->
+          <details class="reveal-panel service-test-panel" id="serviceTestDetails">
+            <summary>Test hidrofor · comenzi protejate <span class="summary-meta">Fără bypass</span></summary>
+            <div class="service-test-body">
+              <p class="service-test-warning"><strong>Test asistat, nu override.</strong> START folosește exact comanda manuală normală, cu verificările deja implementate. Nu dezactivează plutitorul, PANIC sau protecțiile firmware. Nu este un test temporizat: browserul nu garantează oprirea automată dacă se închide ori pierde conexiunea. Testează numai când ești lângă instalație.</p>
+              <div class="service-test-checks" aria-label="Condiții de siguranță pentru START">
+                <div><span>ESP32 + ESP-01S · telemetrie recentă</span><strong id="serviceTestLink">Se verifică…</strong></div>
+                <div><span>Mod MANUAL confirmat</span><strong id="serviceTestMode">Se verifică…</strong></div>
+                <div><span>Releu raportat OPRIT</span><strong id="serviceTestRelay">Se verifică…</strong></div>
+                <div><span>Plutitor · apă confirmată</span><strong id="serviceTestWater">Se verifică…</strong></div>
+                <div><span>Alimentare ESP32 validă</span><strong id="serviceTestBattery">Se verifică…</strong></div>
+                <div><span>Fără automatizare activă/defect</span><strong id="serviceTestAuto">Se verifică…</strong></div>
+                <div><span>Fără comandă în curs / STOP activ</span><strong id="serviceTestBusy">Se verifică…</strong></div>
+              </div>
+              <label class="service-test-arm" for="serviceTestArm">
+                <input id="serviceTestArm" type="checkbox" />
+                <span>Confirm că sunt lângă hidrofor, pot verifica fizic instalația și voi opri manual testul.</span>
+              </label>
+              <p class="service-test-hint" id="serviceTestHint" role="status" aria-live="polite">Se verifică condițiile de pornire…</p>
+              <div class="service-test-actions">
+                <button type="button" class="btn-secondary service-test-start" id="serviceTestStart" disabled>START manual · confirmare</button>
+                <button type="button" class="btn-danger-outline service-test-stop" id="serviceTestStop">STOP de urgență</button>
+              </div>
+              <p class="service-test-footnote">STOP folosește PANIC-ul existent și nu cere confirmare; când legătura este pierdută, trimiterea poate eșua. Nicio stare afișată nu certifică fizic funcționarea sau oprirea motorului. În această previzualizare comenzile sunt doar simulate.</p>
+            </div>
+          </details>
           <details class="reveal-panel r13-rtc-maintenance">
             <summary>Ceas central · RTC</summary>
             <div class="r13-rtc-inside">
@@ -9613,6 +9659,7 @@ const renderLive = (data) => {
   renderModeButtons();
   i3SyncControls();
   i5RenderWaterStatus();
+  renderServiceTestPanel();
   if (typeof window.r12RenderUnified === "function") window.r12RenderUnified();
 
   setText("centralTemp", d.temperatura || "n/a");
@@ -12147,6 +12194,7 @@ const loadLive = () => {
     GREENHOUSES.forEach(({ id, name }) => renderGreenhouseCard(id, name, null));
     renderServiceNodeDiagnostics(null);
     renderServiceSensorDiagnostics(null);
+    renderServiceTestPanel();
     renderHome();
     }
   })();
@@ -12556,7 +12604,9 @@ const loadPageData = async (pageName = uiState.page) => {
 // toate controalele isi pastreaza ID-urile si endpointurile existente.
 const setServiceSection = (sectionName) => {
   if (sectionName !== "control" && sectionName !== "diagnostic") return;
+  if (sectionName !== "control") serviceTestDisarm();
   uiState.serviceSection = sectionName;
+  renderServiceTestPanel();
   document.querySelectorAll("[data-service-section]").forEach((btn) => {
     const active = btn.dataset.serviceSection === sectionName;
     btn.classList.toggle("active", active);
@@ -12569,7 +12619,9 @@ const setServiceSection = (sectionName) => {
 
 const setPage = (pageName) => {
   if (!document.getElementById("page-" + pageName)) return;
+  if (pageName !== "sistem") serviceTestDisarm();
   uiState.page = pageName;
+  renderServiceTestPanel();
   document
     .querySelectorAll(".page")
     .forEach((page) =>
@@ -12801,6 +12853,104 @@ const i3CanStart = () => (forceMock() ? !i3.busy && !i3.panicBusy :
   i3Manual() && i3Relay() === "OPRIT" &&
   uiState.live?.baterieOk === true && i5WaterReady());
 
+// V13-S4: nu inventăm rute, bypass, temporizare sau confirmări hardware.
+// Folosim exclusiv i3Execute('start') și i3Panic() deja existente.
+const serviceTest = { busy: false };
+const serviceTestCheck = () => {
+  const n = i3Node();
+  const link = i3Fresh() && n?.configured === true && n?.online === true;
+  const idlePhase = ['IDLE', 'DONE'].includes(String(uiState.live?.timedRun?.phase || '').toUpperCase());
+  const manual = link && n?.mode === 'MANUAL' && i3Manual();
+  const relayOff = link && n?.relay === 'OPRIT' &&
+    String(uiState.live?.stareHidrofor || '').toUpperCase() === 'OPRIT';
+  const water = link && i5WaterReady();
+  const battery = link && uiState.live?.baterieOk === true;
+  const quiet = link && n?.pending === false && n?.stopIntent === false &&
+    Number.isSafeInteger(n.commandCounter) && n.commandCounter >= 0 &&
+    !i3.busy && !i3.panicBusy;
+  const statuses = [
+    ['serviceTestLink', link],
+    ['serviceTestMode', manual],
+    ['serviceTestRelay', relayOff],
+    ['serviceTestWater', water],
+    ['serviceTestBattery', battery],
+    ['serviceTestAuto', idlePhase],
+    ['serviceTestBusy', quiet]
+  ];
+  return { permitted: statuses.every(([,ok]) => ok) && i3CanStart(),
+    statuses, counter: n?.commandCounter };
+};
+const serviceTestActive = () =>
+  uiState.page === 'sistem' && uiState.serviceSection === 'control' &&
+  $('serviceTestDetails')?.open === true;
+const serviceTestDisarm = () => {
+  const arm = $('serviceTestArm');
+  if (arm) arm.checked = false;
+};
+const renderServiceTestPanel = () => {
+  if (!$('serviceTestDetails')) return;
+  const check = serviceTestCheck();
+  check.statuses.forEach(([id,passed]) => {
+    const el = $(id);
+    if (el) {
+      el.textContent = passed ? 'OK' : 'NECONFIRMAT';
+      el.className = passed ? 'ready' : 'blocked';
+    }
+  });
+  if (!check.permitted) serviceTestDisarm();
+  const armed = $('serviceTestArm')?.checked === true;
+  const start = $('serviceTestStart');
+  if (start) start.disabled = !(serviceTestActive() && check.permitted && armed && !serviceTest.busy);
+  const stop = $('serviceTestStop');
+  if (stop) stop.disabled = i3.panicBusy;
+  setText('serviceTestHint',
+    serviceTest.busy ? 'Se procesează confirmarea sau comanda. STOP de urgență rămâne prioritar.' :
+    !check.permitted ? 'START blocat: una sau mai multe condiții nu sunt confirmate. Nu există ocolire Service.' :
+    !armed ? 'Condiții raportate OK. Bifează confirmarea prezenței înainte de START.' :
+    'START disponibil numai după confirmarea suplimentară din dialog.');
+};
+const serviceTestStart = async () => {
+  if (serviceTest.busy || !serviceTestActive()) return;
+  const initial = serviceTestCheck();
+  if (!initial.permitted || $('serviceTestArm')?.checked !== true) {
+    renderServiceTestPanel();
+    return;
+  }
+  serviceTest.busy = true;
+  renderServiceTestPanel();
+  const generation = i3.generation;
+  try {
+    const accepted = await askConfirm({
+      title: 'Pornești hidroforul pentru verificare?',
+      text: 'Aceasta este o pornire MANUALĂ normală, nu un override. Nu există STOP temporizat în browser. Confirmă doar dacă ești prezent fizic și poți opri pompa. Protecțiile ESP32 / ESP-01S rămân obligatorii.',
+      actionText: forceMock() ? 'Simulează START' : 'Confirm START manual'
+    });
+    if (!accepted || generation !== i3.generation || !serviceTestActive() ||
+        $('serviceTestArm')?.checked !== true) return;
+    // Recitim telemetria după dialog. Nu folosim cache vechi sau contor modificat.
+    await loadLive();
+    const latest = serviceTestCheck();
+    if (generation !== i3.generation || !serviceTestActive() ||
+        $('serviceTestArm')?.checked !== true ||
+        !latest.permitted || latest.counter !== initial.counter) {
+      showAutoToast('Test anulat: starea sau comanda nodului s-a schimbat.');
+      return;
+    }
+    serviceTestDisarm();
+    await i3Execute('start');
+  } finally {
+    serviceTest.busy = false;
+    serviceTestDisarm();
+    renderServiceTestPanel();
+  }
+};
+const serviceTestStop = async () => {
+  serviceTestDisarm();
+  renderServiceTestPanel();
+  // Niciun dialog de confirmare: PANIC trebuie să poată întrerupe START.
+  await i3Panic();
+  renderServiceTestPanel();
+};
 const i3SyncControls = () => {
   if (forceMock()) {
     const busy = i3.busy || i3.panicBusy;
@@ -13298,6 +13448,13 @@ const paintMockControls = () => {
 };
 
 const bindEvents = () => {
+  $('serviceTestDetails')?.addEventListener('toggle', () => {
+    if (!$('serviceTestDetails')?.open) serviceTestDisarm();
+    renderServiceTestPanel();
+  });
+  $('serviceTestArm')?.addEventListener('change', renderServiceTestPanel);
+  $('serviceTestStart')?.addEventListener('click', () => void serviceTestStart());
+  $('serviceTestStop')?.addEventListener('click', () => void serviceTestStop());
   $("centralBatteryCapacityForm")?.addEventListener("submit", (event) => {
     event.preventDefault();
     const input = $("centralBatteryCapacityAh");
@@ -13633,6 +13790,7 @@ window.addEventListener("DOMContentLoaded", async () => {
   setInterval(loadLive, 2000);
   setInterval(() => {
     if (!i3Fresh()) {
+      renderServiceTestPanel();
       setConnectionState(false, "Date ESP32 expirate");
       i3SyncControls(); i5RenderWaterStatus();
       setText("autoTimerContext", "Telemetrie expirată · oprirea și timpul rămas sunt neconfirmate.");
