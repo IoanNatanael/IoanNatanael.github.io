@@ -2092,6 +2092,35 @@ details.accordion > summary ~ *,
   border-radius: 5px;
   padding: 4px 6px;
 }
+/* V13-S2: rezumat jurnal, fără dublarea API-ului de evenimente. */
+.service-journal-overview { margin: 10px 0 14px; }
+.service-journal-counts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.service-journal-counter {
+  padding: 10px 8px; background: var(--surface-soft);
+  border: 1px solid var(--line); border-radius: 10px;
+  text-align: center; min-width: 0;
+}
+.service-journal-counter strong { display: block; font-size: 19px; font-variant-numeric: tabular-nums; line-height: 1.2; }
+.service-journal-counter span { font-size: 10px; color: var(--muted); }
+.service-journal-counter.warn strong { color: var(--warn); }
+.service-journal-counter.error strong, .service-journal-counter.critical strong { color: var(--bad); }
+.service-journal-note { color: var(--muted); font-size: 11px; line-height: 1.5; margin: 8px 0 0; }
+.service-journal-latest { padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; margin-top: 10px; background: var(--surface-soft); }
+.service-journal-latest > span { display: block; color: var(--muted); font-size: 10px; margin-bottom: 4px; }
+.service-journal-latest strong { display: block; font-size: 12px; overflow-wrap: anywhere; }
+.service-journal-latest small { display: block; margin-top: 4px; color: var(--muted); font-size: 10px; }
+.service-journal-recent { border: 1px solid var(--line); border-radius: 10px; margin-top: 10px; overflow: hidden; }
+.service-journal-recent > summary { padding: 11px 12px; cursor: pointer; font-size: 12px; font-weight: 600; }
+.service-journal-recent > .service-journal-recent-list { padding: 0 8px 10px; }
+.service-journal-recent .system-log-item { margin: 7px 0; }
+.service-journal-search { margin: 12px 0; }
+.service-journal-search label { display: block; color: var(--muted); font-size: 11px; margin-bottom: 6px; }
+.service-journal-search input {
+  width: 100%; min-height: 42px; border: 1px solid var(--line-strong);
+  border-radius: 10px; color: var(--ink); background: var(--surface-soft);
+  padding: 10px 12px; font: inherit; font-size: 12px;
+}
+.service-journal-search input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 /* Activity uses readable rows, with details on demand. */
 .system-log-card {
   background: transparent;
@@ -6717,6 +6746,15 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
                   </div>
                   
                 </div>
+                <!-- V13-S2: rezumat alerte din evenimentele deja citite, fără apeluri noi. -->
+                <div class="service-journal-overview" id="serviceJournalOverview" aria-live="polite">
+                  <p class="service-journal-note">Se încarcă ultimele evenimente…</p>
+                </div>
+                <div class="service-journal-search">
+                  <label for="serviceLogSearch">Caută în jurnalul încărcat</label>
+                  <input id="serviceLogSearch" type="search" autocomplete="off"
+                         placeholder="Eroare, hidrofor, comunicare…" maxlength="120" />
+                </div>
                 <details class="log-filter-dropdown">
                   <summary>
                     <div class="log-filter-summary-copy">
@@ -6783,6 +6821,9 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
                           type="button"
                         >
                           Critic
+                        </button>
+                        <button class="filter-btn" data-log-severity="alerts" type="button">
+                          Alerte
                         </button>
                       </div>
                     </div>
@@ -7059,6 +7100,8 @@ const uiState = {
   connected: false,
   logSource: "all",
   logSeverity: "all",
+  journalQuery: "",
+  journalFetch: { commands: "loading", events: "loading" },
   hydroHistoryMode: "all",
   greenhouseMobile: GREENHOUSES[0].id,
   historyWindow: "24h",
@@ -10092,6 +10135,7 @@ const logSeverityLabel = (value) => {
   if (key === "warn" || key === "warning") return "doar Warning";
   if (key === "error") return "doar Error";
   if (key === "critical" || key === "critic") return "doar Critic";
+  if (key === "alerts") return "toate alertele";
   return "toate severitatile";
 };
 
@@ -10210,6 +10254,82 @@ const renderHydroHistory = () => {
     .join("");
 };
 
+// V13-S2: canonicalizăm severitatea pentru statisticile și filtrele locale.
+const serviceJournalSeverity = (item) => {
+  const key = normalize(item?.severityKey || item?.severity);
+  if (['critical', 'critic', 'critica'].includes(key)) return 'critical';
+  if (['error', 'eroare', 'err'].includes(key)) return 'error';
+  if (['warn', 'warning', 'avertizare', 'avertisment', 'atentie'].includes(key)) return 'warn';
+  if (['info', 'informare', 'informativ'].includes(key)) return 'info';
+  return key || 'unknown';
+};
+const serviceJournalIsAlert = (item) =>
+  ['warn', 'error', 'critical'].includes(serviceJournalSeverity(item));
+const serviceJournalSearchKey = (value) =>
+  String(value == null ? '' : value).normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('ro-RO');
+const serviceJournalMatchesSearch = (item) => {
+  const query = serviceJournalSearchKey(uiState.journalQuery).trim();
+  if (!query) return true;
+  return serviceJournalSearchKey([
+    item.time, item.source, item.severity, item.severityKey,
+    item.result, item.resultKey, item.title, item.command, item.action,
+    item.category, item.categorie, item.reason, item.reasonKey,
+    item.description, item.descriere, item.details, item.detalii,
+    item.hidrofor
+  ].filter(x => x != null).join(' ')).includes(query);
+};
+
+const renderServiceJournalOverview = () => {
+  const target = $('serviceJournalOverview');
+  if (!target) return;
+  const eventsOk = uiState.journalFetch.events === 'ok';
+  const commandsOk = uiState.journalFetch.commands === 'ok';
+  const events = eventsOk ? uiState.events : [];
+  const counters = ['warn', 'error', 'critical'].map(key =>
+    ({ key, count: events.filter(item => serviceJournalSeverity(item) === key).length }));
+  const alerts = events.filter(serviceJournalIsAlert)
+    .map(item => ({ item, time: parseRoDateTime(item.time) }))
+    .sort((a, b) => b.time - a.time)
+    .slice(0, 10);
+  const last = alerts[0]?.item;
+  const wasOpen = $('serviceJournalRecent')?.open === true;
+  const counterLabel = {warn:'Atenție',error:'Erori',critical:'Critice'};
+  const counts = counters.map(({key,count}) =>
+    '<div class="service-journal-counter ' + key + '"><strong>' +
+    escapeHtml(eventsOk ? count : '—') + '</strong><span>' +
+    counterLabel[key] + '</span></div>').join('');
+  const status = !eventsOk
+    ? (uiState.journalFetch.events === 'error'
+        ? 'Nu s-au putut citi evenimentele. Lipsa alertelor NU este confirmată.'
+        : 'Așteptăm răspunsul jurnalului de evenimente…')
+    : 'Rezumat numai din ultimele ' + events.length +
+      ' evenimente primite (API: maximum 150). Nu reprezintă întregul istoric EEPROM.';
+  const commandsStatus = uiState.journalFetch.commands === 'error'
+    ? ' Comenzile nu au putut fi încărcate.'
+    : !commandsOk ? ' Comenzile sunt în curs de încărcare.' : '';
+  const latest = last
+    ? '<div class="service-journal-latest"><span>Ultima alertă din lista primită</span><strong>' +
+      escapeHtml(last.title || 'Eveniment fără titlu') +
+      '</strong><small>' + escapeHtml(last.time || 'Oră necunoscută') + ' · ' +
+      escapeHtml(last.source || 'Sistem') + ' · ' +
+      escapeHtml(last.severity || last.severityKey || 'Alertă') +
+      '</small></div>'
+    : (eventsOk ? '<p class="service-journal-note">Nicio alertă în lotul de evenimente încărcat.</p>' : '');
+  const recent = alerts.length
+    ? '<details class="service-journal-recent" id="serviceJournalRecent"' +
+      (wasOpen ? ' open' : '') +
+      '><summary>Ultimele ' + alerts.length + ' alerte · detalii</summary>' +
+      '<div class="service-journal-recent-list">' +
+      alerts.map(({item}) => systemLogItemHtml({kind:'event',item})).join('') +
+      '</div></details>'
+    : '';
+  target.innerHTML = '<div class="service-journal-counts">' + counts + '</div>' +
+    latest + recent + '<p class="service-journal-note">' +
+    escapeHtml(status + commandsStatus +
+      (forceMock() ? ' DEMO: evenimente simulate.' : '')) + '</p>';
+};
+
 const renderSystemEvents = () => {
   const target = $("systemEventsFeed");
   if (!target) return;
@@ -10218,10 +10338,11 @@ const renderSystemEvents = () => {
     const sourceOk =
       uiState.logSource === "all" ||
       normalize(item.source) === normalize(uiState.logSource);
-    const sev = normalize(item.severityKey || item.severity);
-    const severityOk =
-      uiState.logSeverity === "all" || sev === normalize(uiState.logSeverity);
-    return sourceOk && severityOk;
+    const sev = serviceJournalSeverity(item);
+    const severityOk = uiState.logSeverity === 'all' ||
+      (uiState.logSeverity === 'alerts' ? serviceJournalIsAlert(item) :
+        sev === uiState.logSeverity);
+    return sourceOk && severityOk && serviceJournalMatchesSearch(item);
   });
 
   const filteredCommands =
@@ -10230,7 +10351,7 @@ const renderSystemEvents = () => {
           (item) =>
             uiState.logSource === "all" ||
             normalize(item.source) === normalize(uiState.logSource),
-        )
+        ).filter(serviceJournalMatchesSearch)
       : [];
 
   const merged = [
@@ -10249,11 +10370,16 @@ const renderSystemEvents = () => {
     .slice(0, 60);
 
   const totalPool = uiState.events.length + uiState.commands.length;
-  setText("logsMeta", merged.length + " afisate din " + totalPool);
+  const unavailable = ['events','commands'].filter(key => uiState.journalFetch[key] !== 'ok');
+  const countSuffix = unavailable.length ? ' · date parțiale / indisponibile' : '';
+  setText("logsMeta", merged.length + " afișate din " + totalPool + countSuffix);
+  renderServiceJournalOverview();
   updateSystemFilterSummary();
   target.innerHTML = merged.length
     ? merged.map(systemLogItemHtml).join("")
-    : feedEmpty("Nu exista loguri pentru filtrele selectate.");
+    : feedEmpty(unavailable.length
+        ? "Jurnalul nu este disponibil complet. Verifică legătura cu ESP32."
+        : "Nu există înregistrări pentru filtrele selectate.");
 };
 
 const updateStorageSummary = (text) => {
@@ -11895,8 +12021,11 @@ const loadLive = () => {
 const loadCommands = async () => {
   try {
     const payload = await getJson("/api/commands-feed?last=40");
-    renderCommands(payload.items || []);
+    if (!Array.isArray(payload?.items)) throw new Error("INVALID_COMMANDS_FEED");
+    uiState.journalFetch.commands = 'ok';
+    renderCommands(payload.items);
   } catch (error) {
+    uiState.journalFetch.commands = 'error';
     renderCommands([]);
   }
 };
@@ -11904,8 +12033,11 @@ const loadCommands = async () => {
 const loadEvents = async () => {
   try {
     const payload = await getJson("/api/events-feed?source=all&last=150");
-    renderEvents(payload.items || []);
+    if (!Array.isArray(payload?.items)) throw new Error("INVALID_EVENTS_FEED");
+    uiState.journalFetch.events = 'ok';
+    renderEvents(payload.items);
   } catch (error) {
+    uiState.journalFetch.events = 'error';
     renderEvents([]);
   }
 };
@@ -13150,6 +13282,11 @@ const bindEvents = () => {
       );
       renderCentralHistory();
     });
+  });
+
+  $('serviceLogSearch')?.addEventListener('input', event => {
+    uiState.journalQuery = String(event.target.value || '').slice(0, 120);
+    renderSystemEvents();
   });
 
   document.querySelectorAll("[data-log-source]").forEach((btn) => {
