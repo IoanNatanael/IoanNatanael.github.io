@@ -7924,6 +7924,9 @@ const mockState = {
   previewResumeAt: 0,
   previewWater: "wet",
   previewSuspended: false,
+  // R16: un singur consum comun DEMO, actualizat de ventilatoarele simulate.
+  previewTotalLoadW: 2.6,
+  previewWeather: "sun",
   previewSchedules: [
     {id:1,time:730,enabled:true,minutes:12,refillMinutes:10,waitWaterMinutes:30,mode:1,date:0,weekdays:0},
     {id:2,time:1945,enabled:false,minutes:20,refillMinutes:10,waitWaterMinutes:30,mode:1,date:0,weekdays:0}
@@ -8410,7 +8413,28 @@ const mockRemotePayload = (key) => {
   };
 };
 
+// V13-R16 WEB ONLY: balanță ilustrativă coerentă între PV, consum și baterie.
+// Acesta NU este un algoritm de calcul al fluxului real pentru firmware ACTIVE.
+// În sistemul real, bateria se citește DIRECT din INA219 0x41 (curent net),
+// iar un INA219 0x45 va măsura consumul separat după instalare și calibrare.
+const mockEnergyBalance = () => {
+  const live = mockState.live;
+  if (!live) return;
+  const pvW = Math.max(0, Number(live.solarPowerW) || 0);
+  const loadW = Math.max(0, Number(mockState.previewTotalLoadW) || 0);
+  // Pierderi fictive de conversie ale regulatorului, strict pentru simulare.
+  const usableSolarW = Math.max(0, pvW * 0.88 - (pvW > 0.1 ? 0.25 : 0));
+  const netBatteryW = usableSolarW - loadW;
+  const batteryVoltageV = Math.max(10, Number(live.baterie) || 12.5);
+  const netBatteryA = netBatteryW / batteryVoltageV;
+  live.batteryPowerW = Number(netBatteryW.toFixed(3));
+  live.batteryCurrentA = Number(netBatteryA.toFixed(4));
+  live.batteryFlow = netBatteryA > 0.02 ? "CHARGING" :
+    netBatteryA < -0.02 ? "DISCHARGING" : "IDLE";
+};
+
 const mockLivePayload = () => {
+  mockEnergyBalance(); // inclusiv la primul GET /api/live simulat
   const now = Date.now();
   const uptimeSec = Math.floor((now - mockState.startedAt) / 1000);
   const hydroRuntimeSec = mockState.hydroStartedAt
@@ -8759,8 +8783,13 @@ const mockTick = () => {
       : 0;
   mockState.live.solarPowerW =
     mockState.live.solarVoltageV * mockState.live.solarCurrentA;
-  mockState.live.batteryPowerW =
-    mockState.live.baterie * mockState.live.batteryCurrentA;
+  // Dacă scenariul ales este Noapte, PV nu poate reapărea prin zgomot aleator.
+  if (mockState.previewWeather === "night") {
+    mockState.live.solarCurrentA = 0;
+    mockState.live.solarVoltageV = 0;
+    mockState.live.solarPowerW = 0;
+  }
+  mockEnergyBalance(); // fiecare citire păstrează corelația PV - consum - baterie
   mockState.live.chipTemp = clamp(
     mockState.live.chipTemp + (Math.random() - 0.5) * 0.35,
     24,
@@ -11621,13 +11650,17 @@ const updateCentralBalanceR2 = (live) => {
     setText("centralEstimateReason", "Lipsesc citirile valide ale bateriei (INA219 0x41).");
     return;
   }
-  if (centralCurrentSamples.length < 3 || now - centralCurrentSamples[0].t < 10000) {
+  // Numai în WEB PREVIEW estimarea reacționează imediat la schimbarea ventilatoarelor.
+  // ACTIVE rămâne cu media din probele reale (și validarea citirilor hardware).
+  if (!window.HIDROFOR_PREVIEW_ONLY &&
+      (centralCurrentSamples.length < 3 || now - centralCurrentSamples[0].t < 10000)) {
     setText("centralEstimateTime", "Se colectează date…");
     setText("centralEstimateReason", "Se calculează media curentului; ai nevoie de aproximativ 15 secunde.");
     return;
   }
-  const avgA = centralCurrentSamples.reduce((s, p) => s + p.a, 0) / centralCurrentSamples.length;
-  if (Math.abs(avgA) < 0.08) {
+  const avgA = window.HIDROFOR_PREVIEW_ONLY ? currentA :
+    centralCurrentSamples.reduce((s, p) => s + p.a, 0) / centralCurrentSamples.length;
+  if (Math.abs(avgA) < (window.HIDROFOR_PREVIEW_ONLY ? 0.025 : 0.08)) {
     setText("centralEstimateTime", "Flux prea mic");
     setText("centralEstimateReason", "Nu putem estima o durată utilă la curentul mediu actual.");
     return;
@@ -11641,8 +11674,10 @@ const updateCentralBalanceR2 = (live) => {
   setText("centralEstimateTime", duration ?
     (charging ? "Spre 100%: ~" : "Până la ~20%: ~") + duration : "Nu se poate estima");
   setText("centralEstimateReason", charging ?
-    "Calcul simplificat din Ah, SOC estimat și curent mediu; încărcarea finală poate dura mult mai mult." :
-    "Calcul orientativ din Ah, SOC estimat și curent mediu; consumul și capacitatea utilă variază.");
+    (window.HIDROFOR_PREVIEW_ONLY ? "DEMO: estimare din curentul net recalculat la fiecare schimbare de consum; " : "") +
+    "Calcul simplificat din Ah și SOC estimat; încărcarea finală poate dura mult mai mult." :
+    (window.HIDROFOR_PREVIEW_ONLY ? "DEMO: estimare din curentul net recalculat; " : "") +
+    "Calcul orientativ din Ah și SOC estimat; consumul și capacitatea utilă variază.");
 };
 
 const updateBatteryEstimateUi = () => {
@@ -14310,7 +14345,7 @@ window.addEventListener("DOMContentLoaded", () => {
     // Forțăm permanent această pagină să rămână o previzualizare, niciodată firmware live.
     window.HIDROFOR_PREVIEW_ONLY = true;
     const badge = byId('demoBadge');
-    if (badge) {badge.hidden=false; badge.textContent='V13-R15 · preview';}
+    if (badge) {badge.hidden=false; badge.textContent='V13-R16 · preview';}
     document.querySelectorAll('a[href^="/ota"],a[href^="/hidrofor-ota"],a[href="/autentificare"]').forEach(anchor=>{
       anchor.addEventListener('click', event=>{ event.preventDefault(); });
       anchor.title = 'Indisponibil în previzualizarea web';
@@ -14356,9 +14391,9 @@ window.addEventListener("DOMContentLoaded", () => {
   const el = id => document.getElementById(id);
   const pick = (text) => { const x = String(text || '').replace(',', '.').match(/[-+]?\d+(?:\.\d+)?/); return x ? Number(x[0]) : null; };
   const sceneValues = {
-    sun:   {pvV:18.4, pvA:0.93, batteryA:0.64},
-    cloud: {pvV:17.7, pvA:0.17, batteryA:-0.20},
-    night: {pvV:0, pvA:0, batteryA:-0.42}
+    sun:   {pvV:18.4, pvA:0.93},
+    cloud: {pvV:17.7, pvA:0.17},
+    night: {pvV:0, pvA:0}
   };
   function updateVisual() {
     const solar = pick(el('centralBalanceSolar')?.textContent);
@@ -14409,9 +14444,8 @@ window.addEventListener("DOMContentLoaded", () => {
     mockState.live.solarVoltageV = p.pvV;
     mockState.live.solarCurrentA = p.pvA;
     mockState.live.solarPowerW = p.pvV * p.pvA;
-    mockState.live.batteryCurrentA = p.batteryA;
-    mockState.live.batteryPowerW = mockState.live.baterie * p.batteryA;
-    mockState.live.batteryFlow = p.batteryA > .02 ? 'CHARGING' : p.batteryA < -.02 ? 'DISCHARGING' : 'IDLE';
+    mockState.previewWeather = key;
+    mockEnergyBalance(); // aceeași logică, indiferent de scenariu
     // Reseteaza media pentru ca previziunea sa nu combine soarele cu noaptea.
     if (typeof centralCurrentSamples !== 'undefined') centralCurrentSamples.length = 0;
     document.querySelectorAll('[data-r4-scene]').forEach(b=>b.setAttribute('aria-pressed', String(b.dataset.r4Scene===key)));
@@ -14600,7 +14634,7 @@ window.addEventListener("DOMContentLoaded", () => {
 })();
 </script>
 <script id="v13-r15-load-demo">
-/* R15: simulatorul noului INA219 (0x45), strict WEB ONLY. Nu trimite și nu primește I2C/API. */
+/* R16: INA219 (0x45) doar simulat; consumul influențează fluxul net și ETA. */
 (() => {
   'use strict';
   const $ = id => document.getElementById(id);
@@ -14609,7 +14643,9 @@ window.addEventListener("DOMContentLoaded", () => {
   window.r15UpdateLoadDemo = (nextTotalW, nextFanW) => {
     if (window.HIDROFOR_PREVIEW_ONLY !== true) return;
     // Ultimul model R3 are prioritate. Fallback doar la valoarea demonstrativă afișată în UI.
-    if (Number.isFinite(nextTotalW)) demoTotalW = Math.max(0, nextTotalW);
+    const validNewLoad = Number.isFinite(nextTotalW);
+    const changedLoad = validNewLoad && (demoTotalW === null || Math.abs(demoTotalW - nextTotalW) > 0.001);
+    if (validNewLoad) demoTotalW = Math.max(0, nextTotalW);
     if (Number.isFinite(nextFanW)) demoFanW = Math.max(0, nextFanW);
     if (demoTotalW === null) {
       const text = $('r3DemoTotal')?.textContent || '';
@@ -14625,6 +14661,16 @@ window.addEventListener("DOMContentLoaded", () => {
     if ($('r15LoadVoltage')) $('r15LoadVoltage').textContent = f(voltage, 2, 'V');
     if ($('r15LoadCurrent')) $('r15LoadCurrent').textContent = f(current, 3, 'A');
     if ($('r15MeterState')) $('r15MeterState').textContent = 'INA219 0x45 · semnal simulat, fără citire fizică';
+    // Un FAN nou schimbă consumul, deci și fluxul bateriei; evităm bucle
+    // când funcția e apelată fără argumente de rendererul energetic.
+    if (changedLoad && typeof mockState !== 'undefined') {
+      mockState.previewTotalLoadW = demoTotalW;
+      mockEnergyBalance();
+      if (typeof renderLive === 'function' && typeof mockLivePayload === 'function') {
+        // Reîmprospătare fără API: funcționează și cu pagina Centrală deschisă.
+        renderLive(mockLivePayload());
+      }
+    }
   };
   document.addEventListener('DOMContentLoaded', () => window.r15UpdateLoadDemo());
 })();
