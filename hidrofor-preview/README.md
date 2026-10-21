@@ -40,3 +40,35 @@ Verificări JS și cazuri de calcul/lipsuri/cronologie (Node.js, fără dependen
 ```sh
 node --test hidrofor-preview/tests/service-usage.test.cjs
 ```
+
+## V13-S6 — calibrare asistată prin comparație cu un etalon
+
+În **Service → Date și diagnostic → Calibrare asistată**, se poate alege nodul
+(ESP32 central, Sera 1 sau Sera 2) și mărimea (temperatură, umiditate,
+tensiune baterie). Instrumentul capturează citirea exactă din ultimul
+`/api/live` cu ora dispozitivului, apoi compară o valoare de referință.
+Referința acceptă punct și virgulă ca separator zecimal.
+
+- Abatere = **citire capturată − referință**.
+- Compensație teoretică = **referință − citire**, fără aplicare firmware.
+
+Captura necesită telemetrie ESP32 recentă (`i3Fresh`), nod de seră online
+și fără raportare întârziată, număr și unitate valide. Pentru tensiunea
+centrală, câmpurile `baterieOk` și `batteryInaOk` trebuie să fie true.
+Capturile rămân fixe între poll-uri, nu suprascriu citirile altor pagini
+și se șterg la schimbarea nodului, mărimii, închiderea panoului ori refresh.
+
+„Parametri de diagnostic” afișează numai constantele UI: interval sere
+8 min, întârzieri 16/32 min și limitele jurnalelor 40/150 înregistrări.
+Acestea **nu sunt praguri sau interblocaje ale hardware-ului**.
+
+S6 nu adaugă rute POST, polling, persistare sau scrieri în EEPROM.
+Nu există în API-ul inspectat suport confirmat pentru calibrare fizică;
+o calibrare efectivă ar necesita implementare și validare firmware.
+În preview, datele sunt simulate.
+
+Teste independente:
+
+```sh
+node --test hidrofor-preview/tests/service-calibration.test.cjs
+```
