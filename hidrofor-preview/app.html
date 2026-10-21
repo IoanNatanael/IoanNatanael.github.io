@@ -6,7 +6,7 @@
       content="width=device-width, initial-scale=1, viewport-fit=cover"
       name="viewport"
     />
-    <title>Hidro · V13-R18 · Preview interfață</title>
+    <title>Hidro · V13-R19 · Preview interfață</title>
     <style>
 :root {
   color-scheme: dark;
@@ -5457,7 +5457,7 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
 .r15-control-note{font-size:11px;line-height:1.55;color:#a2b6ba;margin:15px 0 0}
 @media(max-width:380px){.r15-meter{padding:12px}.r15-meter-main strong{font-size:29px}.r15-meter-demo{font-size:9px;padding:5px 7px}.r15-load-card .r15-chip-label{font-size:9px}}
 </style>
-<link rel="stylesheet" href="./r18-schedules.css?v=1">
+<link rel="stylesheet" href="./r18-schedules.css?v=2">
 <script defer src="./r18-schedules.js?v=1"></script>
 </head>
   <body class="hidro-v5">
@@ -5494,7 +5494,7 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
         </div>
       </header>
       <main>
-        <aside class="read-only-notice r3-preview-notice" role="note"><strong>PREVIEW V13-R18</strong><span>Interfață DEMO · date simulate; toate butoanele pot fi testate local, fără dispozitive.</span></aside>
+        <aside class="read-only-notice r3-preview-notice" role="note"><strong>PREVIEW V13-R19</strong><span>Interfață DEMO · date simulate; toate butoanele pot fi testate local, fără dispozitive.</span></aside>
         <section class="page active" id="page-home" aria-labelledby="homeTitle">
           <div class="page-head">
             <div class="page-title">
@@ -14289,7 +14289,7 @@ window.addEventListener("DOMContentLoaded", () => {
     // Forțăm permanent această pagină să rămână o previzualizare, niciodată firmware live.
     window.HIDROFOR_PREVIEW_ONLY = true;
     const badge = byId('demoBadge');
-    if (badge) {badge.hidden=false; badge.textContent='V13-R18 · preview';}
+    if (badge) {badge.hidden=false; badge.textContent='V13-R19 · preview';}
     document.querySelectorAll('a[href^="/ota"],a[href^="/hidrofor-ota"],a[href="/autentificare"]').forEach(anchor=>{
       anchor.addEventListener('click', event=>{ event.preventDefault(); });
       anchor.title = 'Indisponibil în previzualizarea web';

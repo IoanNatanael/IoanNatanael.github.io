@@ -34,8 +34,20 @@
 .r18-dialog-heading {display:flex; flex-direction:column; gap:2px;}
 .r18-dialog-heading strong {font-size:19px;line-height:1.2;font-weight:720;}
 .r18-dialog-heading small {color:#92bab4;font-size:11px;}
-.r18-dialog-close {display:grid;place-items:center;width:40px;height:40px;flex:none;border-radius:50%;
-  border:1px solid #36595c;color:#d4eeec;background:#223e44;font-size:24px;cursor:pointer;}
+/* V13-R19: close icon geometrically centered, independent of the font glyph baseline. */
+.r18-dialog-close {
+  position:relative;display:grid;place-items:center;padding:0;box-sizing:border-box;
+  width:42px;height:42px;min-width:42px;min-height:42px;flex:0 0 42px;
+  border-radius:50%;border:1px solid #36595c;background:#203a40;color:#d4eeec;
+  font-size:0;line-height:0;cursor:pointer;
+}
+.r18-dialog-close::before,.r18-dialog-close::after {
+  content:"";position:absolute;top:50%;left:50%;width:17px;height:2px;
+  border-radius:2px;background:currentColor;pointer-events:none;
+  transform:translate(-50%,-50%) rotate(45deg);
+}
+.r18-dialog-close::after {transform:translate(-50%,-50%) rotate(-45deg);}
+.r18-dialog-close:hover {background:#2a474b;border-color:#67948b;}
 .r18-dialog-close:focus-visible,.r18-dialog-tab:focus-visible,.r18-dialog button:focus-visible,
 .r18-dialog input:focus-visible,.r18-dialog select:focus-visible {outline:2px solid #8be9c6;outline-offset:2px;}
 .r18-dialog-scroll {padding:15px;max-height:calc(min(86dvh,850px) - 74px);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;}
