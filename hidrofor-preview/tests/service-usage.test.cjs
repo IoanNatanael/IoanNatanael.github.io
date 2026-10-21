@@ -16,6 +16,7 @@ function setup() {
   const state = {commands:[], events:[], journalFetch:ok, connected:false, live:null};
   const context = vm.createContext({Date, console, uiState:state,
     $:id => nodes[id], forceMock:() => true,
+    i3Fresh:() => state.connected && state.fresh !== false,
     escapeHtml:value => String(value).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;')});
   vm.runInContext(block + '\nthis.api = {v13WearTime, v13WearStats, v13WearConfirmation, v13WearDuration, v13WearReportedDuration, renderServiceUsage};', context);
   return {...context.api, state, nodes};
@@ -71,7 +72,8 @@ test('commands alone, open runs and orphan stops do not produce elapsed time', (
 test('generic snapshots, failures, wrong sources and conflicting state are not confirmations', () => {
   const start = event('on','21-10-2026 12:00:00');
   for (const extra of [{title:'Pornire blocata: hidrofor'}, {title:'Pornire esuata'}, {severityKey:'error'},
-    {source:'Sera 1'}, {source:'Central'}, {hidroforKey:undefined}, {hidrofor:'Oprit'}, {title:'Control automat activat'}]) {
+    {source:'Sera 1'}, {source:'Central'}, {hidroforKey:undefined},
+    {hidrofor:undefined}, {hidrofor:''}, {hidrofor:'Oprit'}, {title:'Control automat activat'}]) {
     assert.equal(api.v13WearConfirmation({...start, ...extra}), '');
     assert.equal(api.v13WearStats([], [event('off','21-10-2026 12:10:00'),{...start,...extra}], ok).durationMs, null);
   }
@@ -134,6 +136,11 @@ test('renderer distinguishes loading/error/empty, escapes live text and has no s
   renderServiceUsage();
   assert.match(nodes.serviceUsageContent.innerHTML,/00:02:03/);
   assert.match(nodes.serviceUsageContent.innerHTML,/nu zero/);
+  state.fresh = false;
+  renderServiceUsage();
+  assert.doesNotMatch(nodes.serviceUsageContent.innerHTML,/00:02:03/);
+  assert.match(nodes.serviceUsageContent.innerHTML,/Indisponibil/);
+  state.fresh = true;
   state.live.hidroforNode.ack = '<img src=x onerror=alert(1)>';
   renderServiceUsage();
   assert.doesNotMatch(nodes.serviceUsageContent.innerHTML,/<img|00:02:03/);
