@@ -6,7 +6,7 @@
       content="width=device-width, initial-scale=1, viewport-fit=cover"
       name="viewport"
     />
-    <title>Hidro · V13-R14 · Preview interfață</title>
+    <title>Hidro · V13-R15 · Preview interfață</title>
     <style>
 :root {
   color-scheme: dark;
@@ -5462,6 +5462,28 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
 #page-hidrofor .r13-schedule-management{margin-top:16px;padding-top:13px}
 #page-hidrofor .r13-safety-note{margin-top:10px}
 </style>
+<style id="v13-r15-load-meter">
+/* V13-R15: noul senzor de consum este doar ilustrație web, fără API nou sau hardware. */
+.r15-load-card .r15-chip-label{display:flex;gap:6px;align-items:center;flex-wrap:wrap;color:#abcbd3;font-size:10px;line-height:1.45}
+.r15-load-card .r15-chip-label span{padding:2px 6px;border-radius:6px;background:#234e58;color:#a6e7ed;font-size:9px;font-weight:750;letter-spacing:.05em}
+.r15-load-card .r4-model-label b{color:#dae8e9;font-weight:650}
+.r15-meter{margin:0 0 19px;border:1px solid #42616a;background:linear-gradient(145deg,#1a323b,#132a31);border-radius:18px;padding:17px;display:flex;flex-direction:column;gap:14px}
+.r15-meter-main{display:flex;align-items:flex-start;gap:10px;justify-content:space-between}
+.r15-meter-main>div{display:flex;flex-direction:column;gap:7px}
+.r15-meter-kicker{font-size:10px;letter-spacing:.065em;color:#a4c7d5;font-weight:700}
+.r15-meter-main strong{display:block;font-size:34px;letter-spacing:-.6px;color:#eef9fa;line-height:1.1}
+.r15-meter-demo{background:#27515b;border:1px solid #3d7983;border-radius:20px;color:#b1f2ed;font-size:10px;font-weight:800;padding:7px 10px;white-space:nowrap}
+.r15-meter-pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;padding-top:12px;border-top:1px solid #355360}
+.r15-meter-pair>div{min-width:0;display:flex;flex-direction:column;gap:4px}
+.r15-meter-pair span{font-size:11px;color:#a4bfc7}
+.r15-meter-pair strong{font-size:16px;color:#e5f2f3;overflow-wrap:anywhere}
+.r15-meter-sensor{display:flex;align-items:center;gap:9px;border-top:1px solid #355360;padding-top:12px;font-size:11px;color:#b2d4d1;line-height:1.45}
+.r15-meter-dot{height:8px;width:8px;flex:none;border-radius:50%;background:#82c9c2;box-shadow:0 0 0 3px #82c9c220}
+.r15-fans-estimate{display:flex;justify-content:space-between;align-items:center;gap:8px;color:#aac2c9;font-size:11px;line-height:1.45}
+.r15-fans-estimate strong{font-size:13px;color:#e5f2f3;white-space:nowrap}
+.r15-control-note{font-size:11px;line-height:1.55;color:#a2b6ba;margin:15px 0 0}
+@media(max-width:380px){.r15-meter{padding:12px}.r15-meter-main strong{font-size:29px}.r15-meter-demo{font-size:9px;padding:5px 7px}.r15-load-card .r15-chip-label{font-size:9px}}
+</style>
 </head>
   <body class="hidro-v5">
     <div class="app">
@@ -5497,7 +5519,7 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
         </div>
       </header>
       <main>
-        <aside class="read-only-notice r3-preview-notice" role="note"><strong>PREVIEW V13-R14</strong><span>Interfață DEMO · date simulate; toate butoanele pot fi testate local, fără dispozitive.</span></aside>
+        <aside class="read-only-notice r3-preview-notice" role="note"><strong>PREVIEW V13-R15</strong><span>Interfață DEMO · date simulate; toate butoanele pot fi testate local, fără dispozitive.</span></aside>
         <section class="page active" id="page-home" aria-labelledby="homeTitle">
           <div class="page-head">
             <div class="page-title">
@@ -6310,11 +6332,11 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
   </span>
   <span aria-hidden="true" class="r5-open-hint">Detalii tehnice ↗</span>
 </button>
-<button aria-controls="r5ConsumersDialog" aria-haspopup="dialog" aria-label="Control consumatori" class="r4-unit r4-load" data-r5-target="r5ConsumersDialog" type="button"><span aria-hidden="true" class="r4-unit-icon"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="M7 3h10l1 5H6zM5 11h14v10H5zM9 15h6m-3-3v6"></path></svg></span><div class="r4-unit-main"><span class="r4-unit-top">Consum total</span><strong id="centralBalanceLoad">Nemăsurat</strong><small>Fără senzor comun</small><small class="r4-model-label">Model demo: <b id="r4DemoConsumption">—</b></small></div><span aria-hidden="true" class="r5-open-hint">Atinge pentru control ↗</span></button>
+<button aria-controls="r5ConsumersDialog" aria-haspopup="dialog" aria-label="Detalii INA219 și control consumatori demonstrativ" class="r4-unit r4-load r15-load-card" data-r5-target="r5ConsumersDialog" type="button"><span aria-hidden="true" class="r4-unit-icon"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.8" viewbox="0 0 24 24"><rect x="4" y="6" width="16" height="12" rx="2"></rect><path d="M8 3v3m8-3v3M8 18v3m8-3v3M7.5 12h9"></path></svg></span><div class="r4-unit-main"><span class="r4-unit-top">Consum total</span><strong id="centralBalanceLoad" aria-live="polite">—</strong><small class="r15-chip-label">INA219 0x45 <span>DEMO</span></small><small class="r4-model-label">Ventilatoare: <b id="r4DemoConsumption">—</b></small></div><span aria-hidden="true" class="r5-open-hint">Detalii și control ↗</span></button>
 </div>
 </div>
 <div aria-live="polite" class="r4-flow-status is-neutral" id="r4EnergyStatus" role="status">Se așteaptă valorile bateriei…</div>
-<details class="r5-explain"><summary>Ce reprezintă fluxurile?</summary><p class="r4-flow-info">Fluxurile reprezintă <b>direcții, nu proporții</b>. PV este înaintea regulatorului, bateria indică puterea netă; consumul total rămâne nemăsurat. Modelul ventilatoarelor este strict demonstrativ.</p></details>
+<details class="r5-explain"><summary>Ce reprezintă fluxurile?</summary><p class="r4-flow-info">Fluxurile arată <b>direcții, nu proporții</b>. PV este măsurat înainte de regulator; bateria indică fluxul net. INA219 0x45 și consumul afișat sunt <b>simulate în această previzualizare</b>.</p></details>
 
 
 </section>
@@ -11571,7 +11593,8 @@ const updateCentralBalanceR2 = (live) => {
     (netW > 0 ? "+" : "") + netW.toFixed(1) + " W");
   setText("centralBalanceDirection", netW === null ? "Date lipsă" :
     netW > 0.3 ? "Bateria se încarcă" : netW < -0.3 ? "Bateria se descarcă" : "Flux apropiat de zero");
-  setText("centralBalanceLoad", "Nemăsurat");
+  if (window.HIDROFOR_PREVIEW_ONLY && typeof window.r15UpdateLoadDemo === "function") window.r15UpdateLoadDemo();
+  else setText("centralBalanceLoad", "Nemăsurat");
   const savedInput = $("centralBatteryCapacityAh");
   if (savedInput && document.activeElement !== savedInput && !savedInput.value && centralBatteryCapacityAh) {
     savedInput.value = String(centralBatteryCapacityAh);
@@ -14279,6 +14302,7 @@ window.addEventListener("DOMContentLoaded", () => {
     byId('r3FansCount').textContent = `${active} / ${demoModes.length} active`;
     byId('r3DemoFansPower').textContent = `~${fanPower.toFixed(1).replace('.',',')} W`;
     byId('r3DemoTotal').textContent = `~${(BASE_LOAD_DEMO+fanPower).toFixed(1).replace('.',',')} W`;
+    if (typeof window.r15UpdateLoadDemo === "function") window.r15UpdateLoadDemo(BASE_LOAD_DEMO + fanPower, fanPower);
     byId('r3AirTempValue').textContent = `${previewTemperature}°C`;
     byId('r3FanSensorWarning').hidden = !invalidReading;
   };
@@ -14286,7 +14310,7 @@ window.addEventListener("DOMContentLoaded", () => {
     // Forțăm permanent această pagină să rămână o previzualizare, niciodată firmware live.
     window.HIDROFOR_PREVIEW_ONLY = true;
     const badge = byId('demoBadge');
-    if (badge) {badge.hidden=false; badge.textContent='V13-R14 · preview';}
+    if (badge) {badge.hidden=false; badge.textContent='V13-R15 · preview';}
     document.querySelectorAll('a[href^="/ota"],a[href^="/hidrofor-ota"],a[href="/autentificare"]').forEach(anchor=>{
       anchor.addEventListener('click', event=>{ event.preventDefault(); });
       anchor.title = 'Indisponibil în previzualizarea web';
@@ -14372,7 +14396,7 @@ window.addEventListener("DOMContentLoaded", () => {
     }
     if (batterySoc) batterySoc.textContent = percentOk ? Math.round(soc) + '% est.' : 'n/a';
     // Modelul de consum R3 ramane ESTIMAT, distinct de senzorul comun nemontat.
-    if (el('r4DemoConsumption')) el('r4DemoConsumption').textContent = el('r3DemoTotal')?.textContent || '—';
+    if (el('r4DemoConsumption')) el('r4DemoConsumption').textContent = el('r3DemoFansPower')?.textContent || '—';
   }
   function chooseScene(key) {
     const p = sceneValues[key];
@@ -14482,10 +14506,13 @@ window.addEventListener("DOMContentLoaded", () => {
 <div><span class="r3-eyebrow">CONTROL CONSUMATORI</span><h3 id="r3FansTitle">Ventilatoare</h3><p>3 ventilatoare · comenzi și consum <b>simulate</b>.</p></div>
 <span aria-live="polite" class="r3-active-count" id="r3FansCount">0 / 3 active</span>
 </div>
-<div aria-label="Consum calculat numai în demo" class="r3-consumption-strip">
-<div><small>Total model</small><strong id="r3DemoTotal">—</strong></div>
-<div><small>Ventilatoare · model</small><strong id="r3DemoFansPower">—</strong></div>
-</div>
+<section class="r15-meter" aria-label="Citiri simulate INA219 0x45">
+  <div class="r15-meter-main"><div><span class="r15-meter-kicker">CONSUM COMUN · INA219 0x45</span><strong id="r15LoadPower">—</strong></div><span class="r15-meter-demo">SIMULAT</span></div>
+  <div class="r15-meter-pair"><div><span>Tensiune</span><strong id="r15LoadVoltage">—</strong></div><div><span>Curent</span><strong id="r15LoadCurrent">—</strong></div></div>
+  <div class="r15-meter-sensor"><span aria-hidden="true" class="r15-meter-dot"></span><span id="r15MeterState">INA219 0x45 · fără senzor real conectat</span></div>
+  <div class="r15-fans-estimate">Ventilatoare · consum model <strong id="r3DemoFansPower">—</strong></div>
+  <span class="visually-hidden" id="r3DemoTotal">—</span>
+</section>
 <details class="r3-auto-test">
 <summary>Testează modul AUTO <span>temperatură simulată</span></summary>
 <div class="r3-sensor-simulation">
@@ -14510,7 +14537,7 @@ window.addEventListener("DOMContentLoaded", () => {
 </article>
 </div>
 <div class="r3-consumer-foot"><span id="r3FanActionNotice" role="status">AUTO este o simulare locală, nu o automatizare activă.</span><button class="r3-reset" id="r3FanReset" type="button">Resetează demo</button></div>
-<details class="r3-future-note"><summary>Ce va putea afișa după integrarea cu ACTIVE?</summary><p>Comandă ON/OFF/AUTO, stare confirmată prin feedback (dacă există), consum total măsurat cu senzor pe ramura comună și consum individual <em>estimat</em> prin calibrare. Nu sunt încă implementate în firmware; nu atribuim consumul total unor ventilatoare fără dovadă.</p></details>
+<p class="r15-control-note">Preview: puterea totală este un model, nu o citire. În ACTIVE viitor, consumul va proveni de la INA219 0x45 numai după montaj și validare; fiecare ventilator rămâne o estimare separată.</p>
 </section></div>
 </dialog>
 <script id="v13-r5-dialog-bindings">
@@ -14570,6 +14597,36 @@ window.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll('[data-r13-start]').forEach(btn => btn.addEventListener('click', () => switchPane(btn.dataset.r13Start)));
     switchPane('now');
   });
+})();
+</script>
+<script id="v13-r15-load-demo">
+/* R15: simulatorul noului INA219 (0x45), strict WEB ONLY. Nu trimite și nu primește I2C/API. */
+(() => {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  let demoTotalW = null;
+  let demoFanW = null;
+  window.r15UpdateLoadDemo = (nextTotalW, nextFanW) => {
+    if (window.HIDROFOR_PREVIEW_ONLY !== true) return;
+    // Ultimul model R3 are prioritate. Fallback doar la valoarea demonstrativă afișată în UI.
+    if (Number.isFinite(nextTotalW)) demoTotalW = Math.max(0, nextTotalW);
+    if (Number.isFinite(nextFanW)) demoFanW = Math.max(0, nextFanW);
+    if (demoTotalW === null) {
+      const text = $('r3DemoTotal')?.textContent || '';
+      const parsed = Number(text.replace(/[^0-9,.]/g, '').replace(',', '.'));
+      if (text.includes('W') && Number.isFinite(parsed)) demoTotalW = parsed;
+    }
+    if (demoTotalW === null) return;
+    const voltage = 12.40; // valoare inventată pentru test vizual, NU hardware
+    const current = demoTotalW / voltage;
+    const f = (n, places, suffix) => n.toFixed(places) + ' ' + suffix;
+    if ($('centralBalanceLoad')) $('centralBalanceLoad').textContent = f(demoTotalW, 1, 'W');
+    if ($('r15LoadPower')) $('r15LoadPower').textContent = f(demoTotalW, 1, 'W');
+    if ($('r15LoadVoltage')) $('r15LoadVoltage').textContent = f(voltage, 2, 'V');
+    if ($('r15LoadCurrent')) $('r15LoadCurrent').textContent = f(current, 3, 'A');
+    if ($('r15MeterState')) $('r15MeterState').textContent = 'INA219 0x45 · semnal simulat, fără citire fizică';
+  };
+  document.addEventListener('DOMContentLoaded', () => window.r15UpdateLoadDemo());
 })();
 </script>
 </body>
