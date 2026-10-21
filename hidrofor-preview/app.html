@@ -6,7 +6,7 @@
       content="width=device-width, initial-scale=1, viewport-fit=cover"
       name="viewport"
     />
-    <title>Hidro · V13-R13 · Preview interfață</title>
+    <title>Hidro · V13-R14 · Preview interfață</title>
     <style>
 :root {
   color-scheme: dark;
@@ -5382,7 +5382,7 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
 #page-hidrofor #autoTimerContext {display:none!important;} /* stare afișată în panoul unic */
 </style>
 <style id="v13-r13-unified-ui">
-/* V13-R13 WEB ONLY — single AUTO workflow and 2 equal mode buttons */
+/* V13-R14 WEB ONLY — single AUTO workflow and 2 equal mode buttons */
 #page-hidrofor #hydroModeSegmented {display:grid!important; grid-template-columns:repeat(2,minmax(0,1fr))!important; width:min(100%,420px)!important; max-width:420px!important; margin:10px auto 0!important; gap:6px!important; border:1px solid #35535a; border-radius:18px; background:#0b2127; padding:6px; box-sizing:border-box;}
 #page-hidrofor #hydroModeSegmented button {width:100%;min-width:0; margin:0; border-radius:13px; min-height:48px; font-weight:750; font-size:14px; color:#b1c6ca; border:0;}
 #page-hidrofor #hydroModeSegmented button.active {color:#0b2d29;background:#83e1c6; box-shadow:0 3px 10px #0003;}
@@ -5449,6 +5449,19 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
 #r13SchedulePane .schedule-delete {min-height:36px;min-width:33px;font-size:20px; padding:4px;}
 @media(max-width:350px) {#r13SchedulePane .schedule-row{grid-template-columns:38px minmax(0,1fr) 32px;gap:6px;padding:10px 6px;}}
 </style>
+<style id="v13-r14-clean-auto-ui">
+/* R14 WEB ONLY: fewer repeated statuses; keep simulator and all command wiring. */
+#page-hidrofor .r13-card-head{padding-bottom:13px}
+#page-hidrofor .r13-card-head h3{margin-top:0;margin-bottom:0}
+#page-hidrofor .r13-timer-panel .timer-dial-wrap{margin-bottom:16px}
+#page-hidrofor .r12-demo-water{margin-top:12px}
+#page-hidrofor .r12-demo-title{margin-bottom:8px}
+#page-hidrofor .r13-start-picker{margin-top:17px;padding-top:13px}
+#page-hidrofor .r13-operation-pane{margin-top:12px}
+#page-hidrofor .r13-schedule-heading{margin-bottom:8px}
+#page-hidrofor .r13-schedule-management{margin-top:16px;padding-top:13px}
+#page-hidrofor .r13-safety-note{margin-top:10px}
+</style>
 </head>
   <body class="hidro-v5">
     <div class="app">
@@ -5480,11 +5493,11 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
             <span id="clockDate" class="header-date">—</span
             ><span id="clockTime" class="clock-time">--:--</span>
           </div>
-          <span class="demo-badge" id="demoBadge">V13-R13 · demo</span>
+          <span class="demo-badge" id="demoBadge">V13-R14 · demo</span>
         </div>
       </header>
       <main>
-        <aside class="read-only-notice r3-preview-notice" role="note"><strong>PREVIEW V13-R13</strong><span>Interfață DEMO · date simulate; toate butoanele pot fi testate local, fără dispozitive.</span></aside>
+        <aside class="read-only-notice r3-preview-notice" role="note"><strong>PREVIEW V13-R14</strong><span>Interfață DEMO · date simulate; toate butoanele pot fi testate local, fără dispozitive.</span></aside>
         <section class="page active" id="page-home" aria-labelledby="homeTitle">
           <div class="page-head">
             <div class="page-title">
@@ -5946,14 +5959,13 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
               <article class="card auto-card r13-single-card">
   <header class="r13-card-head">
     <div>
-      <span class="r13-eyebrow">UN SINGUR PANOU DE UDARE</span>
+      
       <h3 id="autoControlTitle">Udare automată</h3>
-      <p>Durata și plutitorul sunt aceleași, indiferent când pornește ciclul.</p>
     </div>
     <span class="r13-auto-indicator">AUTO</span>
   </header>
   <div class="r13-unified-body">
-    <div class="r13-control-label"><strong>Durata udării</strong><span>Minute efective cu apă</span></div>
+    <div class="r13-control-label"><strong>Durata udării</strong></div>
     <div class="timer-panel r13-timer-panel">
                     <div class="timer-dial-wrap">
                       <button
@@ -6001,20 +6013,12 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
                       <div class="r12-refill-info">
                         <span class="r12-mini-icon" aria-hidden="true">↻</span>
                         <div><label for="autoRefillMinutes">Pauză refacere apă</label>
-                          <small>Se aplică doar dacă plutitorul indică lipsa apei.</small></div>
+                          </div>
                       </div>
                       <div class="r12-refill-input"><input id="autoRefillMinutes" type="number" min="1" max="120" step="1" value="10" inputmode="numeric" aria-label="Pauză pentru refacerea apei în minute"><span>min</span></div>
                     </div>
-                    <div class="r12-water-card" id="r12WaterCard" data-phase="ready">
-                      <div class="r12-water-primary">
-                        <span class="r12-water-symbol" id="r12WaterSymbol" aria-hidden="true">●</span>
-                        <div><strong id="r12WaterLabel">Apă prezentă</strong><small id="r12WaterHint">Plutitor pregătit pentru udare.</small></div>
-                        <span class="r12-water-phase" id="r12PhaseBadge">Pregătit</span>
-                      </div>
-                      <div class="r12-phase-line" id="r12PhaseLine" aria-live="polite">Durata selectată se contorizează doar în timpul udării.</div>
-                    </div>
-                    <div class="r12-demo-water" id="r12DemoWater">
-                      <div class="r12-demo-title"><strong>Simulare plutitor</strong><small>Preview: pauză accelerată, 1 min = 1 sec</small></div>
+<div class="r12-demo-water" id="r12DemoWater">
+                      <div class="r12-demo-title"><strong>Test plutitor · DEMO</strong><small>1 min = 1 sec</small></div>
                       <div class="r12-demo-buttons" role="group" aria-label="Simulare nivel apă">
                         <button type="button" data-r12-water="wet" aria-pressed="true">Apă prezentă</button>
                         <button type="button" data-r12-water="dry" aria-pressed="false">Fără apă</button>
@@ -6031,14 +6035,13 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
       </div>
     </div>
     <section id="r13NowPane" class="r13-operation-pane" aria-label="Pornire imediată">
-      <p class="r13-pane-help">Pornește acum și oprește automat când durata efectivă este consumată.</p>
       <div class="auto-actions r12-auto-actions">
         <button class="btn-good" id="autoTimedStart" type="button">Pornește udarea</button>
         <button class="btn-bad" id="autoTimedStop" type="button">Oprește</button>
       </div>
     </section>
     <section id="r13SchedulePane" class="r13-operation-pane r13-schedule-pane" aria-label="Pornire programată" hidden>
-      <div class="r13-schedule-heading"><strong>Programare pe ESP32</strong><span>Funcționează și cu telefonul închis.</span></div>
+      <div class="r13-schedule-heading"><strong>Programare</strong></div>
       <p id="i9ScheduleStatus" class="r13-inline-status" role="status">Se citesc programările…</p>
       <div class="schedule-panel">
 <div class="schedule-form">
@@ -6046,11 +6049,8 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
                         <label class="field-caption" for="autoScheduleTime">Ora pornirii</label>
                         <input id="autoScheduleTime" type="time" />
                       </div>
-                      <div>
-                        <label class="field-caption" for="autoScheduleWaterWait">Așteptare maximă apă înainte de pornire (min)</label>
-                        <input id="autoScheduleWaterWait" inputmode="numeric" max="240" min="1" step="1" type="number" value="120" />
-                        <p class="field-caption">Dacă la ora programată fântâna este goală, așteaptă cel mult acest timp. Nu pornește fără plutitor valid.</p>
-                      </div>
+                      <!-- Parametru vechi ACTIVE: păstrat intern pentru compatibilitatea preview-ului. Viitor: estimare adaptivă a refacerii apei. -->
+                      <input type="hidden" id="autoScheduleWaterWait" value="120">
                       <div>
                         <label class="field-caption" for="autoScheduleMode">Repetare</label>
                         <select id="autoScheduleMode">
@@ -6080,7 +6080,6 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
       <div class="r13-schedule-submit">
         <button class="btn-primary" id="autoAddSchedule" type="button">Salvează programarea</button>
       </div>
-      <span class="r13-schedule-meta">Ora este furnizată de ceasul RTC al centralei. Sincronizarea se găsește în Service.</span>
       <div class="r13-schedule-management">
         <div class="r13-management-top"><strong>Programările mele</strong><span>maxim 8</span></div>
         <div class="schedule-list" id="autoScheduleList"></div>
@@ -6089,7 +6088,7 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
           <button class="btn-secondary" id="i9ScheduleArm" type="button">Reactivează</button>
           <button class="btn-secondary" id="i9ScheduleSuspend" type="button">Suspendă toate</button>
         </div>
-        <p class="r13-safety-note">STOP/PANIC suspendă programările. Reactivarea se face explicit după verificare.</p>
+        <p class="r13-safety-note">După STOP/PANIC, programările necesită reactivare.</p>
       </div>
     </section>
   </div>
@@ -14069,7 +14068,7 @@ function i9RenderSchedules(){
       :e.mode===1?"zilnic":i9Days.filter((d,i)=>(e.weekdays&(1<<i))).join(" · ");
     return '<article class="schedule-row">'+
     '<button class="schedule-toggle '+(e.enabled?'on':'off')+'" type="button" data-i9-toggle="'+e.id+'" title="Activează / dezactivează">'+(e.enabled?'on':'off')+'</button>'+
-    '<div><div class="schedule-time">'+hr+'</div><div class="schedule-meta">'+e.minutes+' min · refacere '+e.refillMinutes+' min · așteptare apă max '+e.waitWaterMinutes+' min · '+date+'</div></div>'+
+    '<div><div class="schedule-time">'+hr+'</div><div class="schedule-meta">'+e.minutes+' min · refacere '+e.refillMinutes+' min · '+date+'</div></div>'+
     '<button class="schedule-delete" type="button" data-i9-delete="'+e.id+'" aria-label="Șterge programarea">×</button></article>';
   }).join("");
 }
@@ -14286,7 +14285,7 @@ window.addEventListener("DOMContentLoaded", () => {
     // Forțăm permanent această pagină să rămână o previzualizare, niciodată firmware live.
     window.HIDROFOR_PREVIEW_ONLY = true;
     const badge = byId('demoBadge');
-    if (badge) {badge.hidden=false; badge.textContent='V13-R13 · preview';}
+    if (badge) {badge.hidden=false; badge.textContent='V13-R14 · preview';}
     document.querySelectorAll('a[href^="/ota"],a[href^="/hidrofor-ota"],a[href="/autentificare"]').forEach(anchor=>{
       anchor.addEventListener('click', event=>{ event.preventDefault(); });
       anchor.title = 'Indisponibil în previzualizarea web';
