@@ -2121,6 +2121,43 @@ details.accordion > summary ~ *,
   padding: 10px 12px; font: inherit; font-size: 12px;
 }
 .service-journal-search input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+/* V13-S3: valori API transmise de senzori, read-only. */
+.service-sensors-content { padding: 2px 14px 15px; }
+.service-sensors-help { color: var(--muted); font-size: 11px; line-height: 1.6; margin: 9px 0 13px; }
+.service-sensors-help code { color: var(--ink); overflow-wrap: anywhere; }
+.service-sensors-grid { display: grid; gap: 10px; }
+.service-sensor-card {
+  background: var(--surface-soft);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px;
+  min-width: 0;
+}
+.service-sensor-heading { display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; }
+.service-sensor-heading strong { font-size: 13px; }
+.service-sensor-heading small { font-size: 10px; display: block; color: var(--muted); margin-top: 3px; }
+.service-sensor-health {
+  flex: 0 0 auto; max-width: 46%; overflow-wrap: anywhere;
+  font-size: 10px; font-weight: 600; line-height: 1.3;
+  border-radius: 7px; padding: 5px 7px; text-align: right;
+}
+.service-sensor-health.up { color: var(--good); background: var(--good-soft); }
+.service-sensor-health.warn { color: var(--warn); background: var(--warn-soft); }
+.service-sensor-health.down { color: var(--bad); background: var(--bad-soft); }
+.service-sensor-fields { margin: 11px 0 0; padding: 0; display: grid; gap: 8px; }
+.service-sensor-field { border-top: 1px solid var(--line); padding-top: 7px; display: grid; gap: 3px; }
+.service-sensor-field dt { color: var(--muted); font-size: 10px; }
+.service-sensor-field dd { margin: 0; display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.service-sensor-field code {
+  font-size: 12px; color: var(--ink); overflow-wrap: anywhere;
+  min-width: 0; white-space: normal; word-break: break-word;
+}
+.service-sensor-note { color: var(--muted); font-size: 10px; text-align: right; max-width: 53%; }
+.service-sensor-field.invalid .service-sensor-note { color: var(--bad); }
+.service-sensor-field.stale .service-sensor-note { color: var(--warn); }
+.service-sensor-field.ok .service-sensor-note { color: var(--good); }
+.service-sensor-extra { font-size: 10px; color: var(--muted); line-height: 1.55; margin: 10px 0 0; }
+@media (min-width: 740px) { .service-sensors-grid { grid-template-columns: repeat(2,minmax(0,1fr)); } }
 /* Activity uses readable rows, with details on demand. */
 .system-log-card {
   background: transparent;
@@ -6565,6 +6602,17 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
             <p class="service-links-note">ACK-ul și starea releului sunt raportări software, nu dovada funcționării fizice a motorului. RSSI și latența ESP-NOW nu sunt furnizate de API-ul actual.</p>
           </section>
           </div>
+          <!-- V13-S3: valori recepționate, fără citiri fizice noi. -->
+          <details class="reveal-panel service-sensors" id="serviceSensorDetails">
+            <summary>Diagnoză senzori · valori primite <span class="summary-meta">ESP32 / sere</span></summary>
+            <div class="service-sensors-content">
+              <p class="service-sensors-help">Valorile de mai jos provin din ultimul răspuns <code>/api/live</code>, fără rotunjire sau filtrare suplimentară în această secțiune. Sunt date transmise de firmware, <strong>nu ADC brut</strong>, nici dovada calibrării. Citirile marcate ca vechi nu reprezintă starea curentă.</p>
+              <div id="serviceSensorCards" class="service-sensors-grid" aria-live="off">
+                <p class="service-sensors-help">Deschide secțiunea pentru a verifica citirile.</p>
+              </div>
+              <p class="service-sensors-help">Dacă lipsesc măsurători interne, coduri de eroare sau date ADC, firmware-ul trebuie să le expună explicit; interfața nu le poate deduce.</p>
+            </div>
+          </details>
           <!-- V13-S7: export limitat la ceea ce API-ul actual ofera din EEPROM. -->
           <details class="reveal-panel service-export" id="serviceExportDetails">
             <summary>Export date persistente · CSV / JSON</summary>
@@ -9421,6 +9469,97 @@ const renderServiceNodeDiagnostics = (live) => {
       ]);
 };
 
+// V13-S3: diagnoză senzorilor, numai din /api/live (fără POST, EEPROM ori polling).
+// Senzorii digitali SHT/DHT nu oferă ADC brut prin acest API; afișăm textul
+// primit de la firmware și verificăm doar forma/plauzibilitatea elementară.
+const serviceSensorNumeric = (value) => {
+  if (typeof value === 'number') return Number.isFinite(value) ? value : null;
+  if (typeof value !== 'string') return null;
+  const match = value.trim().match(/^([+-]?(?:\\d+(?:[.,]\\d+)?|[.,]\\d+))\\s*(?:°?\\s*C|%|V|A|W)?$/i);
+  return match ? Number(match[1].replace(',', '.')) : null;
+};
+const serviceSensorField = (label, raw, type, stale, apiFlag) => {
+  const exists = raw !== null && raw !== undefined && String(raw).trim() !== '' &&
+    !['na','n/a','null','undefined','nan','-'].includes(normalize(raw));
+  const numeric = exists ? serviceSensorNumeric(raw) : null;
+  const withinRange = numeric !== null && (type === 'temp'
+    ? numeric >= -55 && numeric <= 125
+    : type === 'hum' ? numeric >= 0 && numeric <= 100
+    : type === 'voltage' ? numeric >= 0 : true);
+  const invalid = exists && (!withinRange || apiFlag === false);
+  const status = !exists ? 'Lipsă' :
+    invalid ? (apiFlag === false ? 'Senzor neconfirmat' : 'Valoare neverosimilă / format invalid') :
+    stale ? 'Date vechi' : 'Format valid';
+  const cssClass = invalid ? 'invalid' : stale && exists ? 'stale' : exists ? 'ok' : '';
+  const value = exists ? String(raw) : 'n/a';
+  return '<div class="service-sensor-field ' + cssClass + '"><dt>' +
+    escapeHtml(label) + '</dt><dd><code>' + escapeHtml(value) +
+    '</code><span class="service-sensor-note">' + escapeHtml(status) +
+    '</span></dd></div>';
+};
+const serviceSensorFlag = (value) =>
+  value === true ? 'OK raportat' :
+  value === false ? 'Indisponibil / eroare raportată' : 'Stare neraportată';
+const serviceSensorCard = (name, origin, status, tone, fields, note) =>
+  '<article class="service-sensor-card"><div class="service-sensor-heading">' +
+  '<div><strong>' + escapeHtml(name) + '</strong><small>' +
+  escapeHtml(origin) + '</small></div><span class="service-sensor-health ' +
+  tone + '">' + escapeHtml(status) + '</span></div><dl class="service-sensor-fields">' +
+  fields.join('') + '</dl><p class="service-sensor-extra">' +
+  escapeHtml(note) + '</p></article>';
+
+const renderServiceSensorDiagnostics = (live) => {
+  const panel = $('serviceSensorDetails');
+  const target = $('serviceSensorCards');
+  // Nu reconstruim cardurile când accordion-ul este închis.
+  if (!panel?.open || !target) return;
+  const d = live && typeof live === 'object' && uiState.connected ? live : null;
+  const simulation = forceMock() ? ' · DEMO' : '';
+  const centralFields = [
+    serviceSensorField('Temperatură · API', d?.temperatura, 'temp', !d, null),
+    serviceSensorField('Umiditate · API', d?.umiditate, 'hum', !d, null),
+    serviceSensorField('Tensiune baterie · API', d?.baterie, 'voltage', !d,
+      d?.baterieOk === false ? false : null),
+    serviceSensorField('Curent baterie · API', d?.batteryCurrentA, 'current', !d,
+      d?.batteryInaOk === false ? false : null),
+    serviceSensorField('Tensiune solară · API', d?.solarVoltageV, 'voltage', !d,
+      d?.solarInaOk === false ? false : null),
+    serviceSensorField('Curent solar · API', d?.solarCurrentA, 'current', !d,
+      d?.solarInaOk === false ? false : null)
+  ];
+  const central = serviceSensorCard('Nod central · ESP32',
+    'Sursă /api/live' + simulation,
+    d ? 'Răspuns API primit' : 'API indisponibil',
+    d ? 'up' : 'down', centralFields,
+    'Ora RTC: ' + (d?.dataOra || 'n/a') +
+    ' · INA baterie: ' + serviceSensorFlag(d?.batteryInaOk) +
+    ' · INA solar: ' + serviceSensorFlag(d?.solarInaOk));
+  const greenhouseCards = GREENHOUSES.map(gh => {
+    const g = d?.[gh.id];
+    const hasData = !!g && typeof g === 'object';
+    const online = hasData && (g.online === true ||
+      (g.online == null && normalize(g.status) === 'online'));
+    const freshness = greenhouseFreshness(g?.lastSeen, online);
+    const late = !online || !!freshness.stateClass;
+    const tone = !hasData || !online ? 'down' : late ? 'warn' : 'up';
+    const status = !hasData ? 'Date lipsă' :
+      !online ? 'Nod offline' :
+      late ? 'Raportare întârziată' : 'Raportare recentă';
+    const fields = [
+      serviceSensorField('Temperatură · API', g?.temp, 'temp', late, null),
+      serviceSensorField('Umiditate · API', g?.hum, 'hum', late, null),
+      serviceSensorField('Tensiune baterie · API', g?.batt, 'voltage', late, null)
+    ];
+    return serviceSensorCard(gh.name, 'Senzor digital · valori din ESP-NOW' + simulation,
+      status, tone, fields,
+      'Ultimul pachet: ' + (g?.lastSeen || 'n/a') +
+      ' · ' + (hasData ? freshness.hintText : 'Fără raportare') +
+      ' · fereastră nominală ' + GREENHOUSE_EXPECTED_WAKE_MINUTES +
+      ' min, atenționare după ' + GREENHOUSE_DELAY_WARN_MINUTES + ' min');
+  });
+  target.innerHTML = central + greenhouseCards.join('');
+};
+
 const renderLive = (data) => {
   // Status relay din ESP-01 este de incredere doar cat timp nodul e online.
   // Starea OFF pastrata in cache nu inseamna oprire confirmata ACUM.
@@ -9540,6 +9679,7 @@ const renderLive = (data) => {
   });
   renderGreenhouseSignalStats(d);
   renderServiceNodeDiagnostics(d);
+  renderServiceSensorDiagnostics(d);
   updateBatteryEstimateUi();
   renderAutoTimer();
   renderHome();
@@ -12006,6 +12146,7 @@ const loadLive = () => {
     if (fill) fill.style.width = "0%";
     GREENHOUSES.forEach(({ id, name }) => renderGreenhouseCard(id, name, null));
     renderServiceNodeDiagnostics(null);
+    renderServiceSensorDiagnostics(null);
     renderHome();
     }
   })();
@@ -13282,6 +13423,10 @@ const bindEvents = () => {
       );
       renderCentralHistory();
     });
+  });
+
+  $('serviceSensorDetails')?.addEventListener('toggle', () => {
+    if ($('serviceSensorDetails')?.open) renderServiceSensorDiagnostics(uiState.live);
   });
 
   $('serviceLogSearch')?.addEventListener('input', event => {
