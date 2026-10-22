@@ -13232,6 +13232,10 @@ const sv2Init = () => {
     '#serviceUsageDetails','#serviceExportDetails','#hydroHistoryDetails','#greenhouseDiagnostics',
     '#centralTechServiceDetails','#centralHourlyServiceDetails','#systemJournal',
     '.system-metrics','.system-eeprom'])sv2DisplayModule(selector,'sv2DiagnosticStage');
+  // Păstrăm butonul de sortare istoric utilizabil chiar dacă summary-ul vechi e ascuns.
+  const sort=$('hydroHistorySort');
+  const historyActions=$('hydroHistoryDetails')?.querySelector('.history-actions');
+  if(sort && historyActions) historyActions.prepend(sort);
   sv2State.ready=true;
   document.body.classList.add('sv2-ready');
   $('sv2Source')?.addEventListener('change',e=>sv2SetSource(e.target.value));
@@ -14625,7 +14629,7 @@ window.addEventListener("DOMContentLoaded", () => {
       }
       if (el.hasAttribute("data-open-greenhouse-diagnostics")) {
         setServiceSection("diagnostic");
-        sv2Select("sera1","semnal");
+        sv2Select(uiState.greenhouseMobile === "sera2" ? "sera2" : "sera1","semnal");
       }
       if (el.hasAttribute("data-open-central-hourly")) {
         setServiceSection("diagnostic");
