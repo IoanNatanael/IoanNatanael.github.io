@@ -72,3 +72,25 @@ Teste independente:
 ```sh
 node --test hidrofor-preview/tests/service-calibration.test.cjs
 ```
+
+## V13-R21 — aplicație unificată (web DEMO)
+
+Aceasta este versiunea comună pentru dezvoltarea viitoare: interfața V13-R20
+(programări R18–R20) și pagina Service reorganizată în:
+- **Instrumente:** test pompă, RTC, OTA, administrare jurnale, simulator;
+- **Consolă de date:** o sursă și o categorie selectată la un moment dat;
+  Hidrofor, Centrală, Seră 1, Seră 2, EEPROM și Jurnal.
+
+Fișierele `r18-schedules.css` și `r18-schedules.js` au fost preluate
+identic din ultima versiune `main` V13-R20. Regulile de publicare Pages
+rămân protejate pentru branch-ul `main`.
+
+**Important:** WEB ONLY / DEMO. Această publicație nu este aplicația
+firmware ACTIVE de pe ESP32. Valorile și acțiunile sunt simulate;
+integrarea în proiectul ACTIVE din Drive se face ulterior, separat.
+
+Teste logice (nu înlocuiesc testarea reală în browser):
+
+```sh
+node --test hidrofor-preview/tests/service-*.test.cjs
+```
