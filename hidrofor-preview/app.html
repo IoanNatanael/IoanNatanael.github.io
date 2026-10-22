@@ -4602,6 +4602,13 @@ body.hidro-i3-real #homeStop { touch-action:manipulation; }
 
 #autoScheduleWaterWait{width:100%;box-sizing:border-box;min-height:40px}
 
+/* Text editorial: păstrăm pe ecran valorile, acțiunile și avertismentele utile. */
+#page-sistem .sv2-description:empty { display: none; }
+#page-sistem .sv2-display-head small { display: none; } /* repeta sursa/categoria din selector */
+#page-sistem .sv2-toolbar-head { margin-bottom: 8px; }
+#page-sistem .sv2-help-details { margin-top: 2px; border-top: 1px solid var(--line); padding: 7px 2px 0; }
+#page-sistem .sv2-help-details > summary { cursor:pointer; color:var(--muted); font-size:11px; padding:6px 0; }
+#page-sistem .sv2-help-details p { margin:5px 0 0; color:var(--muted); font-size:11px; line-height:1.55; }
 /* Service Console V1 — single source, single focused view. */
 body.sv2-ready #page-sistem .service-intro,
 body.sv2-ready #page-sistem .service-category-heading {display:none!important}
@@ -5738,7 +5745,7 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
         </div>
       </header>
       <main>
-        <aside class="read-only-notice r3-preview-notice" role="note"><strong>V13-R21 · DEMO UNIFICAT</strong><span>Interfață DEMO · date simulate; toate butoanele pot fi testate local, fără dispozitive.</span></aside>
+        <aside class="read-only-notice r3-preview-notice" role="note"><strong>DEMO</strong><span>Date simulate · fără dispozitive conectate.</span></aside>
         <section class="page active" id="page-home" aria-labelledby="homeTitle">
           <div class="page-head">
             <div class="page-title">
@@ -6042,24 +6049,6 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
                   ><span id="homeSolarHint">Putere instantanee</span></span
                 >
               </button>
-              <p class="home-footnote">
-                <svg
-                  class=""
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.65"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  aria-hidden="true"
-                >
-                  <path
-                    d="M20 4C10 3 5 7 5 13a6 6 0 0 0 6 6c6 0 10-5 9-15Z"
-                  ></path>
-                  <path d="M4 21 16 9"></path>
-                </svg>
-                Un loc pentru toată grădina.
-              </p>
             </div>
           </div>
         </section>
@@ -6071,7 +6060,7 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
           <div class="page-head">
             <div class="page-title">
               <h2 id="hidroforTitle">Udare</h2>
-              <span>Tu alegi când pornește apa.</span>
+              
             </div>
             <span class="pill neutral" id="hydroGeneralPill"
               ><span class="led"></span><span>Se incarca</span></span
@@ -6170,23 +6159,6 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
               hidden=""
               id="autoControlSection"
             >
-              <p class="timer-context">
-                <svg
-                  class=""
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.65"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  aria-hidden="true"
-                >
-                  <circle cx="12" cy="12" r="9"></circle>
-                  <path d="M12 7v5l3 2"></path></svg
-                ><span
-                  >Durata udării și refacerea apei lucrează împreună. Plutitorul supraveghează permanent ciclul.</span
-                >
-              </p>
               <p id="autoTimerContext" class="timer-context" role="status" aria-live="polite">Se verifică starea udării pe ESP32.</p>
               <article class="card auto-card r13-single-card">
   <header class="r13-card-head">
@@ -6452,7 +6424,7 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
           
           <div class="hydro-history-shortcut">
             <button type="button" class="hydro-history-link" data-open-page="sistem" data-open-hydro-history>
-              Vezi activitatea pompei în Service <span aria-hidden="true">→</span>
+              Service · activitatea pompei <span aria-hidden="true">→</span>
             </button>
           </div>
         </section>
@@ -6460,7 +6432,7 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
           <div class="page-head">
             <div class="page-title">
               <h2 id="sereTitle">Sere</h2>
-              <span>Climatul, pe înțelesul tău.</span>
+              
             </div>
           </div>
           <div
@@ -6471,20 +6443,20 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
           <section class="history-layout" id="greenhouseSections"></section>
           
           <div class="greenhouse-service-shortcuts" aria-label="Date tehnice sere">
-            <button class="hydro-history-link" type="button" data-open-page="sistem" data-open-greenhouse-diagnostics>Diagnostic semnal și pachete în Service <span aria-hidden="true">→</span></button>
+            <button class="hydro-history-link" type="button" data-open-page="sistem" data-open-greenhouse-diagnostics>Service · semnal sere <span aria-hidden="true">→</span></button>
           </div>
         </section>
         <section aria-labelledby="centralTitle" class="page" id="page-central">
 <div class="page-head">
 <div class="page-title">
 <h2 id="centralTitle">Centrală</h2>
-<span>Climat, energie și consumatori.</span>
+
 </div>
 </div>
 
 
 <section aria-label="Harta fluxurilor energetice simulate" class="central-balance r4-map" id="r4EnergyMap">
-<header class="r4-heading"><div><h3>Panoul centralei</h3><p>Climat și fluxuri de energie</p></div><span class="r4-sim-chip">PREVIEW</span></header><details class="r4-scenario-details">
+<header class="r4-heading"><div><h3>Panoul centralei</h3></div><span class="r4-sim-chip">PREVIEW</span></header><details class="r4-scenario-details">
 <summary>Testează scenarii <small>doar date simulate</small></summary>
 <div aria-label="Scenarii energetice demonstrative" class="r4-scenes" role="group"><button aria-pressed="true" data-r4-scene="sun" type="button">☀ Soare</button><button aria-pressed="false" data-r4-scene="cloud" type="button">☁ Nori</button><button aria-pressed="false" data-r4-scene="night" type="button">☾ Noapte</button></div>
 </details>
@@ -6592,14 +6564,14 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
 <div class="daily-list" id="centralDailyList"></div>
 </details>
 <div aria-label="Detalii tehnice ale nodului central" class="central-service-shortcuts">
-<button class="hydro-history-link" data-open-central-hourly="" data-open-page="sistem" type="button">Citiri pe ore în Service <span aria-hidden="true">→</span></button>
+<button class="hydro-history-link" data-open-central-hourly="" data-open-page="sistem" type="button">Service · citiri orare <span aria-hidden="true">→</span></button>
 </div>
 </section>
         <section aria-labelledby="sistemTitle" class="page" id="page-sistem">
           <div class="page-head">
             <div class="page-title">
               <h2 id="sistemTitle">Service</h2>
-              <span>Un instrument sau o sursă de date, fără panouri aglomerate.</span>
+              
             </div>
           </div>
           <!-- V13-S1: infrastructura celor două pagini; componentele existente nu sunt mutate. -->
@@ -6623,7 +6595,7 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
 
           <!-- Service Console V1: alegem operația, nu afișăm cinci acordeoane. -->
           <div class="sv2-shell sv2-control-shell" id="sv2ControlShell">
-            <div class="sv2-toolbar-head"><span class="sv2-kicker">INSTRUMENTE</span><span class="sv2-side-note">O operație odată</span></div>
+            <div class="sv2-toolbar-head"><span class="sv2-kicker">INSTRUMENTE</span></div>
             <div class="sv2-tool-chips" id="sv2ControlChoices" role="group" aria-label="Alege operația de mentenanță"></div>
             <div class="sv2-display">
               <div class="sv2-display-head"><div><small>OPERAȚIE SELECTATĂ</small><strong id="sv2ControlTitle">Test hidrofor</strong></div><span class="sv2-live-label">DEMO</span></div>
@@ -6635,7 +6607,7 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
           <details class="reveal-panel service-test-panel" id="serviceTestDetails">
             <summary>Test hidrofor · comenzi protejate <span class="summary-meta">Fără bypass</span></summary>
             <div class="service-test-body">
-              <p class="service-test-warning"><strong>Test asistat, nu override.</strong> START folosește exact comanda manuală normală, cu verificările deja implementate. Nu dezactivează plutitorul, PANIC sau protecțiile firmware. Nu este un test temporizat: browserul nu garantează oprirea automată dacă se închide ori pierde conexiunea. Testează numai când ești lângă instalație.</p>
+              <p class="service-test-warning"><strong>Pornește doar lângă instalație.</strong> START respectă protecțiile existente. Nu există oprire automată garantată prin browser.</p>
               <div class="service-test-checks" aria-label="Condiții de siguranță pentru START">
                 <div><span>ESP32 + ESP-01S · telemetrie recentă</span><strong id="serviceTestLink">Se verifică…</strong></div>
                 <div><span>Mod MANUAL confirmat</span><strong id="serviceTestMode">Se verifică…</strong></div>
@@ -6654,16 +6626,16 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
                 <button type="button" class="btn-secondary service-test-start" id="serviceTestStart" disabled>START manual · confirmare</button>
                 <button type="button" class="btn-danger-outline service-test-stop" id="serviceTestStop">STOP de urgență</button>
               </div>
-              <p class="service-test-footnote">STOP folosește PANIC-ul existent și nu cere confirmare; când legătura este pierdută, trimiterea poate eșua. Nicio stare afișată nu certifică fizic funcționarea sau oprirea motorului. În această previzualizare comenzile sunt doar simulate.</p>
+              <p class="service-test-footnote">STOP/PANIC poate eșua fără comunicație. Verifică fizic oprirea; în DEMO comenzile sunt simulate.</p>
             </div>
           </details>
           <details class="reveal-panel r13-rtc-maintenance">
             <summary>Ceas central · RTC</summary>
             <div class="r13-rtc-inside">
-              <p>Sincronizează ceasul ESP32 cu ora dispozitivului de pe care accesezi pagina.</p>
+              
               <div class="r13-rtc-warning">Atenție: în ACTIVE, sincronizarea RTC suspendă programările. După verificarea orei, acestea se reactivează separat.</div>
               <button class="btn-secondary" id="i9ScheduleSync" type="button">Sincronizează ora RTC</button>
-              <small>Acțiune de mentenanță · nu modifică direct durata udării în curs.</small>
+              
             </div>
           </details>
 <details class="reveal-panel system-ota">
@@ -6701,7 +6673,7 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
           <details class="reveal-panel service-log-maintenance">
             <summary>Gestionare jurnale</summary>
             <section class="card service-admin-card">
-              <p>Ștergerea jurnalelor este o acțiune de Service, protejată prin autentificarea existentă în ESP32.</p>
+              <p>Ștergerea jurnalelor necesită autentificare.</p>
 <details class="manage-logs">
                     <summary>Gestionare jurnal</summary>
                     <div
@@ -6777,7 +6749,7 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
 
           <!-- Service Console V1: sursă -> categorie -> un singur panou. -->
           <div class="sv2-shell sv2-diagnostic-shell" id="sv2DiagnosticShell">
-            <div class="sv2-toolbar-head"><span class="sv2-kicker">CONSOLĂ DE DATE</span><span class="sv2-side-note">Date simulate · /api/live</span></div>
+            <div class="sv2-toolbar-head"><span class="sv2-kicker">CONSOLĂ DE DATE</span></div>
             <label class="sv2-source-label" for="sv2Source">Selectează sursa
               <select id="sv2Source">
                 <option value="hidrofor">Hidrofor · ESP-01S</option>
@@ -6865,7 +6837,7 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
           <details class="reveal-panel service-export" id="serviceExportDetails">
             <summary>Export date persistente · CSV / JSON</summary>
             <div class="service-export-content">
-              <p class="service-export-note">Alege datele și formatul. Descărcăm automat <strong>tot ce este disponibil în API</strong>: maximum 40 de comenzi, 150 de evenimente sau 168 de citiri pe nod. Nu este un backup complet EEPROM.</p>
+              <p class="service-export-note">Se exportă tot istoricul disponibil din API, nu întregul EEPROM.</p>
               <div class="service-export-grid">
                 <label for="serviceExportSource">Set de date
                   <select id="serviceExportSource">
@@ -6884,7 +6856,7 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
                 </label>
 
               </div>
-              <p class="service-export-hint">Doar datele returnate de API, fără parole sau date volatile. Pentru EEPROM real, exportul este permis numai când pompa este confirmată oprită. În previzualizare fișierul va fi marcat DEMO.</p>
+              <details class="sv2-help-details"><summary>Despre export</summary><p>Limite API: 40 comenzi, 150 evenimente sau 168 citiri pe nod. Nu se exportă parole ori date LIVE. Pe ESP32 real, exportul necesită pompa confirmată oprită; fișierele simulate sunt marcate DEMO.</p></details>
               <div class="service-export-footer">
                 <button type="button" id="serviceExportDownload" class="btn-soft">Descarcă</button>
                 <span id="serviceExportStatus" role="status" aria-live="polite">Selectează sursa și formatul.</span>
@@ -13057,19 +13029,19 @@ const loadPageData = async (pageName = uiState.page) => {
 // Service Console V1: UI-only navigation, existing functions keep their IDs/endpoints.
 // Modulele sunt mutate în același DOM, niciodată clonate sau executate de două ori.
 const sv2Models = {
-  hidrofor:{label:'Hidrofor',topics:[['stare','Stare',null,'Date raportate de nodul ESP-01S. Nu confirmă fizic motorul.'],['activitate','Activitate','#hydroHistoryDetails','Comenzi și evenimente din istoricul disponibil.']]},
-  central:{label:'Centrală',topics:[['citiri','Citiri',null,'Ultimele valori transmise de ESP32.'],['sistem','Sistem','#centralTechServiceDetails','Memorie RAM, uptime și stare tehnică.'],['istoric','Istoric','#centralHourlyServiceDetails','Citiri pe ore disponibile în API.']]},
-  sera1:{label:'Seră 1',topics:[['citiri','Citiri',null,'Temperatură, umiditate și baterie.'],['semnal','Semnal','#greenhouseDiagnostics','Pachete și intervale pentru această seră.']]},
-  sera2:{label:'Seră 2',topics:[['citiri','Citiri',null,'Temperatură, umiditate și baterie.'],['semnal','Semnal','#greenhouseDiagnostics','Pachete și intervale pentru această seră.']]},
-  eeprom:{label:'EEPROM',topics:[['stare','Stare','.system-metrics','Starea memoriei și numărul de înregistrări.'],['detalii','Diagnostic','.system-eeprom','Zone EEPROM, trafic orientativ și raport I2C.'],['export','Export','#serviceExportDetails','Un singur loc pentru descărcări CSV / JSON.']]},
-  jurnal:{label:'Jurnal',topics:[['evenimente','Evenimente','#systemJournal','Filtre și căutare în evenimentele primite.'],['pompa','Pompa','#hydroHistoryDetails','Istoricul specific hidroforului.']]}
+  hidrofor:{label:'Hidrofor',topics:[['stare','Stare',null,''],['activitate','Activitate','#hydroHistoryDetails','']]},
+  central:{label:'Centrală',topics:[['citiri','Citiri',null,''],['sistem','Sistem','#centralTechServiceDetails',''],['istoric','Istoric','#centralHourlyServiceDetails','']]},
+  sera1:{label:'Seră 1',topics:[['citiri','Citiri',null,''],['semnal','Semnal','#greenhouseDiagnostics','']]},
+  sera2:{label:'Seră 2',topics:[['citiri','Citiri',null,''],['semnal','Semnal','#greenhouseDiagnostics','']]},
+  eeprom:{label:'EEPROM',topics:[['stare','Stare','.system-metrics',''],['detalii','Diagnostic','.system-eeprom',''],['export','Export','#serviceExportDetails','']]},
+  jurnal:{label:'Jurnal',topics:[['evenimente','Evenimente','#systemJournal',''],['pompa','Pompa','#hydroHistoryDetails','']]}
 };
 const sv2ControlModels = [
-  ['test','Test pompă','.service-test-panel','START protejat și STOP de urgență.'],
-  ['rtc','Ceas RTC','.r13-rtc-maintenance','Sincronizarea ceasului central.'],
-  ['ota','Firmware','.system-ota','Linkuri OTA, indisponibile în previzualizare.'],
-  ['logs','Jurnale','.service-log-maintenance','Gestionarea și ștergerea jurnalelor.'],
-  ['demo','Simulator','#mockTools','Scenarii de test exclusiv în previzualizare.']
+  ['test','Test pompă','.service-test-panel',''],
+  ['rtc','Ceas RTC','.r13-rtc-maintenance',''],
+  ['ota','Firmware','.system-ota',''],
+  ['logs','Jurnale','.service-log-maintenance',''],
+  ['demo','Simulator','#mockTools','']
 ];
 const sv2State = {ready:false,source:'hidrofor',topic:'stare',control:'test',modules:[],activeDiagnostic:null,activeControl:null};
 const sv2ChoiceButton = (value,label,active) => '<button type="button" class="sv2-choice" data-sv2-choice="' +
