@@ -6,7 +6,7 @@
       content="width=device-width, initial-scale=1, viewport-fit=cover"
       name="viewport"
     />
-    <title>Hidro · V13-R20 + Service S1–S6 · Preview interfață</title>
+    <title>Hidro · V13-R21 · Aplicație unificată DEMO</title>
     <style>
 :root {
   color-scheme: dark;
@@ -5712,7 +5712,7 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
         </div>
       </header>
       <main>
-        <aside class="read-only-notice r3-preview-notice" role="note"><strong>PREVIEW V13-R20 + SERVICE S1–S6</strong><span>Interfață DEMO · date simulate; toate butoanele pot fi testate local, fără dispozitive.</span></aside>
+        <aside class="read-only-notice r3-preview-notice" role="note"><strong>V13-R21 · DEMO UNIFICAT</strong><span>Interfață DEMO · date simulate; toate butoanele pot fi testate local, fără dispozitive.</span></aside>
         <section class="page active" id="page-home" aria-labelledby="homeTitle">
           <div class="page-head">
             <div class="page-title">
@@ -15507,7 +15507,7 @@ window.addEventListener("DOMContentLoaded", () => {
     // Forțăm permanent această pagină să rămână o previzualizare, niciodată firmware live.
     window.HIDROFOR_PREVIEW_ONLY = true;
     const badge = byId('demoBadge');
-    if (badge) {badge.hidden=false; badge.textContent='V13-R20 + Service · preview';}
+    if (badge) {badge.hidden=false; badge.textContent='V13-R21 · demo unificat';}
     document.querySelectorAll('a[href^="/ota"],a[href^="/hidrofor-ota"],a[href="/autentificare"]').forEach(anchor=>{
       anchor.addEventListener('click', event=>{ event.preventDefault(); });
       anchor.title = 'Indisponibil în previzualizarea web';
