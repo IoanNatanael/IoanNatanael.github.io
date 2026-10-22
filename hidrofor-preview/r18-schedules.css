@@ -1,0 +1,89 @@
+/* V13-R18 — Programări la vedere, gestionare în modal. WEB ONLY. */
+#page-hidrofor .r13-start-picker { display: none !important; }
+#page-hidrofor .r18-schedule-overview-wrap { margin: 3px 0 22px; }
+#page-hidrofor .r18-overview-card {
+  border: 1px solid #326259; border-radius: 17px; background: linear-gradient(130deg,#11312e,#10282e);
+  min-height: 104px; width: 100%; display: block; text-align: left;
+  color: #e9fff8; padding: 15px 16px; cursor: pointer; font: inherit;
+  box-shadow: inset 0 1px 0 #99ddc11a; transition: border-color .15s,background .15s;
+}
+#page-hidrofor .r18-overview-card:hover {border-color:#64c4a9;}
+#page-hidrofor .r18-overview-card:focus-visible,
+#page-hidrofor .r18-quick-add:focus-visible {outline:3px solid #84e2c7;outline-offset:3px;}
+.r18-overview-head { display:flex; justify-content:space-between; align-items:center; gap:9px; }
+.r18-overview-head strong {font-size:15px;font-weight:720;}
+.r18-overview-arrow {font-size:20px;color:#84dfc3; flex-shrink:0; line-height:1;}
+.r18-overview-sub {color:#a4c5c0;font-size:11.5px;line-height:1.55;margin:6px 0 0;}
+.r18-times {display:flex;flex-wrap:wrap;gap:7px;margin-top:11px;align-items:center;}
+.r18-time-chip {display:flex;align-items:center;gap:6px;background:#183f3a;border:1px solid #3e6b5c;border-radius:11px;padding:7px 10px;max-width:100%;}
+.r18-time-chip b {font-size:16px;color:#c1ffe9;line-height:1;white-space:nowrap;}
+.r18-time-chip span {font-size:11px;color:#b2c9c8;min-width:0;line-height:1.25;}
+.r18-overview-card[data-state="paused"] {border-color:#7a5f3d;background:linear-gradient(125deg,#302b24,#182c2e);}
+.r18-overview-card[data-state="paused"] .r18-time-chip {opacity:.78;}
+.r18-overview-card[data-state="offline"] {border-color:#405f65;}
+.r18-overview-actions {display:flex;gap:8px;margin-top:9px;}
+#page-hidrofor .r18-quick-add {flex:1;min-height:43px;border:1px solid #3c776d;border-radius:11px;
+  background:#193c3a;color:#a5efda;font-size:12px;font-weight:650;cursor:pointer;}
+#page-hidrofor .r18-quick-add:hover {background:#245047;}
+.r18-dialog {border:1px solid #3d6465;border-radius:22px;background:#11272d;
+  color:#e9f9f7;width:min(510px,calc(100vw - 24px));max-width:510px;max-height:min(86dvh,850px);
+  margin:auto; padding:0;box-shadow:0 24px 90px #000b;overflow:hidden;}
+.r18-dialog::backdrop {background:rgba(2,13,17,.77);backdrop-filter:blur(3px);}
+.r18-dialog-header {display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:17px 17px 13px;border-bottom:1px solid #305057;background:linear-gradient(140deg,#173b39,#11272d);}
+.r18-dialog-heading {display:flex; flex-direction:column; gap:2px;}
+.r18-dialog-heading strong {font-size:19px;line-height:1.2;font-weight:720;}
+.r18-dialog-heading small {color:#92bab4;font-size:11px;}
+/* V13-R19: close icon geometrically centered, independent of the font glyph baseline. */
+.r18-dialog-close {
+  position:relative;display:grid;place-items:center;padding:0;box-sizing:border-box;
+  width:42px;height:42px;min-width:42px;min-height:42px;flex:0 0 42px;
+  border-radius:50%;border:1px solid #36595c;background:#203a40;color:#d4eeec;
+  font-size:0;line-height:0;cursor:pointer;
+}
+.r18-dialog-close::before,.r18-dialog-close::after {
+  content:"";position:absolute;top:50%;left:50%;width:17px;height:2px;
+  border-radius:2px;background:currentColor;pointer-events:none;
+  transform:translate(-50%,-50%) rotate(45deg);
+}
+.r18-dialog-close::after {transform:translate(-50%,-50%) rotate(-45deg);}
+.r18-dialog-close:hover {background:#2a474b;border-color:#67948b;}
+.r18-dialog-close:focus-visible,.r18-dialog-tab:focus-visible,.r18-dialog button:focus-visible,
+.r18-dialog input:focus-visible,.r18-dialog select:focus-visible {outline:2px solid #8be9c6;outline-offset:2px;}
+.r18-dialog-scroll {padding:15px;max-height:calc(min(86dvh,850px) - 74px);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;}
+.r18-dialog-tabs {display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:5px;
+  border:1px solid #335158;background:#0a2127;border-radius:13px;margin-bottom:13px;}
+.r18-dialog-tab {min-height:42px;border:0;border-radius:10px;background:transparent;color:#a8c3c5;font:inherit;font-size:12px;font-weight:650;cursor:pointer;}
+.r18-dialog-tab[aria-selected="true"] {background:#77dcc1;color:#103237;}
+.r18-dialog #r13SchedulePane {margin:0;padding:0;border:0;display:block;}
+.r18-dialog #r13SchedulePane .r13-schedule-management {margin:0;border:0;padding:0;background:transparent;}
+.r18-dialog #r13SchedulePane .r13-management-top {margin:10px 0 13px;}
+.r18-dialog #r13SchedulePane .schedule-row {background:#182e36;border-color:#36575c;}
+.r18-dialog #r13SchedulePane .schedule-list {gap:8px;}
+.r18-dialog #r13SchedulePane .schedule-form {gap:12px;}
+.r18-dialog #r13SchedulePane .r13-schedule-submit {margin:14px 0 0;}
+.r18-dialog .r13-safety-note {margin:10px 0 0;}
+.r18-dialog[data-view="list"] .r13-schedule-heading,
+.r18-dialog[data-view="list"] .schedule-panel,
+.r18-dialog[data-view="list"] .r13-schedule-submit {display:none !important;}
+.r18-dialog[data-view="create"] .r13-schedule-management,
+.r18-dialog[data-view="create"] #i9ScheduleStatus,
+.r18-dialog[data-view="create"] .r13-schedule-heading {display:none !important;}
+.r18-create-extra {display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 0 13px;}
+.r18-create-extra label {display:flex;flex-direction:column;gap:7px;font-size:12px;color:#bad1d1;min-width:0;}
+.r18-create-extra input {width:100%;min-height:45px;box-sizing:border-box;border:1px solid #466567;
+  background:#0b2127;color:#eef9f6;border-radius:11px;padding:9px 10px;font:inherit;}
+.r18-dialog .r18-create-hint {font-size:11px;line-height:1.5;color:#99b8b8;margin:12px 0 0;}
+.r18-dialog [hidden]{display:none!important;}
+@media(max-width:380px){
+ #page-hidrofor .r18-overview-card {padding:13px 12px;}
+ .r18-dialog-scroll {padding:12px;}
+ .r18-dialog #r13SchedulePane .schedule-form {grid-template-columns:1fr;}
+ .r18-create-extra {gap:7px;}
+ .r18-time-chip {padding:7px 8px;}
+}
+@media(prefers-reduced-motion:reduce){#page-hidrofor .r18-overview-card{transition:none}}
+
+/* V13-R20: Fixed recovery pause is an internal demo value; UI control removed. */
+#page-hidrofor .r12-refill-box {display:none!important;}
+.r18-dialog .r18-create-extra {grid-template-columns:minmax(0,1fr);}
