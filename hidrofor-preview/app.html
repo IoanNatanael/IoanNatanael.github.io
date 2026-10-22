@@ -13113,6 +13113,11 @@ const sv2DisplayModule = (selector,container) => {
 const sv2Rows = pairs => pairs.map(([key,value]) =>
   '<div><dt>' + escapeHtml(key) + '</dt><dd>' +
   escapeHtml(value == null || String(value).trim()==='' ? '—' : String(value)) + '</dd></div>').join('');
+// Afisarea in Consola are doua zecimale; nu altereaza telemetria sursa.
+const sv2SolarVoltage = value => {
+  const volts = serviceSensorNumeric(value);
+  return volts !== null && volts >= 0 ? volts.toFixed(2) + ' V' : 'Indisponibil';
+};
 const sv2LiveDisplay = () => {
   if (!sv2State.ready || !['hidrofor','central','sera1','sera2'].includes(sv2State.source) ||
       !['stare','citiri'].includes(sv2State.topic)) return;
@@ -13141,7 +13146,7 @@ const sv2LiveDisplay = () => {
       ['Temperatură',d.temperatura],['Umiditate',d.umiditate],
       ['Baterie 12 V',d.baterieOk === true ? d.baterie : 'Neconfirmată'],
       ['Curent baterie',d.batteryInaOk===true?d.batteryCurrentA:'Indisponibil'],
-      ['Tensiune solară',d.solarInaOk===true?d.solarVoltageV:'Indisponibil'],
+      ['Tensiune solară',d.solarInaOk===true?sv2SolarVoltage(d.solarVoltageV):'Indisponibil'],
       ['Ora RTC',d.dataOra]
     ];
   } else {
