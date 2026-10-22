@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="color-scheme" content="dark">
-  <title>Hidrofor · Service S1–S6 · Preview separat</title>
+  <title>Hidrofor · V13-R20 + Service S1–S6 · Preview separat</title>
   <style>
     :root { color-scheme: dark; --phone-width: 390px; }
     * { box-sizing: border-box; }
@@ -37,8 +37,8 @@
   <main>
     <section class="intro" aria-label="Previzualizare Service">
       <div class="eyebrow">Hidrofor · Service · branch separat</div>
-      <h1>Service S1–S6</h1>
-      <p>Previzualizare independentă pentru dezvoltarea paginii Service. Folosește interfața din <strong>feature/service-center</strong>.</p>
+      <h1>V13-R20 + Service</h1>
+      <p>Previzualizare independentă pentru dezvoltarea paginii Service S1–S6, cu îmbunătățirile web V13-R20. Codul de lucru rămâne în <strong>feature/service-center</strong>.</p>
       <p class="notice"><strong>DEMO / WEB ONLY.</strong> Valorile și comenzile sunt simulate. Niciun dispozitiv ACTIVE nu este conectat, iar site-ul original nu este modificat.</p>
       <div class="switches" role="group" aria-label="Lățimea ecranului">
         <button type="button" data-width="360" aria-pressed="false">Compact</button>
@@ -46,13 +46,25 @@
         <button type="button" data-width="430" aria-pressed="false">Mare</button>
       </div>
       <a href="../hidrofor-preview/app.html" target="_blank" rel="noopener">Deschide interfața pe tot ecranul ↗</a>
-      <p class="footnote">Deschide Service din meniul aplicației. Modificările din branch devin vizibile după actualizarea cache-ului. Pentru site-ul ACTIVE integrarea cu firmware se va face separat.</p>
+      <p class="footnote">Pagina încearcă să deschidă direct Service → Date și diagnostic. Dacă nu este posibil, selectează Service din meniul aplicației. Această previzualizare nu controlează hardware-ul ACTIVE.</p>
     </section>
     <div class="phone" aria-label="Previzualizare ecran telefon">
-      <iframe title="Hidrofor · Service Preview" src="../hidrofor-preview/app.html"></iframe>
+      <iframe id="servicePreviewFrame" title="Hidrofor · Service Preview" src="../hidrofor-preview/app.html"></iframe>
     </div>
   </main>
   <script>
+    // Același origin: deschidem Service fără a modifica logica aplicației.
+    const previewFrame = document.getElementById('servicePreviewFrame');
+    previewFrame.addEventListener('load', () => {
+      try {
+        const inner = previewFrame.contentDocument;
+        inner?.querySelector('button.tab-btn[data-page="sistem"]')?.click();
+        inner?.querySelector('button[data-service-section="diagnostic"]')?.click();
+      } catch (_) {
+        // Dacă browserul izolează iframe-ul, navigarea manuală rămâne posibilă.
+      }
+    });
+    previewFrame.src = '../hidrofor-preview/app.html?refresh=' + Date.now();
     document.querySelectorAll('[data-width]').forEach(button => {
       button.addEventListener('click', () => {
         const width = Number(button.dataset.width);
