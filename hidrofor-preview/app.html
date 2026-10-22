@@ -4602,6 +4602,52 @@ body.hidro-i3-real #homeStop { touch-action:manipulation; }
 
 #autoScheduleWaterWait{width:100%;box-sizing:border-box;min-height:40px}
 
+/* Service Console V1 — single source, single focused view. */
+body.sv2-ready #page-sistem .service-intro,
+body.sv2-ready #page-sistem .service-category-heading {display:none!important}
+#page-sistem .sv2-shell {display:none;}
+body.sv2-ready #page-sistem .sv2-shell {display:block;}
+body.sv2-ready #page-sistem .service-subnav {gap:6px; padding:3px; background:#10262c; border:1px solid var(--line);border-radius:13px}
+body.sv2-ready #page-sistem .service-subnav-btn {min-height:43px; padding:8px 6px; border:0;border-radius:9px;background:transparent;font-size:12px}
+body.sv2-ready #page-sistem .service-subnav-btn.active {background:#204239;color:var(--accent);}
+body.sv2-ready #page-sistem .page-head {margin-bottom:12px;}
+body.sv2-ready #page-sistem .page-head .page-title > span {font-size:11px;}
+#page-sistem .sv2-shell {margin-top:14px;}
+#page-sistem .sv2-toolbar-head {display:flex;justify-content:space-between;gap:10px;align-items:center;margin:0 0 12px;}
+#page-sistem .sv2-kicker {font-size:10px;letter-spacing:.13em;color:var(--accent);font-weight:750}
+#page-sistem .sv2-side-note {font-size:10px;color:var(--muted)}
+#page-sistem .sv2-source-label {display:grid;gap:6px;font-size:11px;color:var(--muted);margin-bottom:12px}
+#page-sistem .sv2-source-label select {appearance:auto;min-height:47px;border-radius:11px;padding:10px 12px;border:1px solid #385761;color:var(--ink);background:#182e35;font:inherit;font-size:14px;font-weight:600;width:100%}
+#page-sistem .sv2-tool-chips,#page-sistem .sv2-topics {display:flex;gap:7px;flex-wrap:wrap;margin:4px 0 14px}
+#page-sistem .sv2-choice {border:1px solid var(--line-strong);color:var(--muted);background:#14272e;border-radius:9px;padding:9px 12px;min-height:39px;font:inherit;font-size:11px;font-weight:600;cursor:pointer}
+#page-sistem .sv2-choice[aria-pressed="true"] {color:var(--accent);background:#1b3937;border-color:#4b9280}
+#page-sistem .sv2-choice:focus-visible,#page-sistem .sv2-source-label select:focus-visible {outline:2px solid var(--accent);outline-offset:2px}
+#page-sistem .sv2-display {background:#102329;border:1px solid #29454a;border-radius:14px;min-width:0;overflow:hidden}
+#page-sistem .sv2-display-head {padding:12px 14px 9px;display:flex;justify-content:space-between;align-items:center;gap:12px;border-bottom:1px solid #264046}
+#page-sistem .sv2-display-head > div {display:grid;gap:4px}
+#page-sistem .sv2-display-head small {font-size:9px;letter-spacing:.11em;font-weight:650;color:#81a8ab}
+#page-sistem .sv2-display-head strong {font-size:14px;line-height:1.3}
+#page-sistem .sv2-live-label {flex:none;font-size:9px;color:var(--accent);border:1px solid #39665d;border-radius:30px;padding:4px 8px;}
+#page-sistem .sv2-description {margin:10px 14px;color:var(--muted);font-size:11px;line-height:1.5}
+#page-sistem #sv2ControlStage,#page-sistem #sv2DiagnosticStage {min-width:0;padding:0 12px 12px}
+#page-sistem .sv2-display .sv2-module[hidden],#page-sistem .sv2-display #sv2Readout[hidden] {display:none!important;}
+#page-sistem .sv2-display .sv2-module {margin:0!important;border:0!important;background:transparent!important;padding:0!important;box-shadow:none!important}
+#page-sistem .sv2-display .sv2-module > summary {display:none!important}
+#page-sistem .sv2-display .sv2-module > .card {margin:0!important;}
+#page-sistem #sv2ControlStage .service-test-body {padding:0 0 4px;}
+#page-sistem #sv2ControlStage .r13-rtc-inside {padding:0 0 4px;}
+#page-sistem #sv2DiagnosticStage .logs-layout {margin:0;}
+#page-sistem #sv2DiagnosticStage .system-log-card {padding:0!important;}
+#page-sistem #sv2DiagnosticStage .system-grid {margin:0;}
+#page-sistem .sv2-readings {display:grid;gap:0;margin:4px 0 0;}
+#page-sistem .sv2-readings > div {display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:baseline;gap:10px;padding:10px 3px;border-bottom:1px solid #254046;}
+#page-sistem .sv2-readings > div:last-child {border-bottom:0;}
+#page-sistem .sv2-readings dt {color:#90a9ab;font-size:11px;line-height:1.4}
+#page-sistem .sv2-readings dd {color:#e3f2ed;text-align:right;overflow-wrap:anywhere;font-variant-numeric:tabular-nums;font-size:12px;font-weight:650;margin:0}
+#page-sistem .sv2-offline {color:var(--warn);font-size:11px;line-height:1.55;margin:8px 0}
+#page-sistem[data-sv2-source="sera1"] #greenhouseSignalStats > article:nth-child(2),
+#page-sistem[data-sv2-source="sera2"] #greenhouseSignalStats > article:nth-child(1) {display:none!important}
+@media(max-width:410px){#page-sistem .sv2-choice{padding:8px 10px}#page-sistem .sv2-display-head{padding:11px 12px 9px}#page-sistem #sv2ControlStage,#page-sistem #sv2DiagnosticStage{padding:0 9px 10px}}
 /* V13-S2: doua subpagini Service cu instrumente reale, mutate din Mai mult. */
 .service-subnav {
   display: grid;
@@ -6527,18 +6573,18 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
           <div class="page-head">
             <div class="page-title">
               <h2 id="sistemTitle">Service</h2>
-              <span>Întreținere și diagnostic, organizate separat.</span>
+              <span>Un instrument sau o sursă de date, fără panouri aglomerate.</span>
             </div>
           </div>
           <!-- V13-S1: infrastructura celor două pagini; componentele existente nu sunt mutate. -->
           <div class="service-subnav" role="group" aria-label="Pagini Service">
             <button type="button" class="service-subnav-btn active" data-service-section="control"
                     aria-pressed="true" aria-controls="service-control">
-              Control și mentenanță
+              Instrumente
             </button>
             <button type="button" class="service-subnav-btn" data-service-section="diagnostic"
                     aria-pressed="false" aria-controls="service-diagnostic">
-              Date și diagnostic
+              Consolă de date
             </button>
           </div>
           <section class="service-section-panel" data-service-panel="control"
@@ -6548,6 +6594,17 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
             <p>Actualizări și instrumente administrative. Operațiile sensibile cer autentificare și confirmare.</p>
           </div>
 
+
+          <!-- Service Console V1: alegem operația, nu afișăm cinci acordeoane. -->
+          <div class="sv2-shell sv2-control-shell" id="sv2ControlShell">
+            <div class="sv2-toolbar-head"><span class="sv2-kicker">INSTRUMENTE</span><span class="sv2-side-note">O operație odată</span></div>
+            <div class="sv2-tool-chips" id="sv2ControlChoices" role="group" aria-label="Alege operația de mentenanță"></div>
+            <div class="sv2-display">
+              <div class="sv2-display-head"><div><small>OPERAȚIE SELECTATĂ</small><strong id="sv2ControlTitle">Test hidrofor</strong></div><span class="sv2-live-label">DEMO</span></div>
+              <p class="sv2-description" id="sv2ControlDescription"></p>
+              <div id="sv2ControlStage"></div>
+            </div>
+          </div>
           <!-- V13-S4: testele folosesc exclusiv comenzile deja implementate. -->
           <details class="reveal-panel service-test-panel" id="serviceTestDetails">
             <summary>Test hidrofor · comenzi protejate <span class="summary-meta">Fără bypass</span></summary>
@@ -6690,6 +6747,27 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
             </div>
             <p class="service-links-note">ACK-ul și starea releului sunt raportări software, nu dovada funcționării fizice a motorului. RSSI și latența ESP-NOW nu sunt furnizate de API-ul actual.</p>
           </section>
+          </div>
+
+          <!-- Service Console V1: sursă -> categorie -> un singur panou. -->
+          <div class="sv2-shell sv2-diagnostic-shell" id="sv2DiagnosticShell">
+            <div class="sv2-toolbar-head"><span class="sv2-kicker">CONSOLĂ DE DATE</span><span class="sv2-side-note">Date simulate · /api/live</span></div>
+            <label class="sv2-source-label" for="sv2Source">Selectează sursa
+              <select id="sv2Source">
+                <option value="hidrofor">Hidrofor · ESP-01S</option>
+                <option value="central">Centrală · ESP32</option>
+                <option value="sera1">Seră 1</option>
+                <option value="sera2">Seră 2</option>
+                <option value="eeprom">Memorie · EEPROM</option>
+                <option value="jurnal">Jurnal · toate sursele</option>
+              </select>
+            </label>
+            <div id="sv2Topics" class="sv2-topics" role="group" aria-label="Tipul de date"></div>
+            <div class="sv2-display">
+              <div class="sv2-display-head"><div><small id="sv2Breadcrumb">HIDROFOR / STARE</small><strong id="sv2DisplayTitle">Stare hidrofor</strong></div><span class="sv2-live-label" id="sv2LiveTag">DEMO</span></div>
+              <p class="sv2-description" id="sv2DisplayDescription"></p>
+              <div id="sv2DiagnosticStage"><div class="sv2-readings" id="sv2Readout" aria-live="polite"></div></div>
+            </div>
           </div>
           <!-- V13-S3: valori recepționate, fără citiri fizice noi. -->
           <details class="reveal-panel service-sensors" id="serviceSensorDetails">
@@ -10118,6 +10196,7 @@ const renderLive = (data) => {
     renderGreenhouseCard(greenhouse.id, greenhouse.name, d[greenhouse.id]);
   });
   renderGreenhouseSignalStats(d);
+  sv2LiveDisplay();
   renderServiceNodeDiagnostics(d);
   renderServiceSensorDiagnostics(d);
   renderServiceCalibration();
@@ -12589,6 +12668,7 @@ const loadLive = () => {
     const fill = $("centralBatteryFill");
     if (fill) fill.style.width = "0%";
     GREENHOUSES.forEach(({ id, name }) => renderGreenhouseCard(id, name, null));
+    sv2LiveDisplay();
     renderServiceNodeDiagnostics(null);
     renderServiceSensorDiagnostics(null);
     renderServiceCalibration();
@@ -12999,6 +13079,177 @@ const loadPageData = async (pageName = uiState.page) => {
   }
 };
 
+// Service Console V1: UI-only navigation, existing functions keep their IDs/endpoints.
+// Modulele sunt mutate în același DOM, niciodată clonate sau executate de două ori.
+const sv2Models = {
+  hidrofor:{label:'Hidrofor',topics:[['stare','Stare',null,'Date raportate de nodul ESP-01S. Nu confirmă fizic motorul.'],['activitate','Activitate','#hydroHistoryDetails','Comenzi și evenimente din istoricul disponibil.'],['utilizare','Utilizare','#serviceUsageDetails','Estimări parțiale, nu contoare fizice de uzură.']]},
+  central:{label:'Centrală',topics:[['citiri','Citiri',null,'Ultimele valori transmise de ESP32.'],['sistem','Sistem','#centralTechServiceDetails','Memorie RAM, uptime și stare tehnică.'],['istoric','Istoric','#centralHourlyServiceDetails','Citiri pe ore disponibile în API.'],['calibrare','Comparație','#serviceCalibrationDetails','Comparație cu o valoare de referință, fără corecții hardware.']]},
+  sera1:{label:'Seră 1',topics:[['citiri','Citiri',null,'Temperatură, umiditate și baterie.'],['semnal','Semnal','#greenhouseDiagnostics','Pachete și intervale pentru această seră.'],['calibrare','Comparație','#serviceCalibrationDetails','Abaterea față de un instrument de referință.']]},
+  sera2:{label:'Seră 2',topics:[['citiri','Citiri',null,'Temperatură, umiditate și baterie.'],['semnal','Semnal','#greenhouseDiagnostics','Pachete și intervale pentru această seră.'],['calibrare','Comparație','#serviceCalibrationDetails','Abaterea față de un instrument de referință.']]},
+  eeprom:{label:'EEPROM',topics:[['stare','Stare','.system-metrics','Starea memoriei și numărul de înregistrări.'],['detalii','Diagnostic','.system-eeprom','Zone EEPROM, trafic orientativ și raport I2C.'],['export','Export','#serviceExportDetails','Un singur loc pentru descărcări CSV / JSON.']]},
+  jurnal:{label:'Jurnal',topics:[['evenimente','Evenimente','#systemJournal','Filtre și căutare în evenimentele primite.'],['pompa','Pompa','#hydroHistoryDetails','Istoricul specific hidroforului.']]}
+};
+const sv2ControlModels = [
+  ['test','Test pompă','.service-test-panel','START protejat și STOP de urgență.'],
+  ['rtc','Ceas RTC','.r13-rtc-maintenance','Sincronizarea ceasului central.'],
+  ['ota','Firmware','.system-ota','Linkuri OTA, indisponibile în previzualizare.'],
+  ['logs','Jurnale','.service-log-maintenance','Gestionarea și ștergerea jurnalelor.'],
+  ['demo','Simulator','#mockTools','Scenarii de test exclusiv în previzualizare.']
+];
+const sv2State = {ready:false,source:'hidrofor',topic:'stare',control:'test',modules:[],activeDiagnostic:null,activeControl:null};
+const sv2ChoiceButton = (value,label,active) => '<button type="button" class="sv2-choice" data-sv2-choice="' +
+  escapeHtml(value) + '" aria-pressed="' + (active ? 'true' : 'false') + '">' + escapeHtml(label) + '</button>';
+const sv2DisplayModule = (selector,container) => {
+  const node = $(container)?.querySelector(selector) || document.querySelector('#page-sistem ' + selector);
+  if (!node || !$(container)) return null;
+  if (!node.classList.contains('sv2-module')) {
+    node.classList.add('sv2-module');
+    $(container).appendChild(node);
+    sv2State.modules.push(node);
+    node.hidden=true;
+  }
+  return node;
+};
+const sv2Rows = pairs => pairs.map(([key,value]) =>
+  '<div><dt>' + escapeHtml(key) + '</dt><dd>' +
+  escapeHtml(value == null || String(value).trim()==='' ? '—' : String(value)) + '</dd></div>').join('');
+const sv2LiveDisplay = () => {
+  if (!sv2State.ready || !['hidrofor','central','sera1','sera2'].includes(sv2State.source) ||
+      !['stare','citiri'].includes(sv2State.topic)) return;
+  const target = $('sv2Readout');
+  if (!target) return;
+  const fresh = uiState.connected && i3Fresh();
+  const d = fresh ? uiState.live : null;
+  if (!d) {
+    target.innerHTML = '<p class="sv2-offline">Date indisponibile / expirate. Nu interpretăm ultima valoare drept stare curentă.</p>';
+    return;
+  }
+  let pairs=[];
+  if (sv2State.source === 'hidrofor') {
+    const n = d.hidroforNode || {};
+    const connected = n.configured === true && n.online === true;
+    pairs = [
+      ['Conexiune ESP-01S',connected?'Online raportat':'Neconfirmată'],
+      ['Releu (logic)', connected ? n.relay : 'Necunoscut'],
+      ['Mod',connected ? n.mode : 'Necunoscut'],
+      ['Ultimul ACK',connected ? n.ack : 'Neconfirmat'],
+      ['Comandă în așteptare',connected ? (n.pending === true?'Da':n.pending===false?'Nu':'Necunoscut') : 'Necunoscut'],
+      ['Plutitor',connected && n.water?.fresh===true ? n.water.state : 'Neconfirmat']
+    ];
+  } else if (sv2State.source === 'central') {
+    pairs = [
+      ['Temperatură',d.temperatura],['Umiditate',d.umiditate],
+      ['Baterie 12 V',d.baterieOk === true ? d.baterie : 'Neconfirmată'],
+      ['Curent baterie',d.batteryInaOk===true?d.batteryCurrentA:'Indisponibil'],
+      ['Tensiune solară',d.solarInaOk===true?d.solarVoltageV:'Indisponibil'],
+      ['Ora RTC',d.dataOra]
+    ];
+  } else {
+    const g=d[sv2State.source] || {};
+    const online=g.online===true || (g.online==null&&normalize(g.status)==='online');
+    const recent=online && !greenhouseFreshness(g.lastSeen,true).stateClass;
+    pairs = [
+      ['Nod',recent?'Online · recent':online?'Raportare întârziată':'Offline'],
+      ['Temperatură',recent?g.temp:'Date vechi / indisponibile'],
+      ['Umiditate',recent?g.hum:'Date vechi / indisponibile'],
+      ['Baterie',recent?g.batt:'Date vechi / indisponibile'],
+      ['Ultimul pachet',g.lastSeen],
+      ['Pachete primite',g.signal?.rxCount ?? '—'],
+      ['Pachete pierdute',g.signal?.missedPackets ?? '—']
+    ];
+  }
+  const markup=sv2Rows(pairs);
+  if (target.innerHTML !== markup) target.innerHTML=markup;
+};
+const sv2Render = () => {
+  if(!sv2State.ready)return;
+  const model=sv2Models[sv2State.source]||sv2Models.hidrofor;
+  const active=model.topics.find(t=>t[0]===sv2State.topic)||model.topics[0];
+  sv2State.topic=active[0];
+  const source=$('sv2Source');if(source)source.value=sv2State.source;
+  const diagnostic=$('service-diagnostic');if(diagnostic)diagnostic.dataset.sv2Source=sv2State.source;
+  const topics=$('sv2Topics');if(topics)topics.innerHTML=model.topics.map(t=>sv2ChoiceButton(t[0],t[1],t[0]===sv2State.topic)).join('');
+  setText('sv2Breadcrumb',model.label.toUpperCase()+' / '+active[1].toUpperCase());
+  setText('sv2DisplayTitle',active[1]+' · '+model.label);
+  setText('sv2DisplayDescription',active[3]);
+  setText('sv2LiveTag',forceMock()?'DEMO':'DATE API');
+  const readout=$('sv2Readout');
+  if(readout)readout.hidden=!!active[2];
+  const selectedNode=active[2]?document.querySelector('#sv2DiagnosticStage '+active[2]):null;
+  for(const node of sv2State.modules){
+    if(node.closest('#sv2DiagnosticStage')){
+      const enabled=node===selectedNode;
+      node.hidden=!enabled;
+      if(node.tagName==='DETAILS')node.open=enabled;
+    }
+  }
+  if(active[0]==='calibrare'){
+    const select=$('serviceCalNode');
+    if(select && select.value!==sv2State.source){select.value=sv2State.source;v13CalReset();}
+    renderServiceCalibration();
+  }
+  if(active[2]==='#centralHourlyServiceDetails')void loadCentralServiceHourly();
+  sv2LiveDisplay();
+};
+const sv2SetSource = source => {
+  if(!Object.hasOwn(sv2Models,source))return;
+  sv2State.source=source;
+  sv2State.topic=sv2Models[source].topics[0][0];
+  sv2Render();
+};
+const sv2Select = (source,topic) => {
+  if(!Object.hasOwn(sv2Models,source))return;
+  sv2State.source=source;
+  sv2State.topic=sv2Models[source].topics.some(t=>t[0]===topic)?topic:sv2Models[source].topics[0][0];
+  sv2Render();
+};
+const sv2RenderControl = () => {
+  if(!sv2State.ready)return;
+  const models=forceMock()?sv2ControlModels:sv2ControlModels.filter(m=>m[0]!=='demo');
+  const selected=models.find(m=>m[0]===sv2State.control)||models[0];
+  sv2State.control=selected[0];
+  const chips=$('sv2ControlChoices');if(chips)chips.innerHTML=models.map(m=>sv2ChoiceButton(m[0],m[1],m[0]===sv2State.control)).join('');
+  setText('sv2ControlTitle',selected[1]);setText('sv2ControlDescription',selected[3]);
+  const selectedNode=document.querySelector('#sv2ControlStage '+selected[2]);
+  for(const node of sv2State.modules){
+    if(node.closest('#sv2ControlStage')){
+      const enabled=node===selectedNode;
+      node.hidden=!enabled;
+      if(node.tagName==='DETAILS')node.open=enabled;
+    }
+  }
+  if(selected[0]==='logs'){
+    const nested=$('sv2ControlStage')?.querySelector('.manage-logs');
+    if(nested)nested.open=true;
+  }
+  renderServiceTestPanel();
+};
+const sv2Init = () => {
+  const control=$('sv2ControlStage'),data=$('sv2DiagnosticStage');
+  if(!control||!data||sv2State.ready)return;
+  for(const item of sv2ControlModels)sv2DisplayModule(item[2],'sv2ControlStage');
+  for(const selector of ['.service-links','#serviceSensorDetails','#serviceCalibrationDetails',
+    '#serviceUsageDetails','#serviceExportDetails','#hydroHistoryDetails','#greenhouseDiagnostics',
+    '#centralTechServiceDetails','#centralHourlyServiceDetails','#systemJournal',
+    '.system-metrics','.system-eeprom'])sv2DisplayModule(selector,'sv2DiagnosticStage');
+  sv2State.ready=true;
+  document.body.classList.add('sv2-ready');
+  $('sv2Source')?.addEventListener('change',e=>sv2SetSource(e.target.value));
+  $('sv2Topics')?.addEventListener('click',e=>{
+    const button=e.target.closest('[data-sv2-choice]');
+    if(button && sv2Models[sv2State.source].topics.some(t=>t[0]===button.dataset.sv2Choice)){
+      sv2State.topic=button.dataset.sv2Choice;
+      sv2Render();
+    }
+  });
+  $('sv2ControlChoices')?.addEventListener('click',e=>{
+    const button=e.target.closest('[data-sv2-choice]');
+    if(button){sv2State.control=button.dataset.sv2Choice;sv2RenderControl();}
+  });
+  sv2RenderControl();
+  sv2Render();
+};
+// End Service Console V1.
 // V13-S2: fiecare subpagina Service contine instrumentele repartizate;
 // toate controalele isi pastreaza ID-urile si endpointurile existente.
 const setServiceSection = (sectionName) => {
@@ -13014,6 +13265,7 @@ const setServiceSection = (sectionName) => {
   document.querySelectorAll("[data-service-panel]").forEach((panel) => {
     panel.hidden = panel.dataset.servicePanel !== sectionName;
   });
+  if (sv2State.ready) {sv2RenderControl();sv2Render();}
 };
 
 const setPage = (pageName) => {
@@ -14182,6 +14434,7 @@ window.addEventListener("DOMContentLoaded", async () => {
   renderGreenhouseLayout();
   renderLogSourceButtons();
   bindEvents();
+  sv2Init();
   initAutoModule();
   renderModeButtons();
   updateHydroHistoryModeButton();
@@ -14364,19 +14617,19 @@ window.addEventListener("DOMContentLoaded", () => {
       setPage(el.dataset.openPage);
       if (el.hasAttribute("data-open-journal")) {
         setServiceSection("diagnostic");
-        $("systemJournal").open = true;
+        sv2Select("jurnal","evenimente");
       }
       if (el.hasAttribute("data-open-hydro-history")) {
         setServiceSection("diagnostic");
-        $("hydroHistoryDetails").open = true;
+        sv2Select("hidrofor","activitate");
       }
       if (el.hasAttribute("data-open-greenhouse-diagnostics")) {
         setServiceSection("diagnostic");
-        $("greenhouseDiagnostics").open = true;
+        sv2Select("sera1","semnal");
       }
       if (el.hasAttribute("data-open-central-hourly")) {
         setServiceSection("diagnostic");
-        $("centralHourlyServiceDetails").open = true;
+        sv2Select("central","istoric");
         void loadCentralServiceHourly();
       }
     }),
