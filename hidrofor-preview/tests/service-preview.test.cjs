@@ -15,8 +15,8 @@ const script = readFileSync(join(root, 'r18-schedules.js'), 'utf8');
 test('Pagina separată încarcă aplicația de pe aceeași ramură', () => {
   assert.match(wrapper, /src="\.\.\/hidrofor-preview\/app\.html"/);
   assert.match(wrapper, /previewFrame\.src = '\.\.\/hidrofor-preview\/app\.html\?refresh='/);
-  assert.match(wrapper, /data-page=\\"sistem\\"/);
-  assert.match(wrapper, /data-service-section=\\"diagnostic\\"/);
+  assert.match(wrapper, /data-page="sistem"/);
+  assert.match(wrapper, /data-service-section="diagnostic"/);
   assert.doesNotMatch(wrapper, /ioannatanael\.github\.io\/hidrofor-preview/i);
 });
 
