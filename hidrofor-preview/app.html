@@ -10958,7 +10958,6 @@ const renderServiceJournalOverview = () => {
   const target = $('serviceJournalOverview');
   if (!target) return;
   const eventsStatus = uiState.journalFetch.events;
-  const commandsStatus = uiState.journalFetch.commands;
   if (eventsStatus !== 'ok') {
     target.innerHTML = '<p class="service-journal-note">' +
       (eventsStatus === 'error'
@@ -10974,10 +10973,8 @@ const renderServiceJournalOverview = () => {
     ? alerts.length + ' alerte în ultimele ' + uiState.events.length + ' evenimente' +
       ' · ' + warnings + ' atenție · ' + errors + ' erori · ' + critical + ' critice'
     : 'Nicio alertă în cele ' + uiState.events.length + ' evenimente încărcate';
-  const tail = commandsStatus === 'error' ? ' · Comenzile indisponibile' :
-    commandsStatus !== 'ok' ? ' · Comenzile se încarcă' : '';
   target.innerHTML = '<p class="service-journal-note">' +
-    escapeHtml(message + tail) + '</p>';
+    escapeHtml(message) + '</p>';
 };
 
 const renderSystemEvents = () => {
@@ -10995,14 +10992,8 @@ const renderSystemEvents = () => {
     return sourceOk && severityOk && serviceJournalMatchesSearch(item);
   });
 
-  const filteredCommands =
-    uiState.logSeverity === "all"
-      ? uiState.commands.filter(
-          (item) =>
-            uiState.logSource === "all" ||
-            normalize(item.source) === normalize(uiState.logSource),
-        ).filter(serviceJournalMatchesSearch)
-      : [];
+  // Lista de evenimente nu dublează comenzile; acestea rămân în Activitate/Pompa.
+  const filteredCommands = [];
 
   const merged = [
     ...filteredCommands.map((item) => ({
@@ -11019,8 +11010,8 @@ const renderSystemEvents = () => {
     .sort((a, b) => parseRoDateTime(b.time) - parseRoDateTime(a.time))
     .slice(0, 60);
 
-  const totalPool = uiState.events.length + uiState.commands.length;
-  const unavailable = ['events','commands'].filter(key => uiState.journalFetch[key] !== 'ok');
+  const totalPool = uiState.events.length;
+  const unavailable = ['events'].filter(key => uiState.journalFetch[key] !== 'ok');
   const countSuffix = unavailable.length ? ' · date parțiale / indisponibile' : '';
   setText("logsMeta", merged.length + " afișate din " + totalPool + countSuffix);
   renderServiceJournalOverview();
@@ -13067,9 +13058,9 @@ const loadPageData = async (pageName = uiState.page) => {
 // Modulele sunt mutate în același DOM, niciodată clonate sau executate de două ori.
 const sv2Models = {
   hidrofor:{label:'Hidrofor',topics:[['stare','Stare',null,'Date raportate de nodul ESP-01S. Nu confirmă fizic motorul.'],['activitate','Activitate','#hydroHistoryDetails','Comenzi și evenimente din istoricul disponibil.']]},
-  central:{label:'Centrală',topics:[['citiri','Citiri',null,'Ultimele valori transmise de ESP32.'],['sistem','Sistem','#centralTechServiceDetails','Memorie RAM, uptime și stare tehnică.'],['istoric','Istoric','#centralHourlyServiceDetails','Citiri pe ore disponibile în API.'],]},
-  sera1:{label:'Seră 1',topics:[['citiri','Citiri',null,'Temperatură, umiditate și baterie.'],['semnal','Semnal','#greenhouseDiagnostics','Pachete și intervale pentru această seră.'],]},
-  sera2:{label:'Seră 2',topics:[['citiri','Citiri',null,'Temperatură, umiditate și baterie.'],['semnal','Semnal','#greenhouseDiagnostics','Pachete și intervale pentru această seră.'],]},
+  central:{label:'Centrală',topics:[['citiri','Citiri',null,'Ultimele valori transmise de ESP32.'],['sistem','Sistem','#centralTechServiceDetails','Memorie RAM, uptime și stare tehnică.'],['istoric','Istoric','#centralHourlyServiceDetails','Citiri pe ore disponibile în API.']]},
+  sera1:{label:'Seră 1',topics:[['citiri','Citiri',null,'Temperatură, umiditate și baterie.'],['semnal','Semnal','#greenhouseDiagnostics','Pachete și intervale pentru această seră.']]},
+  sera2:{label:'Seră 2',topics:[['citiri','Citiri',null,'Temperatură, umiditate și baterie.'],['semnal','Semnal','#greenhouseDiagnostics','Pachete și intervale pentru această seră.']]},
   eeprom:{label:'EEPROM',topics:[['stare','Stare','.system-metrics','Starea memoriei și numărul de înregistrări.'],['detalii','Diagnostic','.system-eeprom','Zone EEPROM, trafic orientativ și raport I2C.'],['export','Export','#serviceExportDetails','Un singur loc pentru descărcări CSV / JSON.']]},
   jurnal:{label:'Jurnal',topics:[['evenimente','Evenimente','#systemJournal','Filtre și căutare în evenimentele primite.'],['pompa','Pompa','#hydroHistoryDetails','Istoricul specific hidroforului.']]}
 };
