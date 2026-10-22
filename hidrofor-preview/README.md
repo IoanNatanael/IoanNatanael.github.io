@@ -94,3 +94,26 @@ Teste logice (nu înlocuiesc testarea reală în browser):
 ```sh
 node --test hidrofor-preview/tests/service-*.test.cjs
 ```
+
+## Service compact — navigare simplificată
+
+În interfața V13-R21, `Service → Consolă de date` afișează numai
+categorii relevante pentru sursa selectată. Opțiunile **Utilizare**
+(statistici derivate dintr-un jurnal parțial) și **Comparație**
+(abatere față de un aparat de referință, fără calibrare firmware)
+nu mai sunt afișate în navigarea obișnuită. Codul lor de diagnostic
+rămâne în versiunea de dezvoltare, dar nu intervine în controlul sistemului.
+
+**EEPROM → Export:** două opțiuni, setul de date și formatul CSV/JSON.
+Se descarcă automat întregul lot disponibil (max. 40 comenzi,
+150 evenimente sau 168 citiri orare per nod, când sunt disponibile).
+Nu există calendar sau selectarea manuală a ferestrei și nu este un
+backup complet al EEPROM. În DEMO, descărcarea este simulată,
+fișierul include `DEMO` în nume, iar JSON marchează `simulated=true`.
+În ACTIVE, verificarea că pompa este oprită rămâne obligatorie.
+
+**Jurnal → Evenimente:** o singură listă de evenimente, cu un rezumat
+scurt al alertelor și opțiuni de căutare/filtrare. Comenzile hidroforului
+se consultă separat în **Hidrofor → Activitate** sau **Jurnal → Pompa**.
+
+Teste de regresie: `node --test hidrofor-preview/tests/service-simplified.test.cjs`.
