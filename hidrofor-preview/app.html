@@ -5710,6 +5710,22 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
 </style>
 <link rel="stylesheet" href="./r18-schedules.css?v=2">
 <script defer src="./r18-schedules.js?v=1"></script>
+<style id="e10-site-embed-style">
+#e10-site-entry{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;padding:15px 17px;background:#132e32;border:1px solid #3d625c;border-radius:16px;margin:0 0 18px}
+#e10-site-entry .e10-site-text{display:flex;flex-direction:column;gap:4px;min-width:190px;flex:1}
+#e10-site-entry strong{font-size:14px;color:#def7ec;font-weight:700}
+#e10-site-entry span{font-size:11px;color:#accfc4;line-height:1.5}
+#e10-site-open{background:#80e3bd;color:#102a25;font-weight:750;min-height:44px;border:0;border-radius:11px;padding:10px 15px;cursor:pointer}
+#e10-site-open:focus-visible,#e10-site-close:focus-visible{outline:2px solid #b4f9df;outline-offset:3px}
+#e10-site-modal{box-sizing:border-box;margin:auto;padding:0;width:min(920px,calc(100vw - 28px));height:min(92dvh,940px);max-height:94dvh;max-width:none;overflow:hidden;border:1px solid #47746b;border-radius:20px;background:#10242b;color:#e7f7f0;box-shadow:0 25px 90px #000b}
+#e10-site-modal::backdrop{background:rgba(0,0,0,.76);backdrop-filter:blur(5px)}
+#e10-site-modal .e10-site-head{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:56px;padding:10px 16px;background:#112b32;border-bottom:1px solid #35575b}
+#e10-site-modal .e10-site-head strong{font-size:14px}
+#e10-site-modal .e10-site-head small{display:block;color:#a4c9c0;font-size:10px;margin-top:3px}
+#e10-site-close{width:42px;height:42px;min-height:42px;flex-shrink:0;border-radius:50%;border:1px solid #4d7477;background:#203e45;color:#eefbf7;font-size:23px;cursor:pointer}
+#e10-site-frame{width:100%;height:calc(100% - 57px);display:block;border:0;background:#10242b}
+@media(max-width:680px){#e10-site-entry{padding:13px;align-items:stretch}#e10-site-open{width:100%}#e10-site-modal{width:100vw;height:100dvh;max-height:100dvh;border-radius:0;border:0}}
+</style>
 </head>
   <body class="hidro-v5">
     <div class="app">
@@ -6066,6 +6082,10 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
               ><span class="led"></span><span>Se incarca</span></span
             >
           </div>
+          <section id="e10-site-entry" aria-label="Laborator secvențe de udare">
+  <div class="e10-site-text"><strong>Laborator de secvențe</strong><span>Editor ON/OFF · FIX / SMART / ADAPTIVE · testare 100% simulată</span></div>
+  <button id="e10-site-open" type="button" aria-haspopup="dialog" aria-controls="e10-site-modal">Deschide laboratorul</button>
+</section>
           <section class="hydro-grid">
             <article class="hydro-hero">
               <div class="card-heading">
@@ -15787,6 +15807,39 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   };
   document.addEventListener('DOMContentLoaded', () => window.r15UpdateLoadDemo());
+})();
+</script>
+<dialog id="e10-site-modal" aria-label="Laborator de secvențe — exclusiv simulare">
+  <div class="e10-site-head"><div><strong>Laborator de secvențe</strong><small>FIX / SMART / ADAPTIVE · fără comenzi fizice către hidrofor</small></div><button id="e10-site-close" type="button" aria-label="Închide laboratorul">×</button></div>
+  <iframe id="e10-site-frame" title="Simulator E10 de udare, fără comandă reală" data-src="./e10-lab.html" loading="lazy" referrerpolicy="no-referrer" sandbox="allow-scripts allow-same-origin"></iframe>
+</dialog>
+<script id="e10-site-embed-script">
+(function(){
+  "use strict";
+  function init(){
+    const open=document.getElementById("e10-site-open");
+    const dialog=document.getElementById("e10-site-modal");
+    const close=document.getElementById("e10-site-close");
+    const frame=document.getElementById("e10-site-frame");
+    if(!open||!dialog||!close||!frame)return;
+    open.addEventListener("click",function(){
+      if(!frame.getAttribute("src"))frame.setAttribute("src",frame.getAttribute("data-src"));
+      if(typeof dialog.showModal==="function")dialog.showModal();
+      else dialog.setAttribute("open","");
+    });
+    close.addEventListener("click",function(){
+      if(typeof dialog.close==="function")dialog.close();
+      else dialog.removeAttribute("open");
+    });
+    dialog.addEventListener("click",function(event){
+      if(event.target!==dialog)return;
+      if(typeof dialog.close==="function")dialog.close();
+      else dialog.removeAttribute("open");
+    });
+    dialog.addEventListener("close",function(){open.focus();});
+  }
+  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init,{once:true});
+  else init();
 })();
 </script>
 </body>
