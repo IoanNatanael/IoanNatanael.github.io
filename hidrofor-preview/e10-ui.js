@@ -45,6 +45,10 @@
     const modal=$("e10LabDialog");
     const body=modal?.querySelector(".e10-body");
     if(!body||body.dataset.redesigned==="1")return;
+    // Transactional DOM reorganization: if any part fails, put the ORIGINAL
+    // nodes back. This preserves listeners, draft values, and a usable editor.
+    const originalNodes=[...body.childNodes];
+    try {
     body.dataset.redesigned="1";
     const panels={};
     for(const name of ["program","conditions","results"]){
@@ -71,7 +75,7 @@
     const steps=$("e10Steps");
     const stepActions=$("e10AddOn")?.closest(".e10-controls");
     const programHelp=panels.program.querySelector(".e10-info");
-    if(!libraryLabel||!libraryTools||!editorTitle||!programFields||!steps||!stepActions)return;
+    if(!libraryLabel||!libraryTools||!editorTitle||!programFields||!steps||!stepActions)throw new Error("program controls missing");
     libraryLabel.firstChild.textContent="Schițele mele · salvate doar aici";
     const library=shell("e10-surface e10-library",libraryLabel,libraryTools);
     editorTitle.textContent="Pașii programului";
@@ -92,7 +96,7 @@
     const methodInfo=panels.conditions.querySelector("p.e10-info");
     const strategyLabel=$("e10Strategy")?.closest("label");
     const climateGrids=[...panels.conditions.querySelectorAll(".e10-climate-grid")];
-    if(!strategyLabel||climateGrids.length!==2)return;
+    if(!strategyLabel||climateGrids.length!==2)throw new Error("climate inputs missing");
     strategyLabel.classList.add("e10-strategy-input");
     const modes=node("div","e10-methods");
     const descriptions={
@@ -165,7 +169,7 @@
       comparisonLog=$("e10ReadOnlyJournal")?.closest("details"),
       faultFields=$("e10Fault")?.closest(".e10-fields"),
       history=$("e10History");
-    if(!msg||!sum||!timeline||!legend||!now||!scrub||!elapsed||!comparisonTable||!comparisonNote||!record||!comparisonLog||!faultFields||!history)return;
+    if(!msg||!sum||!timeline||!legend||!now||!scrub||!elapsed||!comparisonTable||!comparisonNote||!record||!comparisonLog||!faultFields||!history)throw new Error("results controls missing");
     elapsed.classList.add("e10-elapsed");
     const resultsHero=shell("e10-results-hero",msg,sum,
       node("h3","", "Cronologia execuției"),timeline,legend,now,scrub,elapsed);
@@ -250,6 +254,14 @@
       steps.querySelectorAll(".e10-step").forEach(row=>row.dataset.state=row.querySelector("select")?.value||"ON");
     });
     gotoPage("program");
+    } catch(error) {
+      // Never leave an empty full-screen overlay after a UI regression.
+      body.replaceChildren(...originalNodes);
+      body.dataset.redesigned="fallback";
+      const note=node("p","e10-safe","Aspectul nou nu s-a încărcat complet; editorul clasic este disponibil pentru test.");
+      body.prepend(note);
+      console.error("E10 presentation fallback:",error);
+    }
   }
   function footer(backLabel,nextLabel,nextPage,backPage){
     const bar=node("div","e10-actions-footer");

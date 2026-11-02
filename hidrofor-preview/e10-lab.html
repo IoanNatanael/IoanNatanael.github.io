@@ -63,6 +63,7 @@
 </style><link rel="stylesheet" href="./e10-ui.css"></head><body><main>
 <h1>Hidrofor — laborator unificat E10</h1>
 <p>Editor ON/OFF, FIX, SMART și ADAPTIVE, comparații și simulare de defecte cu date CLIMATICE SINTETICE. Nu trimite comenzi către ESP32, releu sau hidrofor.</p>
+<p id="e10InitHelp">Dacă laboratorul nu se afișează, verifică permisiunea JavaScript pentru github.io (inclusiv Brave Shields) și reîncarcă pagina. Această pagină nu controlează pompa.</p>
 <div id="e10LabMount"></div></main>
 <script>
 /* E10-P1: pure, deterministic OFFLINE sequence dry-run. No hardware, web or storage calls.
@@ -743,6 +744,8 @@
         <p class="e10-info">Aceasta este o previzualizare deterministă a profilului dorit și a segmentării, nu o măsurătoare a pompei și nu o execuție a motorului Arduino. Integrarea reală necesită confirmări de releu, limitări hardware și teste E8–E9.</p>
       </div>`;
     document.body.append(modal);
+    // Standalone/embedded E10 page: do not depend on a synthetic click to become visible.
+    modal.setAttribute('open','');
     button.addEventListener('click',()=>{refreshEditor();renderPreview();if(typeof modal.showModal==='function')modal.showModal();else modal.setAttribute('open','');});
     $('e10Close').addEventListener('click',()=>modal.close());
     modal.addEventListener('click',e=>{if(e.target===modal) modal.close();});
@@ -780,4 +783,4 @@
 })();
 
 </script>
-<script src="./e10-ui.js"></script><script>document.addEventListener('DOMContentLoaded',()=>{const b=document.getElementById('e10LabButton');if(b)b.click();});</script></body></html>
+<script src="./e10-ui.js"></script><!-- Laboratory opens directly after the E10 engine initializes. --></body></html>
