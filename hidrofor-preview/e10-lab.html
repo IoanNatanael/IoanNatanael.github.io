@@ -743,6 +743,8 @@
         <p class="e10-info">Aceasta este o previzualizare deterministă a profilului dorit și a segmentării, nu o măsurătoare a pompei și nu o execuție a motorului Arduino. Integrarea reală necesită confirmări de releu, limitări hardware și teste E8–E9.</p>
       </div>`;
     document.body.append(modal);
+    // Standalone/embedded E10 page: do not depend on a synthetic click to become visible.
+    modal.setAttribute('open','');
     button.addEventListener('click',()=>{refreshEditor();renderPreview();if(typeof modal.showModal==='function')modal.showModal();else modal.setAttribute('open','');});
     $('e10Close').addEventListener('click',()=>modal.close());
     modal.addEventListener('click',e=>{if(e.target===modal) modal.close();});
@@ -780,4 +782,4 @@
 })();
 
 </script>
-<script src="./e10-ui.js"></script><script>document.addEventListener('DOMContentLoaded',()=>{const b=document.getElementById('e10LabButton');if(b)b.click();});</script></body></html>
+<script src="./e10-ui.js"></script><!-- Laboratory opens directly after the E10 engine initializes. --></body></html>
