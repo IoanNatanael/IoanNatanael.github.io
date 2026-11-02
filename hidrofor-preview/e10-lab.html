@@ -1,71 +1,70 @@
-<!doctype html><html lang="ro"><head><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src data:; connect-src 'none'; form-action 'none'; object-src 'none'; base-uri 'none'"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Hidrofor E10 unificat · FIX SMART ADAPTIVE · DOAR SIMULARE</title>
-<style>body{margin:0;background:#10242b;color:#effbf7;font-family:system-ui,-apple-system,Segoe UI,sans-serif}main{max-width:780px;padding:24px;margin:auto}h1{font-size:23px}p{line-height:1.6;color:#b9d6cc}button{font-family:inherit}</style><style>
-/* E10-P1 offline editor, visually independent of real R21 scheduling controls. */
-#e10LabButton{margin-top:10px;width:100%;min-height:44px;background:#223a43;color:#bdf6df;border:1px solid #477b70;border-radius:12px;font:inherit;font-weight:700;cursor:pointer}
-#e10LabDialog{color:#e8f8f4;background:#0b2229;border:1px solid #416568;border-radius:18px;padding:0;width:min(94vw,780px);max-height:92dvh;box-shadow:0 20px 100px #000b}
-#e10LabDialog::backdrop{background:#000a}
-#e10LabDialog *{box-sizing:border-box}
-#e10LabDialog header{padding:17px 20px;border-bottom:1px solid #30535a;display:flex;justify-content:space-between;align-items:center;gap:10px}
-#e10LabDialog header h2{font-size:18px;font-weight:750;margin:0;color:#e8f8f4}
-#e10LabDialog header small{font-size:11px;color:#aac9c5}
-#e10LabDialog .e10-close{background:#20373e;border:1px solid #416568;border-radius:50%;color:#fff;min-width:40px;height:40px;cursor:pointer;font-size:24px}
-#e10LabDialog .e10-body{padding:16px 20px;overflow-y:auto;max-height:calc(92dvh - 83px);scrollbar-width:thin}
-#e10LabDialog .e10-safe{border:1px solid #907747;background:#3c321d;border-radius:11px;color:#ffe4a2;font-size:12px;padding:10px 13px;line-height:1.5;margin-bottom:14px}
-#e10LabDialog h3{font-size:15px;margin:18px 0 9px;color:#d8f5eb}
-#e10LabDialog .e10-fields{display:grid;grid-template-columns:minmax(0,2fr) minmax(112px,1fr);gap:11px}
-#e10LabDialog label{display:flex;flex-direction:column;font-size:12px;color:#c7e2db;gap:6px;min-width:0}
-#e10LabDialog input,#e10LabDialog select{border:1px solid #42656b;border-radius:9px;padding:10px;background:#112e36;color:#eefaf7;font:inherit;min-width:0;min-height:42px;width:100%}
-#e10LabDialog button{font:inherit;cursor:pointer}
-#e10LabDialog button:focus-visible,#e10LabDialog input:focus-visible,#e10LabDialog select:focus-visible{outline:2px solid #80e6c8;outline-offset:2px}
-#e10LabDialog .e10-controls{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:11px}
-#e10LabDialog .e10-controls button,#e10LabDialog .e10-steps button{border:1px solid #456a6d;color:#ddf8f1;background:#1d3c42;border-radius:9px;padding:8px 11px;min-height:36px}
-#e10LabDialog .e10-steps{display:grid;gap:8px}
-#e10LabDialog .e10-step{display:grid;grid-template-columns:minmax(100px,1fr) minmax(76px,105px) auto;gap:7px;align-items:end;background:#15323a;border:1px solid #33545b;border-radius:12px;padding:9px}
-#e10LabDialog .e10-step-actions{display:flex;gap:4px;align-items:end;flex-wrap:wrap}
-#e10LabDialog .e10-step-actions button{padding:8px 9px;min-width:34px}
-#e10LabDialog .e10-step button:disabled{opacity:.3;cursor:not-allowed}
-#e10LabDialog .e10-primary{background:#79dfbd!important;color:#0a302a!important;font-weight:800;border:0!important}
-#e10LabDialog .e10-danger{border-color:#946267!important;color:#ffd2d4!important}
-#e10LabDialog .e10-info{color:#bbd3ce;font-size:12px;line-height:1.55;margin-top:9px}
-#e10LabDialog .e10-error{color:#ffb4b4;min-height:18px;font-size:12px;margin-top:8px}
-#e10LabDialog .e10-summary{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
-#e10LabDialog .e10-summary span{padding:7px 10px;background:#183841;border:1px solid #305660;border-radius:8px;font-size:12px}
-#e10LabDialog .e10-timeline{display:flex;height:38px;border-radius:10px;overflow:hidden;background:#304951;border:1px solid #446d6e}
-#e10LabDialog .e10-timeline .e10-on{background:#3baf88}
-#e10LabDialog .e10-timeline .e10-off{background:#66808b}
-#e10LabDialog .e10-timeline .e10-rest{background:repeating-linear-gradient(45deg,#ad8c53,#ad8c53 4px,#d0ae72 4px,#d0ae72 7px)}
-#e10LabDialog .e10-current{font-weight:700;font-size:13px;margin:10px 0 7px}
-#e10LabDialog .e10-time{width:100%;accent-color:#75dab9;height:30px}
-#e10LabDialog .e10-history{max-height:155px;overflow:auto;font-size:11px;color:#bdd6d3;padding-left:18px;line-height:1.75}
-#e10LabDialog .e10-legend{display:flex;gap:12px;flex-wrap:wrap;margin:8px 0;color:#b6d1cd;font-size:11px}
-#e10LabDialog .e10-dot{width:9px;height:9px;display:inline-block;margin-right:5px;border-radius:2px;background:#3baf88}
-#e10LabDialog [hidden]{display:none!important}
-@media(max-width:540px){#e10LabDialog .e10-body{padding:12px}#e10LabDialog header{padding:13px}#e10LabDialog .e10-step{grid-template-columns:minmax(0,1fr) 78px;gap:7px}#e10LabDialog .e10-step-actions{grid-column:1/-1}#e10LabDialog .e10-step-actions button{flex:1}#e10LabDialog .e10-fields{grid-template-columns:1fr 115px}}
+<!doctype html><html lang="ro"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="dark"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; connect-src 'none'; form-action 'none'; object-src 'none'; base-uri 'none'"><title>Hidrofor · Laborator E10 · FIX SMART ADAPTIVE</title><style>
+:root{color-scheme:dark;--bg:#0e2027;--surface:#142b33;--surface2:#19343d;--surface3:#10272e;--border:#2a4851;--muted:#a0bcbf;--ink:#eaf6f1;--accent:#8de4c1;--good:#86dfb5;--amber:#efca82;--bad:#f5aca8;--radius:17px}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.55 -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;-webkit-font-smoothing:antialiased}
+button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allowed;opacity:.48}button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+[hidden]{display:none!important}.app{width:min(850px,calc(100% - 36px));margin:0 auto;padding:26px 0 55px}.top{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:23px}.eyebrow{letter-spacing:.18em;color:var(--accent);font-size:10px;font-weight:750;text-transform:uppercase}.top h1{font-size:clamp(23px,4vw,30px);font-weight:670;letter-spacing:-.8px;margin:5px 0 3px;line-height:1.2}.top p{font-size:12px;color:var(--muted);margin:4px 0 0}.sim-only{border-radius:99px;color:var(--accent);border:1px solid #3d7063;background:#1b3935;padding:6px 10px;white-space:nowrap;font-weight:750;font-size:10px}
+.main-section{margin:0 0 22px}.section-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:11px}.section-head h2{margin:0;font-size:16px;font-weight:660;letter-spacing:-.2px}.section-head small{color:var(--muted);font-size:11px}.step-head{display:flex;gap:9px;align-items:center}.index{background:#234940;color:var(--accent);width:22px;height:22px;display:grid;place-items:center;border-radius:7px;font-size:11px;font-weight:750}
+.mode-bar{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));background:#10252d;border:1px solid var(--border);border-radius:15px;padding:5px;gap:4px}.mode-btn{min-height:55px;background:none;border:0;border-radius:11px;color:var(--muted);font-weight:720;font-size:14px;display:flex;align-items:center;justify-content:center;gap:7px;transition:background .14s}.mode-btn[aria-pressed='true']{background:var(--accent);color:#0a2924;box-shadow:0 4px 16px #0002}.mode-hint{color:var(--muted);margin:9px 2px 0;font-size:12px;min-height:20px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;min-width:0}.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}.fields{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(125px,.7fr);gap:12px}.control-label{display:flex;flex-direction:column;gap:7px;font-size:12px;font-weight:560;color:#bed7d4}.control-label input,.control-label select,select{min-width:0;width:100%;min-height:45px;border:1px solid #3b5b63;border-radius:11px;background:#112a32;color:var(--ink);padding:10px 12px;font-size:14px}.input-unit{position:relative}.input-unit span{position:absolute;right:13px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:11px;pointer-events:none}.input-unit input{padding-right:60px}.pill-switch{display:grid;grid-template-columns:repeat(2,1fr);padding:4px;border:1px solid #345459;background:#0f252d;border-radius:12px;gap:4px;margin:14px 0 16px}.pill-switch button{min-height:44px;border:0;background:transparent;color:#a7c8c4;border-radius:9px;font-size:13px;font-weight:650}.pill-switch button[aria-pressed='true']{background:#2c574f;color:#d6fff0}.desc{color:var(--muted);font-size:12px;margin:10px 0 0;line-height:1.55}.strong{color:#e9f5ef;font-weight:670}
+.seq-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:16px 0 8px}.seq-head h3{font-size:13px;margin:0;font-weight:670}.seq-head small{color:var(--muted);font-size:11px}.steps{display:grid;gap:7px}.step{display:grid;grid-template-columns:32px minmax(0,1fr) 97px auto;align-items:center;gap:9px;padding:10px;background:#102a32;border:1px solid #31535c;border-radius:12px}.step-marker{width:31px;height:31px;border-radius:8px;display:grid;place-items:center;background:#254f46;color:#a7eed0;font-weight:750;font-size:11px}.step[data-kind='OFF'] .step-marker{background:#2a4453;color:#b9d5df}.step select{min-height:40px;font-size:12px;padding:7px}.step input{width:100%;min-width:0;min-height:40px;padding:8px;border:1px solid #3b5b63;border-radius:9px;background:#10242d;color:var(--ink);text-align:center}.step-controls{display:flex;gap:3px}.step-controls button{background:#214049;color:#b9d4d1;border:1px solid #395c60;min-height:38px;min-width:35px;border-radius:9px;padding:4px;font-size:16px}.step-controls button:hover{border-color:#7ac6b1}.add-actions{display:flex;gap:8px;margin-top:11px;flex-wrap:wrap}.soft-btn{min-height:42px;background:#1c3c44;border:1px solid #3c6366;color:#d6eee6;border-radius:10px;padding:9px 12px;font-size:12px;font-weight:650}.soft-btn:hover{background:#234a4c}.button-clear{border-color:#705055;color:var(--bad);background:transparent}.plan-note{display:flex;align-items:center;gap:8px;margin-top:12px;padding:9px 10px;border:1px solid #38564e;border-radius:10px;background:#18362f;color:#b7dec9;font-size:11px}.details{border-top:1px solid #2a4a51;margin-top:14px;padding-top:10px}.details summary{list-style:none;cursor:pointer;color:#a7d1c4;font-size:12px;font-weight:650;min-height:35px;display:flex;align-items:center}.details summary::after{content:'+';margin-left:auto;font-size:17px}.details[open] summary::after{content:'−'}.details-content{padding:10px 0 3px}.library-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+.condition-wrap{margin-top:13px}.climate{display:grid;grid-template-columns:1fr 1fr;gap:10px}.greenhouse{background:#112a32;border:1px solid #315159;border-radius:12px;padding:13px}.greenhouse h3{font-size:13px;margin:0 0 11px;color:#d8f1e9}.greenhouse .two{gap:9px}.greenhouse input{padding:9px!important;min-height:43px!important}.greenhouse .control-label{font-size:11px}.greenhouse .source-status{color:var(--good);font-size:10px;margin-top:8px}.greenhouse .source-status[data-healthy='false']{color:var(--bad)}.rule{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px;margin-top:14px}.method-note{display:flex;gap:10px;background:#183a35;border:1px solid #366653;border-radius:11px;padding:11px 13px;margin-top:13px;color:#c3e4d8;font-size:12px;line-height:1.55}.method-note strong{font-weight:800;color:#b4f5d5}.advanced-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.advanced-grid fieldset{border:1px solid #35565b;border-radius:12px;margin:0;padding:12px}.advanced-grid legend{color:#bfdfd4;font-size:12px;font-weight:650;padding:0 4px}.advanced-grid label{margin-top:9px}.advanced-grid input,.advanced-grid select{min-height:41px;font-size:12px}
+.progress-card{background:linear-gradient(140deg,#173936,#132c34 66%);border:1px solid #3e6662;border-radius:19px;padding:19px}.progress-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:16px}.progress-top .eyebrow{font-size:10px}.state{display:inline-flex;align-items:center;gap:7px;padding:7px 10px;border-radius:9px;background:#214a3d;color:#a8efd0;font-size:11px;font-weight:780;white-space:nowrap}.state:before{content:'';width:6px;height:6px;border-radius:50%;background:currentColor}.state.off{color:#bfd5de;background:#24404a}.state.rest{color:var(--amber);background:#443c29}.state.blocked,.state.fault{background:#493034;color:#f3b0aa}.state.done{background:#2b4545;color:#c2e0d5}.headline{font-size:clamp(16px,3vw,20px);font-weight:700;letter-spacing:-.2px;margin:1px 0 4px}.progress-sub{color:#b6cfca;font-size:12px}.timeline{display:flex;height:21px;border-radius:10px;overflow:hidden;background:#24434b;border:1px solid #4c7772;position:relative}.segment{height:100%;min-width:1px}.segment.on{background:#79d9b0}.segment.off{background:#648390}.segment.rest{background:repeating-linear-gradient(45deg,#d2b87b 0,#d2b87b 4px,#947d4e 4px,#947d4e 8px)}.timeline-wrapper{position:relative;margin:17px 0 9px}.needle{height:31px;width:2px;position:absolute;top:-5px;left:0;background:#fafaf5;box-shadow:0 0 0 2px #0b2526;border-radius:3px;pointer-events:none}.line-label{display:flex;justify-content:space-between;font-size:11px;color:#abc9c4;margin:8px 0 0;font-variant-numeric:tabular-nums}.kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:16px}.kpi{background:#102d33;border:1px solid #345359;padding:10px 11px;border-radius:12px}.kpi small{display:block;color:#9bbcb8;font-size:10px;line-height:1.45}.kpi b{display:block;color:#eaf7f1;font-size:18px;font-weight:660;margin-top:5px;letter-spacing:-.4px;font-variant-numeric:tabular-nums}.interactive{margin:15px 0 0}.interactive input[type=range]{accent-color:var(--accent);width:100%;cursor:pointer}.progress-controls{display:flex;gap:9px;margin-top:13px}.progress-controls button{min-height:46px;min-width:0}.primary-btn{background:var(--accent);color:#0b3027;border:0;border-radius:11px;font-weight:800;padding:10px 15px;flex:1}.hint{font-size:11px;color:#9dbbb7;margin:10px 0 0}.legend{display:flex;align-items:center;gap:13px;color:#9bbeb9;font-size:10px;margin-top:12px;flex-wrap:wrap}.legend span{display:flex;gap:6px;align-items:center}.legend i{display:inline-block;width:9px;height:9px;border-radius:3px}.error{background:#39272d;border:1px solid #844e50;color:#ffc5c0;padding:11px 13px;border-radius:11px;font-size:12px;margin:10px 0 0}.history{color:#bcd4d1;font-size:12px;line-height:1.8;max-height:280px;overflow:auto;padding-left:22px;margin:9px 0}.offline-note{text-align:center;color:#7fa6a2;font-size:11px;margin:17px 0 0}
+@media(max-width:660px){.app{width:calc(100% - 26px);padding-top:16px}.top{margin-bottom:19px}.top h1{font-size:24px}.card,.progress-card{padding:14px}.section-head{align-items:flex-start}.section-head small{display:none}.step{grid-template-columns:29px minmax(0,1fr) 67px;gap:7px;padding:9px}.step-controls{grid-column:1/-1;justify-content:flex-end}.step-controls button{min-width:42px}.rule{grid-template-columns:1fr 1fr}.rule .control-label:last-child{grid-column:1/-1}.climate{grid-template-columns:1fr}.kpi b{font-size:15px}.kpi{padding:9px}.mode-btn{font-size:13px}.fields{grid-template-columns:minmax(0,1fr) 119px}.advanced-grid{grid-template-columns:1fr}.progress-top{align-items:flex-start}.state{font-size:10px;padding:7px 8px}.progress-controls .soft-btn{padding:9px 10px}}
+@media(max-width:375px){.top{flex-wrap:wrap}.rule{grid-template-columns:1fr}.rule .control-label:last-child{grid-column:auto}.fields{grid-template-columns:1fr 112px}.mode-btn{min-height:49px;font-size:12px}.step{grid-template-columns:27px minmax(0,1fr) 62px}.progress-controls{flex-wrap:wrap}.progress-controls .primary-btn{flex-basis:100%}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.mode-btn{transition:none}}
 
-/* E10-P2: SMART/ADAPTIVE comparison uses the same offline sequence laboratory. */
-#e10LabDialog .e10-climate-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:12px 0}
-#e10LabDialog fieldset{min-width:0;border:1px solid #3b5c5e;border-radius:11px;padding:12px;display:grid;gap:11px}
-#e10LabDialog legend{color:#bff1de;font-weight:650;padding:0 6px;font-size:12px}
-#e10LabDialog .e10-check{flex-direction:row;align-items:center;gap:9px;color:#aebec5}
-#e10LabDialog .e10-check input{width:20px;min-height:20px;height:20px;accent-color:#70d6ad}
-#e10LabDialog .e10-pair{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-#e10LabDialog .e10-table-wrap{width:100%;max-width:100%;overflow-x:auto;border:1px solid #33535b;border-radius:9px;margin:10px 0}
-#e10LabDialog .e10-decision-table,#e10LabDialog .e10-table-wrap table{border-collapse:collapse;width:100%;font-size:11px;min-width:580px;color:#d3e9e2}
-#e10LabDialog .e10-decision-table th,#e10LabDialog .e10-decision-table td,#e10LabDialog .e10-table-wrap th,#e10LabDialog .e10-table-wrap td{padding:9px 10px;text-align:left;border-bottom:1px solid #35535a;vertical-align:top}
-#e10LabDialog .e10-decision-table th,#e10LabDialog .e10-table-wrap th{color:#a7c6be;font-weight:650;background:#19343d}
-#e10LabDialog .e10-comparison-details{border-top:1px solid #36535b;margin:13px 0;padding-top:7px}
-#e10LabDialog .e10-comparison-details summary{cursor:pointer;padding:8px 0;color:#9edbc5}
-#e10LabDialog .e10-comparison-details p{color:#b6cec8;font-size:11px;line-height:1.5;margin:8px 0}
-#e10LabDialog .e10-comparison-details h3,#e10LabDialog .e10-comparison-details h4{font-size:13px}
-@media(max-width:560px){#e10LabDialog .e10-climate-grid{grid-template-columns:1fr}#e10LabDialog fieldset{padding:10px}#e10LabDialog .e10-pair{gap:8px}}
+/* Compact sequence: only one useful action per step; no unusable reordering arrows. */
+.step{grid-template-columns:32px minmax(0,1fr) 100px auto}.step-controls button{min-width:39px}
+@media(max-width:660px){.step{grid-template-columns:29px minmax(0,1fr) 67px auto}.step-controls{grid-column:auto;justify-content:flex-end}.step-controls button{min-width:35px}}
+@media(max-width:375px){.step{grid-template-columns:27px minmax(0,1fr) 62px auto}}
+</style></head><body><main class="app" id="e10App">
+  <header class="top"><div><div class="eyebrow">Hidrofor · Laborator E10</div><h1>Controlul udării</h1><p>Configurează un program și vezi exact cum ar funcționa.</p></div><span class="sim-only">DOAR SIMULARE</span></header>
+  <section class="main-section" aria-labelledby="methodHeading"><div class="section-head"><div class="step-head"><span class="index">1</span><h2 id="methodHeading">Cum vrei să controlezi?</h2></div></div>
+    <div class="mode-bar" role="group" aria-label="Metoda de control">
+      <button type="button" class="mode-btn" data-mode="FIX" aria-pressed="true">FIX</button>
+      <button type="button" class="mode-btn" data-mode="SMART" aria-pressed="false">SMART</button>
+      <button type="button" class="mode-btn" data-mode="ADAPTIVE" aria-pressed="false">ADAPTIVE</button>
+    </div><p class="mode-hint" id="modeHint">FIX execută programul pe care îl alegi, fără condiții de temperatură.</p>
+    <div class="condition-wrap card" id="climatePanel" hidden>
+      <div class="section-head"><h2>Condițiile serelor</h2><small>Valori de test · nu sunt date reale</small></div>
+      <div class="climate">
+        <div class="greenhouse"><h3>Sera 1</h3><div class="two"><label class="control-label">Temperatură (°C)<input id="s1t" type="number" step="0.1" min="-40" max="85" value="30"></label><label class="control-label">Umiditate aer (%)<input id="s1h" type="number" step="0.1" min="0" max="100" value="40"></label></div><div id="s1status" class="source-status">● Date de test valide</div></div>
+        <div class="greenhouse"><h3>Sera 2</h3><div class="two"><label class="control-label">Temperatură (°C)<input id="s2t" type="number" step="0.1" min="-40" max="85" value="32"></label><label class="control-label">Umiditate aer (%)<input id="s2h" type="number" step="0.1" min="0" max="100" value="38"></label></div><div id="s2status" class="source-status">● Date de test valide</div></div>
+      </div>
+      <div id="smartOptions" hidden><div class="rule"><label class="control-label">Temperatură minimă °C<input id="smartT" type="number" min="-40" max="85" step="0.1" value="28"></label><label class="control-label">Umiditate maximă %<input id="smartH" type="number" min="0" max="100" step="0.1" value="45"></label><label class="control-label">Câte sere?<select id="smartCombine"><option value="2">Ambele sere</option><option value="1">Cel puțin una</option></select></label></div><div class="method-note">SMART permite simularea numai dacă pragurile sunt îndeplinite. Dacă datele unei sere lipsesc ori sunt expirate, blochează programul.</div></div>
+      <div id="adaptiveOptions" hidden><div class="method-note"><div><strong id="adaptiveScore">Ajustare după condițiile de test</strong><div id="adaptiveExplanation">Durata ON poate scădea; pauzele OFF rămân neschimbate.</div></div></div></div>
+      <details class="details"><summary>Setări avansate ale senzorilor și strategiei</summary><div class="details-content">
+        <div class="two"><label class="control-label">Stare Sera 1<select id="s1state"><option value="ok">Date valide</option><option value="missing">Nod indisponibil</option><option value="stale">Date expirate</option><option value="untrusted">Sursă nevalidată</option></select></label><label class="control-label">Stare Sera 2<select id="s2state"><option value="ok">Date valide</option><option value="missing">Nod indisponibil</option><option value="stale">Date expirate</option><option value="untrusted">Sursă nevalidată</option></select></label></div>
+        <label class="control-label" style="margin-top:12px">Valabilitate date (secunde)<input id="maxAge" type="number" min="1" max="5400" step="1" value="120"></label>
+        <div id="adaptiveAdvanced" hidden><div class="advanced-grid" style="margin-top:12px"><fieldset><legend>Factor și temperatură</legend><label class="control-label">Factor minim (%)<input id="minFactor" type="number" min="1" max="100" value="50"></label><label class="control-label">Temperatură joasă / înaltă (°C)<span class="two"><input id="lowT" type="number" step="0.1" min="-40" max="85" value="15"><input id="highT" type="number" step="0.1" min="-40" max="85" value="35"></span></label></fieldset><fieldset><legend>Umiditate și condiții</legend><label class="control-label">Umiditate joasă / înaltă (%)<span class="two"><input id="lowH" type="number" min="0" max="100" step="0.1" value="30"><input id="highH" type="number" min="0" max="100" step="0.1" value="70"></span></label><p class="desc">Algoritmul redistribuie totalul minutelor ON fără a modifica pauzele OFF.</p></fieldset></div></div>
+      </div></details>
+    </div>
+  </section>
+  <section class="main-section" aria-labelledby="planHeading"><div class="section-head"><div class="step-head"><span class="index">2</span><h2 id="planHeading">Ce program să execute?</h2></div></div><div class="card">
+    <div class="fields"><label class="control-label">Numele programului<input id="planName" value="Udare dimineața" maxlength="60" autocomplete="off"></label><label class="control-label">Pornire la ora<input id="planTime" type="time" value="07:00"></label></div>
+    <div class="pill-switch" role="group" aria-label="Tipul programului"><button type="button" data-type="TIMED" aria-pressed="true">Temporizat</button><button type="button" data-type="SEQUENCE" aria-pressed="false">Secvențial</button></div>
+    <div id="timedEditor"><label class="control-label">Cât timp să fie pornită pompa?<div class="input-unit"><input id="timedMinutes" type="number" min="1" max="120" step="1" value="10"><span>minute</span></div></label><p class="desc">O singură udare. Simularea introduce automat pauzele de protecție după maximum 4 minute ON.</p></div>
+    <div id="sequenceEditor" hidden><div class="seq-head"><h3>Secvența de udare</h3><small>Maximum 16 pași</small></div><div class="steps" id="stepRows"></div><div class="add-actions"><button class="soft-btn" type="button" id="addOn">+ Pornește pompa</button><button class="soft-btn" type="button" id="addOff">+ Pauză</button><button class="soft-btn" type="button" id="resetSeq">Exemplul profesorului</button></div><p class="desc">La fiecare ON lung se introduc automat segmente de 4 minute și pauze de protecție.</p></div>
+    <div class="plan-note"><span aria-hidden="true">●</span><span>Protecția ESP-01S rămâne neschimbată: AUTO maxim 5 minute. Această pagină nu trimite START real.</span></div>
+    <details class="details"><summary>Programele mele · salvate local</summary><div class="details-content"><label class="control-label">Schițe în acest browser<select id="savedPlans"><option value="">Program nesalvat</option></select></label><div class="library-actions"><button class="soft-btn" type="button" id="savePlan">Salvează schița</button><button class="soft-btn" type="button" id="newPlan">Program nou</button><button class="soft-btn button-clear" type="button" id="deletePlan">Șterge</button></div><p class="desc">Doar în acest browser. Nu se scrie în EEPROM, ESP32 sau RTC.</p></div></details>
+  </div></section>
+  <section class="main-section" aria-labelledby="progressHeading"><div class="section-head"><div class="step-head"><span class="index">3</span><h2 id="progressHeading">Progresul simulării</h2></div><small>Calcule pe baza setărilor de mai sus</small></div>
+    <div class="progress-card"><div class="progress-top"><div><div class="eyebrow" id="progressMode">FIX · Temporizat</div><div class="headline" id="progressTitle">Pregătit pentru simulare</div><div class="progress-sub" id="progressText">Fără acces la pompa fizică.</div></div><span class="state off" id="pumpState">POMPĂ OFF</span></div>
+      <div class="error" role="alert" id="validationError" hidden></div>
+      <div class="timeline-wrapper"><div id="timeline" class="timeline" aria-label="Cronologia programului"></div><div id="timelineNeedle" class="needle"></div></div><div class="line-label"><span id="startClock">07:00</span><span id="endClock">07:10</span></div>
+      <div class="legend"><span><i style="background:#79d9b0"></i>ON</span><span><i style="background:#648390"></i>OFF</span><span><i style="background:#d2b87b"></i>Pauză protecție</span></div>
+      <div class="kpis"><div class="kpi"><small>Durata totală</small><b id="durationTotal">—</b></div><div class="kpi"><small>Pompă ON</small><b id="durationOn">—</b></div><div class="kpi"><small>Pauze</small><b id="durationPause">—</b></div></div>
+      <div class="interactive"><label for="scrubber" class="control-label">Derulează timpul</label><input id="scrubber" type="range" min="0" max="1" step="1" value="0" aria-label="Timpul simulat"><div class="line-label"><span id="elapsed">0m 00s</span><span id="remaining">Rămase —</span></div></div>
+      <div class="progress-controls"><button class="primary-btn" id="playSimulation" type="button">▶ Pornește simularea</button><button class="soft-btn" id="restartSimulation" type="button">↺ Reia</button></div>
+      <p class="hint">Simulare accelerată: aproximativ 1 minut virtual pe secundă. Nu pornește releul.</p>
+      <details class="details"><summary>Testează un defect</summary><div class="details-content two"><label class="control-label">Scenariu<select id="faultSelect"><option value="NONE">Funcționare normală</option><option value="LINK">Comunicație pierdută</option><option value="DRY">Lipsă apă</option><option value="BATTERY">Baterie critică</option><option value="RTC">Ceas invalid</option></select></label><label class="control-label">La minutul<input id="faultMinute" type="number" min="0" max="240" step="0.5" value="6" disabled></label></div></details>
+      <details class="details"><summary>Etapele calculate ale simulării</summary><ol class="history" id="eventList"></ol></details>
+    </div>
+  </section><p class="offline-note">Laborator E10 • datele senzorilor sunt introduse manual • fără START/STOP real</p>
+</main>
 
-</style><link rel="stylesheet" href="./e10-ui.css?v=e10-fix-20261102"></head><body><main>
-<h1>Hidrofor — laborator unificat E10</h1>
-<p>Editor ON/OFF, FIX, SMART și ADAPTIVE, comparații și simulare de defecte cu date CLIMATICE SINTETICE. Nu trimite comenzi către ESP32, releu sau hidrofor.</p>
-<p id="e10InitHelp">Dacă laboratorul nu se afișează, verifică permisiunea JavaScript pentru github.io (inclusiv Brave Shields) și reîncarcă pagina. Această pagină nu controlează pompa.</p>
-<div id="e10LabMount"></div></main>
 <script>
+
 /* E10-P1: pure, deterministic OFFLINE sequence dry-run. No hardware, web or storage calls.
  * A visualization/test model of the existing 4-minute safe-segment policy, NOT
  * a replacement for HydroforAutomationEngine or a real ESP-NOW confirmation.
@@ -166,8 +165,10 @@
     normalized,build,stateAt,wallClock});
 });
 
+
 </script>
 <script>
+
 /* E10 integrated offline-only DECISION MODEL.
  * Mirrors the header-only SMART/ADAPTIVE modules, but does not control devices.
  * Treat any calculated eligibility only as a simulated advisory result.
@@ -346,441 +347,274 @@
   return Object.freeze({CLIMATE,statusMessage,validateClimate,smart,adaptive,sequence,decisionText,compare,recordFromOption});
 });
 
-</script>
-<script>
-/* Read-only E10 decision summaries; no network requests or control actions. */
-(function(root,factory){
-  if(typeof module==='object' && module.exports)module.exports=factory();
-  else root.E10ComparisonUI=factory();
-})(typeof globalThis==='object'?globalThis:this,function(){
-  'use strict';
-  const names=['FIX','SMART','ADAPTIVE'];
-  const states=['Decizie','Blocat','START solicitat','START confirmat','Încheiat','Eșuat'];
-  const validUInt=n=>Number.isInteger(n)&&n>=0&&n<=0xffffffff;
-  function minutes(d,name,flag,limit){return d[flag]===true && Number.isInteger(d[name]) && d[name]>=1 && d[name]<=limit ? d[name] : null;}
-  function climate(c){
-    if(!c || c.available!==true || !Number.isInteger(c.temperatureTenths) ||
-       c.temperatureTenths < -400 || c.temperatureTenths > 850 ||
-       !Number.isInteger(c.humidityTenths) || c.humidityTenths<0 || c.humidityTenths>1000 ||
-       !validUInt(c.receptionAgeMs) || typeof c.fresh!=='boolean')return null;
-    return {temperatureC:c.temperatureTenths/10,humidityPct:c.humidityTenths/10,
-      receptionAgeMs:c.receptionAgeMs,fresh:c.fresh};
-  }
-  function normalise(r){
-    if(!r || !r.decision || !validUInt(r.id) || r.id===0)return null;
-    const d=r.decision;
-    // Older records predate durationScope and are always single-run records.
-    const scope=d.durationScope===undefined ? 0 : d.durationScope;
-    if(!Number.isInteger(scope) || ![0,1].includes(scope))return null;
-    if(!Number.isInteger(d.method)||d.method<0||d.method>2||![0,1].includes(d.kind)||
-       typeof d.eligible!=='boolean'||!Number.isInteger(r.state)||r.state<0||r.state>5||!validUInt(d.uptimeMs))return null;
-    if(typeof d.hasBaseMinutes!=='boolean'||typeof d.hasProposedMinutes!=='boolean' ||
-       typeof r.hasRequestTime!=='boolean'||typeof r.hasAckTime!=='boolean'||typeof r.hasFinishTime!=='boolean')return null;
-    const limit=scope===1?240:120;
-    const base=minutes(d,'baseMinutes','hasBaseMinutes',limit), proposed=minutes(d,'proposedMinutes','hasProposedMinutes',limit);
-    if((d.hasBaseMinutes && base===null)||(d.hasProposedMinutes && proposed===null)||(d.eligible && proposed===null)||
-       (base!==null && proposed!==null && proposed>base))return null;
-    if(r.hasRequestTime && (!validUInt(r.requestUptimeMs)||d.kind!==0||!d.eligible))return null;
-    if(r.hasAckTime && (!r.hasRequestTime||!validUInt(r.ackUptimeMs)))return null;
-    if(r.hasFinishTime && !validUInt(r.finishUptimeMs))return null;
-    const chronological=(a,b)=>((a-b)>>>0)<0x80000000;
-    if((r.hasRequestTime&&!chronological(r.requestUptimeMs,d.uptimeMs)) ||
-       (r.hasAckTime&&!chronological(r.ackUptimeMs,r.requestUptimeMs)) ||
-       (r.hasFinishTime&&!chronological(r.finishUptimeMs,r.hasAckTime?r.ackUptimeMs:r.hasRequestTime?r.requestUptimeMs:d.uptimeMs)))return null;
-    if((r.state===0 && (r.hasRequestTime||r.hasAckTime||r.hasFinishTime)) ||
-       (r.state===1 && (r.hasRequestTime||r.hasAckTime)) ||
-       (r.state===2 && (r.hasAckTime||r.hasFinishTime)) ||
-       (r.state===3 && r.hasFinishTime))return null;
-    if((r.state===2 && !r.hasRequestTime)||(r.state===3 && !r.hasAckTime)||
-       (r.state===4 && (!r.hasAckTime||!r.hasFinishTime))||
-       (r.state===5 && (!r.hasRequestTime||!r.hasFinishTime))||
-       (r.state===1 && !r.hasFinishTime))return null;
-    return {id:r.id,method:d.method,kind:d.kind,scope,eligible:d.eligible,state:r.state,
-      base,proposed,requested:r.hasRequestTime,ack:r.hasAckTime,
-      reasonSchema:Number.isInteger(d.reasonSchema)?d.reasonSchema:0,
-      reasonCode:Number.isInteger(d.reasonCode)?d.reasonCode:0,
-      terminalReason:Number.isInteger(r.terminalReason)?r.terminalReason:0,
-      epoch:d.hasEpoch===true&&validUInt(d.epochSeconds)&&d.epochSeconds>0?d.epochSeconds:null,
-      uptimeMs:d.uptimeMs,greenhouse1:climate(d.greenhouse1),greenhouse2:climate(d.greenhouse2),
-      adaptive:(d.hasAdaptiveDetails===true && d.method===2 && Number.isInteger(d.factorPercent) && d.factorPercent>=1 && d.factorPercent<=100 &&
-        [1,2].includes(d.selectedGreenhouse) && ['tempTermPercent','humidityTermPercent','scorePercent'].every(k=>Array.isArray(d[k]) && d[k].length===2 && d[k].every(n=>Number.isInteger(n)&&n>=0&&n<=100))) ?
-        {factor:d.factorPercent,selected:d.selectedGreenhouse,temp:d.tempTermPercent,humidity:d.humidityTermPercent,score:d.scorePercent}:null};
-  }
-  function reasonText(r){
-    const climate=['date disponibile','vârstă maximă invalidă','sera 1 lipsă','sera 2 lipsă','sursă sera 1 neacceptată','sursă sera 2 neacceptată','valori sera 1 invalide','valori sera 2 invalide','sera 1 veche','sera 2 veche'];
-    const families={1:['dezactivat','configurație invalidă','climă indisponibilă','condiție neîndeplinită','eligibil'],2:['dezactivat','profil invalid','climă respinsă','durată calculată'],3:['secvență ajustată','secvență invalidă','profil respins','climă respinsă','total prea mic pentru pașii ON','eroare de calcul']};
-    if(!families[r.reasonSchema])return `cod ${r.reasonSchema}:${r.reasonCode}`;
-    const major=r.reasonCode>>>8,detail=r.reasonCode&255;
-    const text=families[r.reasonSchema][major]??('cod '+major);
-    // Climate status defaults to zero when configuration prevents evaluation.
-    return ((r.reasonSchema===1 || r.reasonSchema===2) && major===2) || (r.reasonSchema===3 && major===3) ? `${text}; ${climate[detail]??('cod climă '+detail)}` : text;
-  }
-  function summarise(payload){
-    if(!payload || payload.available!==true || !Array.isArray(payload.records) || payload.records.length>32)
-      return {available:false};
-    const rows=payload.records.map(normalise),ids=new Map();
-    for(const r of rows)if(r)ids.set(r.id,(ids.get(r.id)||0)+1);
-    const valid=rows.filter(r=>r && ids.get(r.id)===1);
-    const byKind=[0,1].map(kind=>names.map((name,method)=>{
-      const set=valid.filter(r=>r.kind===kind&&r.method===method);
-      const plannedByScope=[0,1].map(scope=>{
-        const plans=set.filter(r=>r.scope===scope && r.eligible && r.proposed!==null).map(r=>r.proposed);
-        const total=plans.length?plans.reduce((a,b)=>a+b,0):null;
-        return {scope,plannedCount:plans.length,plannedTotal:total,plannedAverage:plans.length?total/plans.length:null};
-      });
-      // Existing fields continue to represent only single-run records.
-      const single=plannedByScope[0];
-      return {name,decisions:set.length,eligible:set.filter(r=>r.eligible).length,
-        requested:set.filter(r=>r.requested).length,ack:set.filter(r=>r.ack).length,
-        blocked:set.filter(r=>r.state===1).length,failed:set.filter(r=>r.state===5).length,
-        plannedCount:single.plannedCount,plannedTotal:single.plannedTotal,
-        plannedAverage:single.plannedAverage,plannedByScope};
-    }));
-    return {available:true,rows:valid,invalid:rows.length-valid.length,truncated:payload.truncated===true,byKind};
-  }
-  // Uses DOM text nodes throughout. A caller explicitly supplies a read-only
-  // snapshot; it controls refresh frequency and displays unavailable on failure.
-  function render(container,payload){
-    const doc=container.ownerDocument,stats=summarise(payload);
-    container.replaceChildren();
-    const el=(tag,text,parent)=>{const n=doc.createElement(tag);if(text!==null)n.textContent=text;(parent||container).appendChild(n);return n;};
-    el('h3','Jurnal și comparație E10');
-    if(!stats.available){el('p','Jurnalul E10 este indisponibil. Nu există date de comparat.');return;}
-    el('p','Istoric în RAM, maximum 32 de decizii; se pierde la repornire. Comparația privește doar înregistrările disponibile, nu tot istoricul instalației.');
-    el('p','Metodele pot avea număr și condiții diferite de înregistrare; mediile nu demonstrează eficiența și nu reprezintă neapărat o comparație pe aceleași scenarii.');
-    if(stats.truncated)el('p','Istoricul este parțial: cele mai vechi decizii au fost eliminate.');
-    if(stats.invalid)el('p',stats.invalid+' înregistrări incomplete sau invalide au fost excluse.');
-    el('p','START solicitat este o cerere; START confirmat indică un ACK valid și releu raportat pornit, nu timp măsurat sau volum pompat. Duratele propuse sunt planuri, nu funcționare măsurată.');
-    el('p','Duratele sunt agregate separat: udare simplă sau totalul pașilor ON ai unei secvențe (fără pauze OFF și de protecție).');
-    el('p','Eligibilitatea simulată arată numai rezultatul regulii și nu verifică apa, bateria, releul sau celelalte condiții de pornire.');
-    for(let kind=0;kind<2;kind++){
-      el('h4',kind===0?'Execuții reale':'Simulări — separate de execuții');
-      const table=el('table',null),caption=el('caption','Comparație pe metoda deciziei',table),head=el('thead',null,table),tr=el('tr',null,head);
-      for(const name of ['Metodă','Decizii','Eligibile','START cerut','START confirmat','Blocate','Eșuate','Durată propusă: total / medie / număr'])el('th',name,tr);
-      const body=el('tbody',null,table);
-      for(const v of stats.byKind[kind]){const row=el('tr',null,body);const plan=v.plannedByScope.map((p,i)=>`${i?'total ON secvență':'udare simplă'}: `+(p.plannedCount?`${p.plannedTotal} min / ${p.plannedAverage.toFixed(1)} min / ${p.plannedCount}`:'indisponibil')).join('; ');for(const val of [v.name,v.decisions,v.eligible,v.requested,v.ack,v.blocked,v.failed,plan])el('td',String(val),row);}
-    }
-    el('h4','Decizii recente');
-    if(!stats.rows.length){el('p','Nu există decizii E10 în această sesiune.');return;}
-    const table=el('table',null),head=el('thead',null,table),tr=el('tr',null,head);
-    for(const name of ['ID','Tip','Metodă','Eligibilă','Bază / propus','Stare','Motiv','Calcul adaptiv','Sera 1 aer','Sera 2 aer','Moment'])el('th',name,tr);
-    const body=el('tbody',null,table),showClimate=c=>c?`${c.temperatureC.toFixed(1)} °C, ${c.humidityPct.toFixed(1)}% RH (${c.fresh?'proaspătă':'veche'}, vârstă la decizie ${Math.floor(c.receptionAgeMs/1000)} s)`:'indisponibil';
-    for(const r of stats.rows.slice().reverse()){
-      const row=el('tr',null,body),when=r.epoch!==null?new Date(r.epoch*1000).toISOString():`uptime ${r.uptimeMs} ms`;
-      const a=r.adaptive,detail=a?`factor ${a.factor}%; sera ${a.selected}; T ${a.temp.join('/')}, RH ${a.humidity.join('/')}, scor ${a.score.join('/')}%`:'—';
-      for(const val of [r.id,r.kind?'simulare':'real',names[r.method],r.eligible?'da':'nu',`${r.scope?'total ON secvență':'udare simplă'}: ${r.base??'—'} / ${r.proposed??'—'} min`,states[r.state],reasonText(r)+(r.terminalReason?` / cod final ${r.terminalReason}`:''),detail,showClimate(r.greenhouse1),showClimate(r.greenhouse2),when])el('td',String(val),row);
-    }
-    el('p','Temperatura și umiditatea sunt ale aerului, nu ale solului. Vârsta indică recepția telemetriei, nu momentul măsurării la senzor.');
-  }
-  return {normalise,summarise,reasonText,render};
-});
 
 </script>
 <script>
-/* E10-P1: offline editor + dry run. Intentionally never calls fetch/apiFetch/ESP-NOW.
- * Browser localStorage stores unarmed DRAFTS only, never ESP32 schedule entries.
- */
+/* E10 V3: one selectable control method and one program type.
+   Uses the existing pure E10 DRY-RUN and SMART/ADAPTIVE engines unchanged.
+   Offline-only: no network, relay, scheduler, NVS or ESP32 operations. */
 (() => {
   'use strict';
-  const Engine = window.HidroforSequenceDryRun;
-  const Modes = window.HidroforE10ClimateModes;
-  const ComparisonUI = window.E10ComparisonUI;
-  if (!Engine || !Modes || !ComparisonUI) return;
-  const $ = id => document.getElementById(id);
-  const KEY = 'hidrofor-e10-dryrun-drafts-v1';
-  const MAX_SAVED = 8;
-  const copy = data => JSON.parse(JSON.stringify(data));
-  let records = [], selected = -1, current = copy(Engine.DEFAULT_PLAN), preview = null;
-  let fault = 'NONE';
-  let lastComparison = null;
-  let comparisonRecords = [];
-  let comparisonNextId = 1;
-  const safeText = (node,value) => {if(node) node.textContent=String(value);};
-  const asMinute = n => Math.floor(n/60)+'m '+String(n%60).padStart(2,'0')+'s';
-  const create = (tag,cl,txt) => {const el=document.createElement(tag);if(cl)el.className=cl;if(txt!==undefined)el.textContent=txt;return el;};
-  function notice(msg) {safeText($('e10Message'),msg);}
-  function readSaved() {
-    try {
-      const raw=JSON.parse(localStorage.getItem(KEY)||'[]');
-      if (!Array.isArray(raw)) return [];
-      return raw.slice(0,MAX_SAVED).flatMap(x=>{try{return [Engine.normalized(x)];}catch(_){return [];}});
-    } catch(_) {return [];}
+  const Engine=window.HidroforSequenceDryRun;
+  const Modes=window.HidroforE10ClimateModes;
+  if(!Engine || !Modes){
+    const el=document.getElementById('validationError');
+    if(el){el.hidden=false;el.textContent='Motoarele software ale laboratorului nu s-au încărcat.';}
+    return;
   }
-  function persist() {
-    try {localStorage.setItem(KEY,JSON.stringify(records));return true;}
-    catch(_) {notice('Nu am putut salva în acest browser (spațiu/permisiuni).');return false;}
+  const $=id=>document.getElementById(id);
+  const savedKey='hidrofor-e10-lab-simplu-v3';
+  const baseSeq=[{type:'ON',minutes:10},{type:'OFF',minutes:20},{type:'ON',minutes:30}];
+  const clone=x=>JSON.parse(JSON.stringify(x));
+  const state={mode:'FIX',type:'TIMED',steps:clone(baseSeq),planName:'Udare dimineața',start:'07:00',timedMinutes:10,
+    records:[],selected:'', preview:null,planned:null,option:null,at:0,timer:null,started:false};
+  const fmt=seconds=>Math.floor(seconds/60)+'m '+String(Math.round(seconds%60)).padStart(2,'0')+'s';
+  const fmtClock=seconds=>Engine.wallClock(state.start,seconds);
+  const el=(tag,className,text)=>{const x=document.createElement(tag);if(className)x.className=className;if(text!==undefined)x.textContent=String(text);return x;};
+  function text(id,value){$(id).textContent=String(value);}
+  function num(id){const s=$(id).value.trim();return s===''?NaN:Number(s);}
+  function markError(message){const box=$('validationError');box.textContent=message||'';box.hidden=!message;}
+  function stop(){if(state.timer!==null){clearInterval(state.timer);state.timer=null;}updateButton();}
+  function updateButton(){text('playSimulation',state.timer!==null?'Ⅱ Pauză simularea':state.preview&&state.at>=state.preview.totalSeconds?'↺ Pornește din nou':'▶ Pornește simularea');$('playSimulation').disabled=!state.preview;}
+  function makePlan(){
+    return Engine.normalized({version:1,name:state.planName,start:state.start,
+      steps:state.type==='TIMED'?[{type:'ON',minutes:state.timedMinutes}]:clone(state.steps)});
   }
-  function updateSelect() {
-    const el=$('e10Saved');if(!el)return;
-    el.replaceChildren();el.append(new Option('Program nou / nesalvat','-1'));
-    records.forEach((r,i)=>el.append(new Option(r.name+' · '+r.start,String(i))));
-    el.value=String(selected);
+  function climateConfig(){
+    const nowMs=1_000_000,maxAgeMs=num('maxAge')*1000;
+    function greenhouse(prefix,source){
+      const st=$(prefix+'state').value;
+      return {source,present:st!=='missing',online:st!=='missing',acceptedProvenance:st!=='untrusted',
+        temperatureC:num(prefix+'t'),humidityPercent:num(prefix+'h'),
+        climateReceivedMs:nowMs-(st==='stale'?maxAgeMs+5_000:1000)};
+    }
+    const thresholds=()=>({temperatureConfigured:true,humidityConfigured:true,temperatureAtLeastC:num('smartT'),humidityAtMostPercent:num('smartH')});
+    return {pair:{sera1:greenhouse('s1',1),sera2:greenhouse('s2',2)},nowMs,maxAgeMs,
+      smart:{enabled:true,configured:true,combine:num('smartCombine'),maxAgeMs,sera1:thresholds(),sera2:thresholds()},
+      adaptive:{enabled:true,configured:true,baseMinutes:20,maxAgeMs,minFactorPercent:num('minFactor'),
+        lowTemperatureSet:true,highTemperatureSet:true,lowHumiditySet:true,highHumiditySet:true,
+        lowTemperatureC:num('lowT'),highTemperatureC:num('highT'),lowHumidityPercent:num('lowH'),highHumidityPercent:num('highH')}};
   }
-  function refreshEditor() {
-    $('e10Name').value=current.name;
-    $('e10Start').value=current.start;
-    const host=$('e10Steps');host.replaceChildren();
-    current.steps.forEach((s,i)=>{
-      const row=create('div','e10-step');
-      const mode=create('label','',`Pas ${i+1} · Stare`);
-      const select=create('select');select.setAttribute('aria-label',`Starea pasului ${i+1}`);
-      ['ON','OFF'].forEach(k=>select.append(new Option(k==='ON'?'Pompă ON':'Pompă OFF',k)));
-      select.value=s.type;select.addEventListener('change',()=>{s.type=select.value;renderPreview();});mode.append(select);
-      const duration=create('label','','Minute');const input=create('input');
-      input.type='number';input.min='1';input.max='120';input.step='1';input.value=s.minutes;
-      input.setAttribute('aria-label',`Durata pasului ${i+1}`);
-      input.addEventListener('change',()=>{s.minutes=Number(input.value);renderPreview();});duration.append(input);
-      const actions=create('div','e10-step-actions');
-      [[`↑`,`Mută pasul ${i+1} în sus`,-1],[`↓`,`Mută pasul ${i+1} în jos`,1],[`×`,`Șterge pasul ${i+1}`,0]].forEach(([label,alt,move])=>{
-        const btn=create('button','',label);btn.type='button';btn.setAttribute('aria-label',alt);
-        btn.disabled=move===-1&&i===0 || move===1&&i===current.steps.length-1;
-        btn.addEventListener('click',()=>{
-          if(move===0) current.steps.splice(i,1);
-          else [current.steps[i],current.steps[i+move]]=[current.steps[i+move],current.steps[i]];
-          refreshEditor();renderPreview();
-        });actions.append(btn);
+  function refreshMode(){
+    document.querySelectorAll('[data-mode]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===state.mode)));
+    $('climatePanel').hidden=state.mode==='FIX';
+    $('smartOptions').hidden=state.mode!=='SMART';
+    $('adaptiveOptions').hidden=state.mode!=='ADAPTIVE';
+    $('adaptiveAdvanced').hidden=state.mode!=='ADAPTIVE';
+    text('modeHint',({FIX:'FIX · Execută durata sau pașii pe care i-ai stabilit.',SMART:'SMART · Verifică datele ambelor sere înainte să permită programul.',ADAPTIVE:'ADAPTIVE · Ajustează minutele ON în funcție de temperatură și umiditate.'})[state.mode]);
+    for(const prefix of ['s1','s2']){
+      const st=$(prefix+'state').value,health=$(prefix+'status');
+      const reasons={ok:'● Date de test valide',missing:'● Sera indisponibilă',stale:'● Date expirate',untrusted:'● Sursă neverificată'};
+      health.textContent=reasons[st];health.dataset.healthy=String(st==='ok');
+    }
+  }
+  function refreshType(){
+    document.querySelectorAll('[data-type]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.type===state.type)));
+    $('timedEditor').hidden=state.type!=='TIMED';$('sequenceEditor').hidden=state.type!=='SEQUENCE';
+  }
+  function renderSteps(){
+    const host=$('stepRows');host.replaceChildren();
+    state.steps.forEach((step,index)=>{
+      const row=el('div','step');row.dataset.kind=step.type;
+      const marker=el('span','step-marker',String(index+1));
+      const sel=el('select');sel.setAttribute('aria-label','Starea pasului '+(index+1));
+      for(const type of ['ON','OFF']){const opt=new Option(type==='ON'?'Pompa pornește':'Pompa se oprește',type);sel.append(opt);}sel.value=step.type;
+      sel.addEventListener('change',()=>{
+        const draft=clone(state.steps);draft[index].type=sel.value;
+        if(index>0&&draft[index-1].type===draft[index].type || index+1<draft.length&&draft[index+1].type===draft[index].type || !draft.some(s=>s.type==='ON')){
+          sel.value=state.steps[index].type;markError('Pașii trebuie să alterneze ON și OFF, cu cel puțin un ON.');return;
+        }
+        state.steps=draft;renderSteps();recompute();
       });
-      row.append(mode,duration,actions);host.append(row);
+      const inp=el('input');inp.type='number';inp.min='1';inp.max='120';inp.step='1';inp.value=String(step.minutes);
+      inp.setAttribute('aria-label','Minutele pasului '+(index+1));
+      inp.addEventListener('change',()=>{state.steps[index].minutes=inp.value.trim()===''?NaN:Number(inp.value);recompute();});
+      const controls=el('div','step-controls');
+      for(const [action,display,label] of [['delete','×','Șterge']]){
+        const b=el('button','',display);b.type='button';b.setAttribute('aria-label',label+' pasul '+(index+1));
+        const copy=clone(state.steps);
+        if(action==='up'&&index>0)[copy[index-1],copy[index]]=[copy[index],copy[index-1]];
+        if(action==='down'&&index<copy.length-1)[copy[index+1],copy[index]]=[copy[index],copy[index+1]];
+        if(action==='delete')copy.splice(index,1);
+        const valid=copy.length>0&&copy.some(x=>x.type==='ON')&&copy.every((x,i)=>i===0||x.type!==copy[i-1].type);
+        b.disabled=action==='up'&&index===0||action==='down'&&index===state.steps.length-1||!valid;
+        b.addEventListener('click',()=>{state.steps=copy;renderSteps();recompute();});
+        controls.append(b);
+      }
+      row.append(marker,sel,inp,controls);host.append(row);
     });
+    $('addOn').disabled=state.steps.length>=16||state.steps.at(-1)?.type==='ON';
+    $('addOff').disabled=state.steps.length>=16||state.steps.at(-1)?.type==='OFF';
   }
-  function minutesOf(t) {return Math.round(t/60*10)/10;}
-
-  // All values in this form are SYNTHETIC. These are NEVER automatically loaded
-  // from the greenhouse telemetry and are never eligible for a real START.
-  function readClimateForm() {
-    const val=id=>$(id).value.trim()===''?NaN:Number($(id).value);
-    const maxAgeMs=val('e10MaxAge')*1000,nowMs=1_000_000;
-    const make=(source,prefix)=>({
-      source,present:!$(prefix+'Missing').checked,online:!$(prefix+'Missing').checked,
-      acceptedProvenance:!$(prefix+'Untrusted').checked,
-      temperatureC:val(prefix+'Temp'),humidityPercent:val(prefix+'Rh'),
-      climateReceivedMs:nowMs-($(prefix+'Stale').checked?maxAgeMs+5000:1000)
-    });
-    const pair={sera1:make(1,'e10S1'),sera2:make(2,'e10S2')};
-    const threshold=prefix=>({temperatureConfigured:true,humidityConfigured:true,
-      temperatureAtLeastC:val(prefix+'MinTemp'),humidityAtMostPercent:val(prefix+'MaxRh')});
-    const smart={enabled:true,configured:true,maxAgeMs,
-      combine:val('e10Combine'),sera1:threshold('e10S1'),sera2:threshold('e10S2')};
-    const adaptive={enabled:true,configured:true,baseMinutes:20,
-      maxAgeMs,minFactorPercent:val('e10MinFactor'),
-      lowTemperatureSet:true,highTemperatureSet:true,lowHumiditySet:true,highHumiditySet:true,
-      lowTemperatureC:val('e10TempLow'),highTemperatureC:val('e10TempHigh'),
-      lowHumidityPercent:val('e10RhLow'),highHumidityPercent:val('e10RhHigh')};
-    return {pair,nowMs,maxAgeMs,smart,adaptive};
+  function displayEmpty(reason,block=false){
+    state.preview=null;state.planned=null;state.option=null;
+    $('timeline').replaceChildren();$('eventList').replaceChildren();
+    text('durationTotal','—');text('durationOn','—');text('durationPause','—');
+    text('progressTitle',block?'Program blocat':'Verifică programul');
+    text('progressText',block?'Nu se pornește nicio simulare.': 'Corectează valorile de mai sus.');
+    const badge=$('pumpState');badge.textContent=block?'BLOCAT':'POMPĂ OFF';badge.className='state '+(block?'blocked':'off');
+    text('elapsed','0m 00s');text('remaining','—');text('startClock',state.start||'—');text('endClock','—');
+    $('scrubber').disabled=true;$('scrubber').value='0';$('timelineNeedle').style.left='0%';
+    if(reason)markError(reason);updateButton();
   }
-  function renderDecisions(plan) {
-    const climate=readClimateForm();
-    const evaluation=Modes.compare(plan,climate.pair,climate.nowMs,
-      climate.smart,climate.adaptive,Engine);
-    lastComparison={evaluation,climate};
-    const table=$('e10DecisionTable');table.replaceChildren();
-    const head=create('thead'),hrow=create('tr');
-    ['Metodă','Stare','Total ON','Durată totală','Motiv'].forEach(v=>hrow.append(create('th','',v)));
-    head.append(hrow);table.append(head);
-    const body=create('tbody');
-    evaluation.options.forEach(op=>{
-      const tr=create('tr');
-      const cells=[op.method,op.eligible?'Eligibilă (simulare)':'BLOCATĂ',
-        op.result?asMinute(op.result.pumpSeconds):'—',
-        op.result?asMinute(op.result.totalSeconds):'—',op.reason];
-      cells.forEach(v=>tr.append(create('td','',v)));
-      body.append(tr);
-    });
-    table.append(body);
-    const a=evaluation.options[2];
-    safeText($('e10DecisionNote'),a.eligible ?
-      `ADAPTIVE: ${a.calculation.factorPercent}% din totalul ON (${evaluation.totalOn} min), `+
-      `cu repartizare între pașii ON; pauzele OFF rămân neschimbate. `+
-      `Sera de referință: ${a.calculation.climateDetails.selectedGreenhouse}.` :
-      'ADAPTIVE indisponibilă: '+a.reason+'. Datele sunt introduse manual pentru SIMULARE.');
-    const mode=$('e10Strategy').value;
-    const chosen=evaluation.options.find(op=>op.method===mode);
-    if(!chosen?.eligible)throw new Error(mode+' blocat în simulare: '+(chosen?.reason||'date invalide'));
-    return chosen.plan;
+  function recompute(){
+    stop();state.at=0;state.started=false;markError('');
+    text('progressMode',state.mode+' · '+(state.type==='TIMED'?'Temporizat':'Secvențial'));
+    let plan,chosen,climate;
+    try{
+      plan=makePlan();climate=climateConfig();
+      // The exact original E10 decision engine remains the SINGLE source of truth.
+      const evaluation=Modes.compare(plan,climate.pair,climate.nowMs,climate.smart,climate.adaptive,Engine);
+      chosen=evaluation.options.find(op=>op.method===state.mode);
+      if(!chosen)throw new Error('Metodă necunoscută.');
+      state.option=chosen;
+      if(!chosen.eligible){
+        text('adaptiveScore','Ajustare indisponibilă');
+        displayEmpty(chosen.reason,true);return;
+      }
+      state.planned=chosen.plan;
+      let preview=chosen.result;
+      const fault=$('faultSelect').value;
+      if(fault!=='NONE'){
+        const t=num('faultMinute');
+        if(!Number.isFinite(t)||t<0||t*2!==Math.round(t*2))throw new Error('Momentul defectului trebuie să fie multiplu de 0,5 minute.');
+        preview=Engine.build(chosen.plan,{faultType:fault,faultAtSeconds:Math.round(t*60)});
+      }
+      state.preview=preview;
+      if(state.mode==='ADAPTIVE'){
+        const c=chosen.calculation;
+        text('adaptiveScore',`Durata ON: ${fmt(evaluation.original.pumpSeconds)} → ${fmt(chosen.result.pumpSeconds)}`);
+        text('adaptiveExplanation',`Factor ${c.factorPercent}% · Sera de referință ${c.climateDetails.selectedGreenhouse}. Pauzele OFF rămân neschimbate.`);
+      }
+      $('scrubber').max=String(preview.totalSeconds);$('scrubber').step='1';$('scrubber').value='0';$('scrubber').disabled=false;
+      const timeline=$('timeline');timeline.replaceChildren();
+      for(const segment of preview.segments){
+        const bar=el('span','segment '+segment.state.toLowerCase());
+        bar.style.width=(preview.totalSeconds?(segment.to-segment.from)/preview.totalSeconds*100:0)+'%';
+        bar.title=`Pas ${segment.step} · ${segment.state} · ${fmt(segment.to-segment.from)}`;
+        timeline.append(bar);
+      }
+      text('durationTotal',fmt(preview.totalSeconds));text('durationOn',fmt(preview.pumpSeconds));
+      text('durationPause',fmt(preview.offSeconds+preview.restSeconds));
+      text('startClock',fmtClock(0));text('endClock',fmtClock(preview.totalSeconds));
+      const history=$('eventList');history.replaceChildren();
+      for(const seg of preview.segments){
+        const label=seg.state==='ON'?'Pompă ON':seg.state==='OFF'?'Pauză programată':'Pauză de protecție';
+        const li=el('li','',`${fmtClock(seg.from)} – ${fmtClock(seg.to)} · ${label} · ${fmt(seg.to-seg.from)} (pas ${seg.step})`);
+        history.append(li);
+      }
+      if(preview.fault)history.append(el('li','',preview.event.message));
+      updateProgress();updateButton();
+    }catch(e){displayEmpty(e.message,false);}
   }
-  function recordComparison() {
-    if(!lastComparison){notice('Corectează întâi editorul sau datele pentru comparație.');return;}
-    for(const op of lastComparison.evaluation.options){
-      comparisonRecords.push(Modes.recordFromOption(op,comparisonNextId++,lastComparison.climate.pair,
-        lastComparison.climate.nowMs,lastComparison.climate.maxAgeMs));
+  function updateProgress(){
+    const p=state.preview;if(!p)return;
+    const t=Math.max(0,Math.min(p.totalSeconds,state.at));state.at=t;
+    const cur=Engine.stateAt(p,t);
+    const label=cur.state==='ON'?'POMPĂ ON':cur.state==='REST'?'PAUZĂ PROTECȚIE':cur.state==='OFF'?'POMPĂ OFF':cur.state==='FAULT'?'DEFECT':'FINALIZAT';
+    const badge=$('pumpState');badge.className='state '+({ON:'',REST:'rest',OFF:'off',FAULT:'fault',DONE:'done'})[cur.state];badge.textContent=label;
+    const done=cur.state==='DONE',fault=cur.state==='FAULT';
+    if(!state.started){
+      badge.className='state off';badge.textContent='PREGĂTIT';
+      text('progressTitle','Program pregătit');
+      text('progressText',`Urmează pasul ${cur.step||1} la ${fmtClock(0)}. Apasă Pornește simularea.`);
+    }else{
+      text('progressTitle',done?'Program încheiat':fault?'Program întrerupt':`Pas ${cur.step||'—'} · ${cur.state==='ON'?'Udare':cur.state==='REST'?'Pauză de protecție':'Așteptare'}`);
+      text('progressText',fault?cur.detail:done?'Pompa este oprită în simulare.':`${fmtClock(t)} · ${cur.detail}`);
     }
-    if(comparisonRecords.length>32)comparisonRecords=comparisonRecords.slice(-32);
-    const output=$('e10ReadOnlyJournal');
-    ComparisonUI.render(output,{available:true,truncated:comparisonNextId>33,records:comparisonRecords});
-    notice('Trei DECIZII SIMULATE adăugate în jurnalul RAM al browserului. Zero START reale.');
+    text('elapsed',fmt(t)+' / '+fmt(p.totalSeconds));text('remaining','Rămase '+fmt(p.totalSeconds-t));
+    $('scrubber').value=String(t);$('timelineNeedle').style.left=(p.totalSeconds?t/p.totalSeconds*100:0)+'%';
+    if(t>=p.totalSeconds)stop();
   }
-  function renderPreview() {
-    lastComparison=null;
-    const title=$('e10Name').value;
-    current.name=title;
-    current.start=$('e10Start').value;
-    const rawFaultAt=$('e10FaultMinute').value.trim();
-    let result;
-    try {
-      const safePlan=Engine.normalized(current);
-      // FIX / SMART / ADAPTIVE select the SAME sequence editor and simulator.
-      // Only the proposed ON steps may change. No API/control call here.
-      const selectedPlan=renderDecisions(safePlan);
-      const base=Engine.build(selectedPlan);
-      if(fault!=='NONE') {
-        const n=Number(rawFaultAt);
-        if(rawFaultAt==='' || !Number.isFinite(n) || n<0 || !Number.isInteger(n*2)) throw new Error('Momentul defectului trebuie să fie în multipli de 0,5 minute.');
-        const seconds=Math.round(n*60);
-        result=Engine.build(selectedPlan,{faultAtSeconds:seconds,faultType:fault});
-      } else result=base;
-      preview=result;
-      safeText($('e10Message'),'');
-    } catch(e){
-      preview=null;
-      safeText($('e10Message'),e.message);
-      $('e10Summary').replaceChildren();$('e10Timeline').replaceChildren();
-      safeText($('e10Now'),'Corectează programul pentru simulare.');
-      $('e10Scrub').disabled=true;$('e10History').replaceChildren();return;
+  function startStop(){
+    if(!state.preview)return;
+    if(state.timer!==null){stop();return;}
+    if(state.at>=state.preview.totalSeconds)state.at=0;
+    state.started=true;
+    state.timer=setInterval(()=>{
+      if(!state.preview){stop();return;}
+      state.at=Math.min(state.preview.totalSeconds,state.at+15);updateProgress();
+    },250);
+    updateButton();updateProgress();
+  }
+  function clearForm(){
+    stop();state.selected='';state.mode='FIX';state.type='TIMED';state.steps=clone(baseSeq);
+    state.planName='Udare dimineața';state.start='07:00';state.timedMinutes=10;
+    $('planName').value=state.planName;$('planTime').value=state.start;$('timedMinutes').value='10';
+    $('savedPlans').value='';refreshType();refreshMode();renderSteps();recompute();
+  }
+  function safeRead(){
+    try{
+      const existing=JSON.parse(localStorage.getItem(savedKey)||'[]');
+      const valid=x=>x&&typeof x.id==='string'&&['FIX','SMART','ADAPTIVE'].includes(x.mode)&&['TIMED','SEQUENCE'].includes(x.type)&&x.plan&&Array.isArray(x.plan.steps);
+      if(Array.isArray(existing)&&existing.length)return existing.filter(valid).slice(0,8);
+      // Migrate pre-redesign E10 browser drafts without changing or deleting them.
+      const old=JSON.parse(localStorage.getItem('hidrofor-e10-dryrun-drafts-v1')||'[]');
+      if(Array.isArray(old))return old.slice(0,8).flatMap((item,i)=>{
+        try{const plan=Engine.normalized(item);return [{id:'legacy-'+i,mode:'FIX',type:'SEQUENCE',plan,sequence:clone(plan.steps),timedMinutes:plan.steps.find(x=>x.type==='ON')?.minutes||10}];}
+        catch(_){return [];}
+      });
+    }catch(_){}
+    return [];
+  }
+  function showSaved(){
+    const sel=$('savedPlans');sel.replaceChildren(new Option('Selectează un program',''));
+    for(const record of state.records)sel.append(new Option(record.plan.name+' · '+record.mode+' · '+(record.type==='TIMED'?'Temporizat':'Secvențial'),record.id));
+    sel.value=state.selected;
+  }
+  function save(){
+    let plan;try{plan=makePlan();}catch(e){markError(e.message);return;}
+    const record={id:state.selected||String(Date.now())+'-'+Math.random().toString(36).slice(2,8),
+      mode:state.mode,type:state.type,plan,timedMinutes:state.timedMinutes,sequence:clone(state.steps)};
+    let records=state.records.slice();
+    if(state.selected){const i=records.findIndex(x=>x.id===state.selected);if(i>=0)records[i]=record;else records.push(record);}
+    else {if(records.length>=8){markError('Sunt permise cel mult 8 schițe. Șterge una înainte să salvezi.');return;}records.push(record);}
+    try{localStorage.setItem(savedKey,JSON.stringify(records));}catch(e){markError('Browserul nu permite salvarea locală.');return;}
+    state.records=records;state.selected=record.id;showSaved();markError('');
+    $('savePlan').textContent='✓ Schiță salvată';setTimeout(()=>{$('savePlan').textContent='Salvează schița';},1200);
+  }
+  function load(){
+    const selected=$('savedPlans').value;if(!selected){state.selected='';return;}
+    const record=state.records.find(x=>x.id===selected);if(!record)return;
+    try{
+      const normalized=Engine.normalized(record.plan);
+      state.selected=record.id;state.mode=record.mode;state.type=record.type;
+      state.planName=normalized.name;state.start=normalized.start;
+      state.steps=record.sequence&&Array.isArray(record.sequence)?clone(record.sequence):clone(normalized.steps);
+      state.timedMinutes=record.timedMinutes||normalized.steps.find(s=>s.type==='ON')?.minutes||10;
+      $('planName').value=state.planName;$('planTime').value=state.start;$('timedMinutes').value=String(state.timedMinutes);
+      refreshType();refreshMode();renderSteps();recompute();
+    }catch(e){markError('Schița salvată nu mai are un format valid.');}
+  }
+  function removeSaved(){
+    if(!state.selected){markError('Selectează mai întâi o schiță.');return;}
+    const rows=state.records.filter(x=>x.id!==state.selected);
+    try{localStorage.setItem(savedKey,JSON.stringify(rows));}catch(e){markError('Nu se poate modifica memoria locală.');return;}
+    state.records=rows;state.selected='';showSaved();markError('');
+  }
+  function init(){
+    state.records=safeRead();showSaved();
+    document.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click',()=>{state.mode=b.dataset.mode;refreshMode();recompute();}));
+    document.querySelectorAll('[data-type]').forEach(b=>b.addEventListener('click',()=>{state.type=b.dataset.type;refreshType();recompute();}));
+    $('planName').addEventListener('input',()=>{state.planName=$('planName').value;recompute();});
+    $('planTime').addEventListener('change',()=>{state.start=$('planTime').value;recompute();});
+    $('timedMinutes').addEventListener('input',()=>{const v=$('timedMinutes').value.trim();state.timedMinutes=v===''?NaN:Number(v);recompute();});
+    for(const key of ['s1t','s1h','s2t','s2h','s1state','s2state','smartT','smartH','smartCombine','maxAge','minFactor','lowT','highT','lowH','highH']){
+      $(key).addEventListener('input',()=>{refreshMode();recompute();});$(key).addEventListener('change',()=>{refreshMode();recompute();});
     }
-    const details=[
-      ['Durată totală',asMinute(preview.totalSeconds)],
-      ['Pompă ON',asMinute(preview.pumpSeconds)],
-      ['Pauze programate',asMinute(preview.offSeconds)],
-      ['Pauze de protecție',asMinute(preview.restSeconds)],
-      ['Final',Engine.wallClock(preview.plan.start,preview.totalSeconds)]
-    ];
-    const summary=$('e10Summary');summary.replaceChildren();
-    details.forEach(([k,v])=>summary.append(create('span','',k+': '+v)));
-    const track=$('e10Timeline');track.replaceChildren();
-    preview.segments.forEach(segment=>{
-      const width=preview.totalSeconds ? (segment.to-segment.from)/preview.totalSeconds*100 : 0;
-      const bar=create('div','e10-'+segment.state.toLowerCase());
-      bar.style.width=width+'%';bar.title=`Pas ${segment.step}: ${segment.state} ${asMinute(segment.to-segment.from)}`;
-      track.append(bar);
-    });
-    $('e10Scrub').disabled=false;
-    $('e10Scrub').max=String(preview.totalSeconds);
-    $('e10Scrub').step='30';
-    $('e10Scrub').value='0';
-    const history=$('e10History');history.replaceChildren();
-    preview.segments.forEach((s,i)=>{
-      if(i>=50)return;
-      history.append(create('li','',Engine.wallClock(preview.plan.start,s.from)+
-        ' · Pas '+s.step+' · '+s.state+' ('+asMinute(s.to-s.from)+')'));
-    });
-    if(preview.segments.length>50)history.append(create('li','','... '+(preview.segments.length-50)+' tranziții suplimentare'));
-    if(preview.fault)history.append(create('li','',preview.event.message));
-    scrub();
+    $('addOn').addEventListener('click',()=>{state.steps.push({type:'ON',minutes:4});renderSteps();recompute();});
+    $('addOff').addEventListener('click',()=>{state.steps.push({type:'OFF',minutes:10});renderSteps();recompute();});
+    $('resetSeq').addEventListener('click',()=>{state.steps=clone(baseSeq);renderSteps();recompute();});
+    $('faultSelect').addEventListener('change',()=>{$('faultMinute').disabled=$('faultSelect').value==='NONE';recompute();});
+    $('faultMinute').addEventListener('input',recompute);
+    $('scrubber').addEventListener('input',()=>{stop();state.started=true;state.at=Number($('scrubber').value);updateProgress();});
+    $('playSimulation').addEventListener('click',startStop);
+    $('restartSimulation').addEventListener('click',()=>{stop();state.at=0;state.started=false;updateProgress();});
+    $('savePlan').addEventListener('click',save);$('newPlan').addEventListener('click',clearForm);
+    $('savedPlans').addEventListener('change',load);$('deletePlan').addEventListener('click',removeSaved);
+    refreshType();refreshMode();renderSteps();recompute();
   }
-  function scrub() {
-    if(!preview) return;
-    const t=Number($('e10Scrub').value)||0;
-    const state=Engine.stateAt(preview,t);
-    const label={ON:'POMPĂ ON (simulat)',OFF:'POMPĂ OFF (program)',REST:'POMPĂ OFF (protecție)',DONE:'FINALIZAT',FAULT:'DEFECT — OPRIT'};
-    safeText($('e10Now'),Engine.wallClock(preview.plan.start,t)+': '+(label[state.state]||state.state)+
-      (state.step?' · pasul '+state.step:'')+' · '+state.detail);
-    safeText($('e10Elapsed'),asMinute(t)+' / '+asMinute(preview.totalSeconds));
-  }
-  function init() {
-    const anchor=$('autoControlSection') || $('e10LabMount');
-    if(!anchor || $('e10LabButton'))return;
-    records=readSaved();
-    const button=create('button','','Laborator secvențe · simulare');button.id='e10LabButton';button.type='button';
-    // Important: not a real Start/Stop button. No API paths are used by this feature.
-    const actions=$('r18QuickAdd')?.parentElement || anchor;
-    actions.append(button);
-    const modal=create('dialog');modal.id='e10LabDialog';modal.setAttribute('aria-labelledby','e10Title');
-    modal.innerHTML=`
-      <header><div><h2 id="e10Title">Laborator de secvențe</h2><small>E10 UNIFICAT · FIX / SMART / ADAPTIVE · fără START real</small></div><button class="e10-close" id="e10Close" type="button" aria-label="Închide">×</button></header>
-      <div class="e10-body">
-        <div class="e10-safe"><strong>SIMULARE OFFLINE.</strong> Nu comandă releul, nu salvează în ESP32, nu programează RTC. Programele sunt schițe locale, numai în acest browser. Protecția reală necesită confirmări hardware.</div>
-        <label>Programe salvate în acest browser<select id="e10Saved"></select></label>
-        <div class="e10-controls"><button type="button" id="e10New">Program nou</button><button type="button" id="e10Save" class="e10-primary">Salvează schița local</button><button type="button" id="e10Delete" class="e10-danger">Șterge schița</button></div>
-        <h3>Editor de pași</h3><div class="e10-fields"><label>Nume<input id="e10Name" type="text" maxlength="60" autocomplete="off"></label><label>Ora ipotetică<input id="e10Start" type="time"></label></div>
-        <div id="e10Steps" class="e10-steps" style="margin-top:12px"></div>
-        <div class="e10-controls"><button type="button" id="e10AddOn">+ Pas ON</button><button type="button" id="e10AddOff">+ Pas OFF</button><button type="button" id="e10Reset">Revenire la exemplu</button></div>
-        <div class="e10-info">Pe fiecare interval ON, simulăm segmente de maximum 4 minute și 30 secunde de pauză între segmente; protecția reală de 5 minute rămâne neschimbată. Pauzele suplimentare schimbă durata totală.</div>
-        <h3>Metode de control — numai simulare</h3>
-        <p class="e10-info"><strong>Date sintetice introduse manual.</strong> Temperatura și umiditatea sunt ale AERULUI; nu dovedesc umiditatea solului. Valorile sunt exemple de test, NU recomandări de udare. Nicio metodă nu poate arma sau porni pompa.</p>
-        <label>Strategia afișată pe cronologie<select id="e10Strategy" data-e10-climate><option value="FIX">FIX — secvența originală</option><option value="SMART">SMART — pornește doar dacă regula este îndeplinită</option><option value="ADAPTIVE">ADAPTIVE — ajustează totalul ON</option></select></label>
-        <div class="e10-climate-grid">
-          <fieldset><legend>Sera 1 · aer simulat</legend>
-            <label>Temperatură °C<input id="e10S1Temp" type="number" min="-40" max="85" step="0.1" value="30" data-e10-climate></label>
-            <label>Umiditate relativă %<input id="e10S1Rh" type="number" min="0" max="100" step="0.1" value="40" data-e10-climate></label>
-            <label>SMART: temperatură cel puțin °C<input id="e10S1MinTemp" type="number" min="-40" max="85" step="0.1" value="28" data-e10-climate></label>
-            <label>SMART: umiditate cel mult %<input id="e10S1MaxRh" type="number" min="0" max="100" step="0.1" value="45" data-e10-climate></label>
-            <label class="e10-check"><input id="e10S1Missing" type="checkbox" data-e10-climate> Nod lipsă</label>
-            <label class="e10-check"><input id="e10S1Stale" type="checkbox" data-e10-climate> Date expirate</label>
-            <label class="e10-check"><input id="e10S1Untrusted" type="checkbox" data-e10-climate> Sursă respinsă</label>
-          </fieldset>
-          <fieldset><legend>Sera 2 · aer simulat</legend>
-            <label>Temperatură °C<input id="e10S2Temp" type="number" min="-40" max="85" step="0.1" value="32" data-e10-climate></label>
-            <label>Umiditate relativă %<input id="e10S2Rh" type="number" min="0" max="100" step="0.1" value="38" data-e10-climate></label>
-            <label>SMART: temperatură cel puțin °C<input id="e10S2MinTemp" type="number" min="-40" max="85" step="0.1" value="28" data-e10-climate></label>
-            <label>SMART: umiditate cel mult %<input id="e10S2MaxRh" type="number" min="0" max="100" step="0.1" value="45" data-e10-climate></label>
-            <label class="e10-check"><input id="e10S2Missing" type="checkbox" data-e10-climate> Nod lipsă</label>
-            <label class="e10-check"><input id="e10S2Stale" type="checkbox" data-e10-climate> Date expirate</label>
-            <label class="e10-check"><input id="e10S2Untrusted" type="checkbox" data-e10-climate> Sursă respinsă</label>
-          </fieldset>
-        </div>
-        <div class="e10-climate-grid">
-          <fieldset><legend>Regula SMART</legend>
-            <label>Condiția serelor<select id="e10Combine" data-e10-climate><option value="2">AMBELE sere</option><option value="1">Cel puțin UNA</option></select></label>
-            <label>Prospețime maximă, secunde<input id="e10MaxAge" type="number" min="1" max="5400" step="1" value="120" data-e10-climate></label>
-            <p class="e10-info">Chiar în modul UNA, datele ambelor sere trebuie să fie valide și recente.</p>
-          </fieldset>
-          <fieldset><legend>Profilul ADAPTIVE</legend>
-            <label>Factor minim %<input id="e10MinFactor" type="number" min="1" max="100" value="50" data-e10-climate></label>
-            <label>Prag temperatură joasă / înaltă °C<div class="e10-pair"><input id="e10TempLow" type="number" min="-40" max="85" value="15" step="0.1" data-e10-climate><input id="e10TempHigh" type="number" min="-40" max="85" value="35" step="0.1" data-e10-climate></div></label>
-            <label>Prag umiditate joasă / înaltă %<div class="e10-pair"><input id="e10RhLow" type="number" min="0" max="100" value="30" step="0.1" data-e10-climate><input id="e10RhHigh" type="number" min="0" max="100" value="70" step="0.1" data-e10-climate></div></label>
-            <p class="e10-info">Ajustează numai totalul minutelor ON, proporțional cu factorul. Pauzele OFF rămân identice.</p>
-          </fieldset>
-        </div>
-        <h3>Comparație FIX / SMART / ADAPTIVE</h3>
-        <div class="e10-table-wrap"><table id="e10DecisionTable" class="e10-decision-table" aria-label="Comparație între metode"></table></div>
-        <p class="e10-info" id="e10DecisionNote"></p>
-        <div class="e10-controls"><button id="e10RecordCompare" type="button">Adaugă comparația în jurnalul simulat</button></div>
-        <details class="e10-comparison-details"><summary>Jurnal comparativ simulat (RAM browser)</summary><div id="e10ReadOnlyJournal" class="e10-table-wrap"></div></details>
-        <h3>Simulare și defecte</h3><div class="e10-fields"><label>Scenariu<select id="e10Fault"><option value="NONE">Normal — fără defect</option><option value="LINK">Pierderea comunicației</option><option value="DRY">Lipsă apă</option><option value="BATTERY">Baterie critică</option><option value="RTC">Ceas RTC invalid</option></select></label><label>Defect la minutul<input id="e10FaultMinute" type="number" min="0" max="240" step="0.5" value="6" disabled></label></div>
-        <div id="e10Message" class="e10-error" role="alert"></div><div id="e10Summary" class="e10-summary"></div>
-        <div id="e10Timeline" class="e10-timeline" aria-label="Cronologie simulată"></div><div class="e10-legend"><span><i class="e10-dot"></i>ON</span><span><i class="e10-dot" style="background:#66808b"></i>OFF</span><span><i class="e10-dot" style="background:#d0ae72"></i>Pauză protecție</span></div>
-        <div class="e10-current" id="e10Now" role="status"></div><label>Derulează timpul<input id="e10Scrub" class="e10-time" type="range" min="0" max="3600" step="30" value="0"></label><div id="e10Elapsed" class="e10-info"></div>
-        <h3>Jurnal simulat</h3><ol id="e10History" class="e10-history"></ol>
-        <p class="e10-info">Aceasta este o previzualizare deterministă a profilului dorit și a segmentării, nu o măsurătoare a pompei și nu o execuție a motorului Arduino. Integrarea reală necesită confirmări de releu, limitări hardware și teste E8–E9.</p>
-      </div>`;
-    document.body.append(modal);
-    // Standalone/embedded E10 page: do not depend on a synthetic click to become visible.
-    modal.setAttribute('open','');
-    button.addEventListener('click',()=>{refreshEditor();renderPreview();if(typeof modal.showModal==='function')modal.showModal();else modal.setAttribute('open','');});
-    $('e10Close').addEventListener('click',()=>modal.close());
-    modal.addEventListener('click',e=>{if(e.target===modal) modal.close();});
-    $('e10Name').addEventListener('input',renderPreview);
-    $('e10Start').addEventListener('change',renderPreview);
-    $('e10Scrub').addEventListener('input',scrub);
-    $('e10Fault').addEventListener('change',()=>{fault=$('e10Fault').value;$('e10FaultMinute').disabled=fault==='NONE';renderPreview();});
-    $('e10FaultMinute').addEventListener('change',renderPreview);
-    document.querySelectorAll('[data-e10-climate]').forEach(el=>{el.addEventListener('change',renderPreview);el.addEventListener('input',renderPreview);});
-    $('e10RecordCompare').addEventListener('click',recordComparison);
-    $('e10AddOn').addEventListener('click',()=>addStep('ON'));
-    $('e10AddOff').addEventListener('click',()=>addStep('OFF'));
-    $('e10Reset').addEventListener('click',()=>{current=copy(Engine.DEFAULT_PLAN);selected=-1;updateSelect();refreshEditor();renderPreview();});
-    $('e10New').addEventListener('click',()=>{current={version:1,name:'Program nou',start:'07:00',steps:[{type:'ON',minutes:4}]};selected=-1;updateSelect();refreshEditor();renderPreview();});
-    $('e10Saved').addEventListener('change',()=>{selected=Number($('e10Saved').value);current=selected===-1?copy(Engine.DEFAULT_PLAN):copy(records[selected]);refreshEditor();renderPreview();});
-    $('e10Save').addEventListener('click',()=>{
-      let plan;try{plan=Engine.normalized(current);Engine.build(plan);}catch(e){notice(e.message);return;}
-      if(selected<0) {if(records.length>=MAX_SAVED){notice('Maximum 8 schițe. Șterge una înainte de salvare.');return;}selected=records.length;records.push(plan);}
-      else records[selected]=plan;
-      if(persist()){updateSelect();notice('Schiță salvată LOCAL în acest browser; nu este armată pe ESP32.');}
-    });
-    $('e10Delete').addEventListener('click',()=>{
-      if(selected<0){notice('Selectează o schiță salvată.');return;}
-      records.splice(selected,1);selected=-1;current=copy(Engine.DEFAULT_PLAN);
-      persist();updateSelect();refreshEditor();renderPreview();notice('Schiță ștearsă din browser.');
-    });
-    updateSelect();refreshEditor();renderPreview();
-  }
-  function addStep(type) {
-    if(current.steps.length>=Engine.MAX_STEPS){notice('Maximum 16 pași.');return;}
-    if(current.steps.length && current.steps[current.steps.length-1].type===type){notice('Alternează ON cu OFF.');return;}
-    current.steps.push({type,minutes:type==='ON'?4:10});refreshEditor();renderPreview();
-  }
-  document.addEventListener('DOMContentLoaded',init);
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 })();
 
-</script>
-<script src="./e10-ui.js?v=e10-fix-20261102"></script><!-- Laboratory opens directly after the E10 engine initializes. --></body></html>
+</script></body></html>
