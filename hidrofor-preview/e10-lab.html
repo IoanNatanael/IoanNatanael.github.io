@@ -1,4 +1,4 @@
-<!doctype html><html lang="ro"><head><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; connect-src 'none'; form-action 'none'; object-src 'none'; base-uri 'none'"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<!doctype html><html lang="ro"><head><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src data:; connect-src 'none'; form-action 'none'; object-src 'none'; base-uri 'none'"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Hidrofor E10 unificat · FIX SMART ADAPTIVE · DOAR SIMULARE</title>
 <style>body{margin:0;background:#10242b;color:#effbf7;font-family:system-ui,-apple-system,Segoe UI,sans-serif}main{max-width:780px;padding:24px;margin:auto}h1{font-size:23px}p{line-height:1.6;color:#b9d6cc}button{font-family:inherit}</style><style>
 /* E10-P1 offline editor, visually independent of real R21 scheduling controls. */
@@ -60,7 +60,7 @@
 #e10LabDialog .e10-comparison-details h3,#e10LabDialog .e10-comparison-details h4{font-size:13px}
 @media(max-width:560px){#e10LabDialog .e10-climate-grid{grid-template-columns:1fr}#e10LabDialog fieldset{padding:10px}#e10LabDialog .e10-pair{gap:8px}}
 
-</style></head><body><main>
+</style><link rel="stylesheet" href="./e10-ui.css"></head><body><main>
 <h1>Hidrofor — laborator unificat E10</h1>
 <p>Editor ON/OFF, FIX, SMART și ADAPTIVE, comparații și simulare de defecte cu date CLIMATICE SINTETICE. Nu trimite comenzi către ESP32, releu sau hidrofor.</p>
 <div id="e10LabMount"></div></main>
@@ -780,4 +780,4 @@
 })();
 
 </script>
-<script>document.addEventListener('DOMContentLoaded',()=>{const b=document.getElementById('e10LabButton');if(b)b.click();});</script></body></html>
+<script src="./e10-ui.js"></script><script>document.addEventListener('DOMContentLoaded',()=>{const b=document.getElementById('e10LabButton');if(b)b.click();});</script></body></html>
