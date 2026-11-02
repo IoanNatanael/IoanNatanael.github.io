@@ -5,7 +5,12 @@
 *{box-sizing:border-box}
 html,body{margin:0;min-height:100%;background:var(--e10-bg)}
 main{width:100%;max-width:none;margin:0;padding:0}
-main>h1,main>p,#e10LabButton{display:none!important}
+/* If JavaScript cannot initialize, the user sees an explanation instead of a blank screen. */
+main>h1,main>p{display:block!important}
+main>h1{color:#e7f3ef;margin:18px 0 8px}
+main>p{color:#b1cbc8;margin:0 0 14px}
+body:has(#e10LabDialog[open]) > main{display:none!important}
+#e10LabButton{display:none!important}
 #e10LabDialog{inset:0;position:fixed;top:0;left:0;margin:0!important;padding:0;border:0;border-radius:0;width:100%;height:100dvh;max-height:100dvh;max-width:none;box-shadow:none;background:var(--e10-bg);color:var(--e10-ink)}
 #e10LabDialog::backdrop{background:var(--e10-bg)}
 #e10LabDialog>header{display:none!important}
