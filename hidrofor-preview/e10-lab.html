@@ -17,50 +17,51 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
 .step{grid-template-columns:32px minmax(0,1fr) 100px auto}.step-controls button{min-width:39px}
 @media(max-width:660px){.step{grid-template-columns:29px minmax(0,1fr) 67px auto}.step-controls{grid-column:auto;justify-content:flex-end}.step-controls button{min-width:35px}}
 @media(max-width:375px){.step{grid-template-columns:27px minmax(0,1fr) 62px auto}}
-</style></head><body><main class="app" id="e10App">
-  <header class="top"><div><div class="eyebrow">Hidrofor · Laborator E10</div><h1>Controlul udării</h1><p>Configurează un program și vezi exact cum ar funcționa.</p></div><span class="sim-only">DOAR SIMULARE</span></header>
-  <section class="main-section" aria-labelledby="methodHeading"><div class="section-head"><div class="step-head"><span class="index">1</span><h2 id="methodHeading">Cum vrei să controlezi?</h2></div></div>
+.embedded .top{display:none}.embedded .app{padding-top:20px}
+.mode-hint{min-height:0;margin:7px 2px 0}
+.saved-notice{margin:8px 0 0;color:var(--amber);font-size:12px}
+</style><script>if(window.self!==window.top)document.documentElement.classList.add('embedded');</script></head><body><main class="app" id="e10App">
+  <header class="top"><div><h1>Simulare udare</h1></div><span class="sim-only">SIMULARE</span></header>
+  <section class="main-section" aria-labelledby="methodHeading"><div class="section-head"><h2 id="methodHeading">Mod</h2></div>
     <div class="mode-bar" role="group" aria-label="Metoda de control">
-      <button type="button" class="mode-btn" data-mode="FIX" aria-pressed="true">FIX</button>
-      <button type="button" class="mode-btn" data-mode="SMART" aria-pressed="false">SMART</button>
-      <button type="button" class="mode-btn" data-mode="ADAPTIVE" aria-pressed="false">ADAPTIVE</button>
-    </div><p class="mode-hint" id="modeHint">FIX execută programul pe care îl alegi, fără condiții de temperatură.</p>
+      <button type="button" class="mode-btn" data-mode="FIX" aria-pressed="true">Fix</button>
+      <button type="button" class="mode-btn" data-mode="SMART" aria-pressed="false">Smart</button>
+      <button type="button" class="mode-btn" data-mode="ADAPTIVE" aria-pressed="false">Adaptiv</button>
+    </div><p class="mode-hint" id="modeHint">Durata aleasă de tine</p>
     <div class="condition-wrap card" id="climatePanel" hidden>
-      <div class="section-head"><h2>Condițiile serelor</h2><small>Valori de test · nu sunt date reale</small></div>
+      <div class="section-head"><h2>Valorile serelor</h2><small>Date de test</small></div>
       <div class="climate">
         <div class="greenhouse"><h3>Sera 1</h3><div class="two"><label class="control-label">Temperatură (°C)<input id="s1t" type="number" step="0.1" min="-40" max="85" value="30"></label><label class="control-label">Umiditate aer (%)<input id="s1h" type="number" step="0.1" min="0" max="100" value="40"></label></div><div id="s1status" class="source-status">● Date de test valide</div></div>
         <div class="greenhouse"><h3>Sera 2</h3><div class="two"><label class="control-label">Temperatură (°C)<input id="s2t" type="number" step="0.1" min="-40" max="85" value="32"></label><label class="control-label">Umiditate aer (%)<input id="s2h" type="number" step="0.1" min="0" max="100" value="38"></label></div><div id="s2status" class="source-status">● Date de test valide</div></div>
       </div>
-      <div id="smartOptions" hidden><div class="rule"><label class="control-label">Temperatură minimă °C<input id="smartT" type="number" min="-40" max="85" step="0.1" value="28"></label><label class="control-label">Umiditate maximă %<input id="smartH" type="number" min="0" max="100" step="0.1" value="45"></label><label class="control-label">Câte sere?<select id="smartCombine"><option value="2">Ambele sere</option><option value="1">Cel puțin una</option></select></label></div><div class="method-note">SMART permite simularea numai dacă pragurile sunt îndeplinite. Dacă datele unei sere lipsesc ori sunt expirate, blochează programul.</div></div>
+      <div id="smartOptions" hidden><div class="rule"><label class="control-label">Temperatură minimă °C<input id="smartT" type="number" min="-40" max="85" step="0.1" value="28"></label><label class="control-label">Umiditate maximă %<input id="smartH" type="number" min="0" max="100" step="0.1" value="45"></label><label class="control-label">Câte sere?<select id="smartCombine"><option value="2">Ambele sere</option><option value="1">Cel puțin una</option></select></label></div><div class="method-note">Ambele sere trebuie să aibă date valide.</div></div>
       <div id="adaptiveOptions" hidden><div class="method-note"><div><strong id="adaptiveScore">Ajustare după condițiile de test</strong><div id="adaptiveExplanation">Durata ON poate scădea; pauzele OFF rămân neschimbate.</div></div></div></div>
-      <details class="details"><summary>Setări avansate ale senzorilor și strategiei</summary><div class="details-content">
+      <details class="details"><summary>Setări avansate</summary><div class="details-content">
         <div class="two"><label class="control-label">Stare Sera 1<select id="s1state"><option value="ok">Date valide</option><option value="missing">Nod indisponibil</option><option value="stale">Date expirate</option><option value="untrusted">Sursă nevalidată</option></select></label><label class="control-label">Stare Sera 2<select id="s2state"><option value="ok">Date valide</option><option value="missing">Nod indisponibil</option><option value="stale">Date expirate</option><option value="untrusted">Sursă nevalidată</option></select></label></div>
         <label class="control-label" style="margin-top:12px">Valabilitate date (secunde)<input id="maxAge" type="number" min="1" max="5400" step="1" value="120"></label>
         <div id="adaptiveAdvanced" hidden><div class="advanced-grid" style="margin-top:12px"><fieldset><legend>Factor și temperatură</legend><label class="control-label">Factor minim (%)<input id="minFactor" type="number" min="1" max="100" value="50"></label><label class="control-label">Temperatură joasă / înaltă (°C)<span class="two"><input id="lowT" type="number" step="0.1" min="-40" max="85" value="15"><input id="highT" type="number" step="0.1" min="-40" max="85" value="35"></span></label></fieldset><fieldset><legend>Umiditate și condiții</legend><label class="control-label">Umiditate joasă / înaltă (%)<span class="two"><input id="lowH" type="number" min="0" max="100" step="0.1" value="30"><input id="highH" type="number" min="0" max="100" step="0.1" value="70"></span></label><p class="desc">Algoritmul redistribuie totalul minutelor ON fără a modifica pauzele OFF.</p></fieldset></div></div>
       </div></details>
     </div>
   </section>
-  <section class="main-section" aria-labelledby="planHeading"><div class="section-head"><div class="step-head"><span class="index">2</span><h2 id="planHeading">Ce program să execute?</h2></div></div><div class="card">
+  <section class="main-section" aria-labelledby="planHeading"><div class="section-head"><h2 id="planHeading">Program</h2></div><div class="card">
     <div class="fields"><label class="control-label">Numele programului<input id="planName" value="Udare dimineața" maxlength="60" autocomplete="off"></label><label class="control-label">Pornire la ora<input id="planTime" type="time" value="07:00"></label></div>
-    <div class="pill-switch" role="group" aria-label="Tipul programului"><button type="button" data-type="TIMED" aria-pressed="true">Temporizat</button><button type="button" data-type="SEQUENCE" aria-pressed="false">Secvențial</button></div>
-    <div id="timedEditor"><label class="control-label">Cât timp să fie pornită pompa?<div class="input-unit"><input id="timedMinutes" type="number" min="1" max="120" step="1" value="10"><span>minute</span></div></label><p class="desc">O singură udare. Simularea introduce automat pauzele de protecție după maximum 4 minute ON.</p></div>
-    <div id="sequenceEditor" hidden><div class="seq-head"><h3>Secvența de udare</h3><small>Maximum 16 pași</small></div><div class="steps" id="stepRows"></div><div class="add-actions"><button class="soft-btn" type="button" id="addOn">+ Pornește pompa</button><button class="soft-btn" type="button" id="addOff">+ Pauză</button><button class="soft-btn" type="button" id="resetSeq">Exemplul profesorului</button></div><p class="desc">La fiecare ON lung se introduc automat segmente de 4 minute și pauze de protecție.</p></div>
-    <div class="plan-note"><span aria-hidden="true">●</span><span>Protecția ESP-01S rămâne neschimbată: AUTO maxim 5 minute. Această pagină nu trimite START real.</span></div>
-    <details class="details"><summary>Programele mele · salvate local</summary><div class="details-content"><label class="control-label">Schițe în acest browser<select id="savedPlans"><option value="">Program nesalvat</option></select></label><div class="library-actions"><button class="soft-btn" type="button" id="savePlan">Salvează schița</button><button class="soft-btn" type="button" id="newPlan">Program nou</button><button class="soft-btn button-clear" type="button" id="deletePlan">Șterge</button></div><p class="desc">Doar în acest browser. Nu se scrie în EEPROM, ESP32 sau RTC.</p></div></details>
+    <div class="pill-switch" role="group" aria-label="Tipul programului"><button type="button" data-type="TIMED" aria-pressed="true">Simplu</button><button type="button" data-type="SEQUENCE" aria-pressed="false">Cu pași</button></div>
+    <div id="timedEditor"><label class="control-label">Durată<div class="input-unit"><input id="timedMinutes" type="number" min="1" max="120" step="1" value="10"><span>minute</span></div></label></div>
+    <div id="sequenceEditor" hidden><div class="seq-head"><h3>Pași</h3><small>Maximum 16</small></div><div class="steps" id="stepRows"></div><div class="add-actions"><button class="soft-btn" type="button" id="addOn">+ Udare</button><button class="soft-btn" type="button" id="addOff">+ Pauză</button><button class="soft-btn" type="button" id="resetSeq">Exemplu</button></div></div>
+    <details class="details"><summary>Schițele mele</summary><div class="details-content"><label class="control-label">Salvate în acest browser<select id="savedPlans"><option value="">Program nesalvat</option></select></label><p class="saved-notice" id="savedPlanNotice" role="status" hidden></p><div class="library-actions"><button class="soft-btn" type="button" id="savePlan">Salvează</button><button class="soft-btn" type="button" id="newPlan">Program nou</button><button class="soft-btn button-clear" type="button" id="deletePlan">Șterge</button></div></div></details>
   </div></section>
-  <section class="main-section" aria-labelledby="progressHeading"><div class="section-head"><div class="step-head"><span class="index">3</span><h2 id="progressHeading">Progresul simulării</h2></div><small>Calcule pe baza setărilor de mai sus</small></div>
+  <section class="main-section" aria-labelledby="progressHeading"><div class="section-head"><h2 id="progressHeading">Simulare</h2></div>
     <div class="progress-card"><div class="progress-top"><div><div class="eyebrow" id="progressMode">FIX · Temporizat</div><div class="headline" id="progressTitle">Pregătit pentru simulare</div><div class="progress-sub" id="progressText">Fără acces la pompa fizică.</div></div><span class="state off" id="pumpState">POMPĂ OFF</span></div>
       <div class="error" role="alert" id="validationError" hidden></div>
       <div class="timeline-wrapper"><div id="timeline" class="timeline" aria-label="Cronologia programului"></div><div id="timelineNeedle" class="needle"></div></div><div class="line-label"><span id="startClock">07:00</span><span id="endClock">07:10</span></div>
       <div class="legend"><span><i style="background:#79d9b0"></i>ON</span><span><i style="background:#648390"></i>OFF</span><span><i style="background:#d2b87b"></i>Pauză protecție</span></div>
       <div class="kpis"><div class="kpi"><small>Durata totală</small><b id="durationTotal">—</b></div><div class="kpi"><small>Pompă ON</small><b id="durationOn">—</b></div><div class="kpi"><small>Pauze</small><b id="durationPause">—</b></div></div>
       <div class="interactive"><label for="scrubber" class="control-label">Derulează timpul</label><input id="scrubber" type="range" min="0" max="1" step="1" value="0" aria-label="Timpul simulat"><div class="line-label"><span id="elapsed">0m 00s</span><span id="remaining">Rămase —</span></div></div>
-      <div class="progress-controls"><button class="primary-btn" id="playSimulation" type="button">▶ Pornește simularea</button><button class="soft-btn" id="restartSimulation" type="button">↺ Reia</button></div>
-      <p class="hint">Simulare accelerată: aproximativ 1 minut virtual pe secundă. Nu pornește releul.</p>
+      <div class="progress-controls"><button class="primary-btn" id="playSimulation" type="button">▶ Simulează</button><button class="soft-btn" id="restartSimulation" type="button">↺ Reia</button></div>
       <details class="details"><summary>Testează un defect</summary><div class="details-content two"><label class="control-label">Scenariu<select id="faultSelect"><option value="NONE">Funcționare normală</option><option value="LINK">Comunicație pierdută</option><option value="DRY">Lipsă apă</option><option value="BATTERY">Baterie critică</option><option value="RTC">Ceas invalid</option></select></label><label class="control-label">La minutul<input id="faultMinute" type="number" min="0" max="240" step="0.5" value="6" disabled></label></div></details>
       <details class="details"><summary>Etapele calculate ale simulării</summary><ol class="history" id="eventList"></ol></details>
     </div>
-  </section><p class="offline-note">Laborator E10 • datele senzorilor sunt introduse manual • fără START/STOP real</p>
+  </section><p class="offline-note">Date de test · fără pornire reală</p>
 </main>
 
 <script>
@@ -355,6 +356,9 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
    Offline-only: no network, relay, scheduler, NVS or ESP32 operations. */
 (() => {
   'use strict';
+  if(window.self!==window.top)document.addEventListener('keydown',event=>{
+    if(event.key==='Escape')window.parent.postMessage({type:'hidrofor-e10-close'},location.origin);
+  });
   const Engine=window.HidroforSequenceDryRun;
   const Modes=window.HidroforE10ClimateModes;
   if(!Engine || !Modes){
@@ -375,7 +379,7 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
   function num(id){const s=$(id).value.trim();return s===''?NaN:Number(s);}
   function markError(message){const box=$('validationError');box.textContent=message||'';box.hidden=!message;}
   function stop(){if(state.timer!==null){clearInterval(state.timer);state.timer=null;}updateButton();}
-  function updateButton(){text('playSimulation',state.timer!==null?'Ⅱ Pauză simularea':state.preview&&state.at>=state.preview.totalSeconds?'↺ Pornește din nou':'▶ Pornește simularea');$('playSimulation').disabled=!state.preview;}
+  function updateButton(){text('playSimulation',state.timer!==null?'Ⅱ Pauză':state.preview&&state.at>=state.preview.totalSeconds?'↺ Simulează din nou':'▶ Simulează');$('playSimulation').disabled=!state.preview;}
   function makePlan(){
     return Engine.normalized({version:1,name:state.planName,start:state.start,
       steps:state.type==='TIMED'?[{type:'ON',minutes:state.timedMinutes}]:clone(state.steps)});
@@ -401,11 +405,13 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
     $('smartOptions').hidden=state.mode!=='SMART';
     $('adaptiveOptions').hidden=state.mode!=='ADAPTIVE';
     $('adaptiveAdvanced').hidden=state.mode!=='ADAPTIVE';
-    text('modeHint',({FIX:'FIX · Execută durata sau pașii pe care i-ai stabilit.',SMART:'SMART · Verifică datele ambelor sere înainte să permită programul.',ADAPTIVE:'ADAPTIVE · Ajustează minutele ON în funcție de temperatură și umiditate.'})[state.mode]);
+    text('modeHint',({FIX:'Durata aleasă de tine',SMART:'Udare în funcție de condiții',ADAPTIVE:'Durată ajustată după condiții'})[state.mode]);
     for(const prefix of ['s1','s2']){
       const st=$(prefix+'state').value,health=$(prefix+'status');
+      const t=num(prefix+'t'),h=num(prefix+'h');
       const reasons={ok:'● Date de test valide',missing:'● Sera indisponibilă',stale:'● Date expirate',untrusted:'● Sursă neverificată'};
-      health.textContent=reasons[st];health.dataset.healthy=String(st==='ok');
+      const valid=st==='ok'&&Number.isFinite(t)&&t>=-40&&t<=85&&Number.isFinite(h)&&h>=0&&h<=100;
+      health.textContent=st==='ok'&&!valid?'● Valori invalide':reasons[st];health.dataset.healthy=String(valid);
     }
   }
   function refreshType(){
@@ -418,7 +424,7 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
       const row=el('div','step');row.dataset.kind=step.type;
       const marker=el('span','step-marker',String(index+1));
       const sel=el('select');sel.setAttribute('aria-label','Starea pasului '+(index+1));
-      for(const type of ['ON','OFF']){const opt=new Option(type==='ON'?'Pompa pornește':'Pompa se oprește',type);sel.append(opt);}sel.value=step.type;
+      for(const type of ['ON','OFF']){const opt=new Option(type==='ON'?'Udare':'Pauză',type);sel.append(opt);}sel.value=step.type;
       sel.addEventListener('change',()=>{
         const draft=clone(state.steps);draft[index].type=sel.value;
         if(index>0&&draft[index-1].type===draft[index].type || index+1<draft.length&&draft[index+1].type===draft[index].type || !draft.some(s=>s.type==='ON')){
@@ -459,7 +465,7 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
   }
   function recompute(){
     stop();state.at=0;state.started=false;markError('');
-    text('progressMode',state.mode+' · '+(state.type==='TIMED'?'Temporizat':'Secvențial'));
+    text('progressMode',state.mode+' · '+(state.type==='TIMED'?'Simplu':'Cu pași'));
     let plan,chosen,climate;
     try{
       plan=makePlan();climate=climateConfig();
@@ -484,7 +490,7 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
       if(state.mode==='ADAPTIVE'){
         const c=chosen.calculation;
         text('adaptiveScore',`Durata ON: ${fmt(evaluation.original.pumpSeconds)} → ${fmt(chosen.result.pumpSeconds)}`);
-        text('adaptiveExplanation',`Factor ${c.factorPercent}% · Sera de referință ${c.climateDetails.selectedGreenhouse}. Pauzele OFF rămân neschimbate.`);
+        text('adaptiveExplanation',`${c.factorPercent}% din total · pauzele rămân`);
       }
       $('scrubber').max=String(preview.totalSeconds);$('scrubber').step='1';$('scrubber').value='0';$('scrubber').disabled=false;
       const timeline=$('timeline');timeline.replaceChildren();
@@ -516,8 +522,8 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
     const done=cur.state==='DONE',fault=cur.state==='FAULT';
     if(!state.started){
       badge.className='state off';badge.textContent='PREGĂTIT';
-      text('progressTitle','Program pregătit');
-      text('progressText',`Urmează pasul ${cur.step||1} la ${fmtClock(0)}. Apasă Pornește simularea.`);
+      text('progressTitle','Pregătit');
+      text('progressText',`Pornire simulată la ${fmtClock(0)}`);
     }else{
       text('progressTitle',done?'Program încheiat':fault?'Program întrerupt':`Pas ${cur.step||'—'} · ${cur.state==='ON'?'Udare':cur.state==='REST'?'Pauză de protecție':'Așteptare'}`);
       text('progressText',fault?cur.detail:done?'Pompa este oprită în simulare.':`${fmtClock(t)} · ${cur.detail}`);
@@ -537,17 +543,27 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
     },250);
     updateButton();updateProgress();
   }
+  const climateFields=['s1t','s1h','s2t','s2h','s1state','s2state','smartT','smartH','smartCombine','maxAge','minFactor','lowT','highT','lowH','highH'];
+  function climateSnapshot(){return Object.fromEntries(climateFields.map(id=>[id,$(id).value]));}
+  function restoreClimate(saved){
+    for(const id of climateFields){
+      const field=$(id);
+      const fallback=field.tagName==='SELECT' ? [...field.options].find(o=>o.defaultSelected)?.value ?? field.options[0].value : field.defaultValue;
+      const value=saved && typeof saved[id]==='string' && saved[id].length<=100 ? saved[id] : fallback;
+      field.value=field.tagName==='SELECT' && ![...field.options].some(o=>o.value===value) ? fallback : value;
+    }
+  }
   function clearForm(){
     stop();state.selected='';state.mode='FIX';state.type='TIMED';state.steps=clone(baseSeq);
     state.planName='Udare dimineața';state.start='07:00';state.timedMinutes=10;
     $('planName').value=state.planName;$('planTime').value=state.start;$('timedMinutes').value='10';
-    $('savedPlans').value='';refreshType();refreshMode();renderSteps();recompute();
+    $('savedPlans').value='';$('savedPlanNotice').hidden=true;restoreClimate(null);refreshType();refreshMode();renderSteps();recompute();
   }
   function safeRead(){
     try{
-      const existing=JSON.parse(localStorage.getItem(savedKey)||'[]');
+      const stored=localStorage.getItem(savedKey),existing=JSON.parse(stored||'[]');
       const valid=x=>x&&typeof x.id==='string'&&['FIX','SMART','ADAPTIVE'].includes(x.mode)&&['TIMED','SEQUENCE'].includes(x.type)&&x.plan&&Array.isArray(x.plan.steps);
-      if(Array.isArray(existing)&&existing.length)return existing.filter(valid).slice(0,8);
+      if(stored!==null)return Array.isArray(existing)?existing.filter(valid).slice(0,8):[];
       // Migrate pre-redesign E10 browser drafts without changing or deleting them.
       const old=JSON.parse(localStorage.getItem('hidrofor-e10-dryrun-drafts-v1')||'[]');
       if(Array.isArray(old))return old.slice(0,8).flatMap((item,i)=>{
@@ -559,19 +575,19 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
   }
   function showSaved(){
     const sel=$('savedPlans');sel.replaceChildren(new Option('Selectează un program',''));
-    for(const record of state.records)sel.append(new Option(record.plan.name+' · '+record.mode+' · '+(record.type==='TIMED'?'Temporizat':'Secvențial'),record.id));
+    for(const record of state.records)sel.append(new Option(record.plan.name+' · '+record.mode+' · '+(record.type==='TIMED'?'Simplu':'Cu pași'),record.id));
     sel.value=state.selected;
   }
   function save(){
     let plan;try{plan=makePlan();}catch(e){markError(e.message);return;}
     const record={id:state.selected||String(Date.now())+'-'+Math.random().toString(36).slice(2,8),
-      mode:state.mode,type:state.type,plan,timedMinutes:state.timedMinutes,sequence:clone(state.steps)};
+      mode:state.mode,type:state.type,plan,timedMinutes:state.timedMinutes,sequence:clone(state.steps),climate:climateSnapshot()};
     let records=state.records.slice();
     if(state.selected){const i=records.findIndex(x=>x.id===state.selected);if(i>=0)records[i]=record;else records.push(record);}
     else {if(records.length>=8){markError('Sunt permise cel mult 8 schițe. Șterge una înainte să salvezi.');return;}records.push(record);}
     try{localStorage.setItem(savedKey,JSON.stringify(records));}catch(e){markError('Browserul nu permite salvarea locală.');return;}
-    state.records=records;state.selected=record.id;showSaved();markError('');
-    $('savePlan').textContent='✓ Schiță salvată';setTimeout(()=>{$('savePlan').textContent='Salvează schița';},1200);
+    state.records=records;state.selected=record.id;showSaved();markError('');$('savedPlanNotice').hidden=true;
+    $('savePlan').textContent='✓ Salvat';setTimeout(()=>{$('savePlan').textContent='Salvează';},1200);
   }
   function load(){
     const selected=$('savedPlans').value;if(!selected){state.selected='';return;}
@@ -583,6 +599,10 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
       state.steps=record.sequence&&Array.isArray(record.sequence)?clone(record.sequence):clone(normalized.steps);
       state.timedMinutes=record.timedMinutes||normalized.steps.find(s=>s.type==='ON')?.minutes||10;
       $('planName').value=state.planName;$('planTime').value=state.start;$('timedMinutes').value=String(state.timedMinutes);
+      const hasClimate=record.climate && typeof record.climate==='object' && !Array.isArray(record.climate) && climateFields.every(id=>typeof record.climate[id]==='string');
+      restoreClimate(hasClimate?record.climate:null);
+      $('savedPlanNotice').textContent=hasClimate?'':'Schiță veche: valori de test implicite.';
+      $('savedPlanNotice').hidden=Boolean(hasClimate);
       refreshType();refreshMode();renderSteps();recompute();
     }catch(e){markError('Schița salvată nu mai are un format valid.');}
   }
@@ -590,7 +610,7 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
     if(!state.selected){markError('Selectează mai întâi o schiță.');return;}
     const rows=state.records.filter(x=>x.id!==state.selected);
     try{localStorage.setItem(savedKey,JSON.stringify(rows));}catch(e){markError('Nu se poate modifica memoria locală.');return;}
-    state.records=rows;state.selected='';showSaved();markError('');
+    state.records=rows;state.selected='';showSaved();markError('');$('savedPlanNotice').hidden=true;
   }
   function init(){
     state.records=safeRead();showSaved();
@@ -599,7 +619,7 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
     $('planName').addEventListener('input',()=>{state.planName=$('planName').value;recompute();});
     $('planTime').addEventListener('change',()=>{state.start=$('planTime').value;recompute();});
     $('timedMinutes').addEventListener('input',()=>{const v=$('timedMinutes').value.trim();state.timedMinutes=v===''?NaN:Number(v);recompute();});
-    for(const key of ['s1t','s1h','s2t','s2h','s1state','s2state','smartT','smartH','smartCombine','maxAge','minFactor','lowT','highT','lowH','highH']){
+    for(const key of climateFields){
       $(key).addEventListener('input',()=>{refreshMode();recompute();});$(key).addEventListener('change',()=>{refreshMode();recompute();});
     }
     $('addOn').addEventListener('click',()=>{state.steps.push({type:'ON',minutes:4});renderSteps();recompute();});
