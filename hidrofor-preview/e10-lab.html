@@ -67,6 +67,14 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
 @media(max-width:650px){.mode-bar .mode-btn{font-size:11px;padding:11px 1px}.config-line .choice-group{margin-left:0}.program-basics{grid-template-columns:1fr 120px}.threshold-fields{grid-template-columns:1fr 1fr}.choice-group.triple button{padding:8px 5px;font-size:11px}}
 @media(max-width:370px){.program-basics{grid-template-columns:1fr}.choice-group.small button{padding:7px 6px}.config-line{align-items:flex-start}.band-line input{width:52px!important}}
 
+
+
+#savedMenu{display:grid;gap:6px;margin-bottom:12px}
+.saved-item{background:#1b3039;border:1px solid #34535a;border-radius:9px;min-height:43px;padding:9px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px;text-align:left}
+.saved-item strong{font-size:12px;font-weight:650}.saved-item span{font-size:10px;color:#9abcc0}
+.saved-item[aria-current="true"]{border-color:#82e3c6;background:#204039}
+.selected-band{border-left:3px solid #82e3c6;background:#1d3934}
+
 </style><script>if(window.self!==window.top)document.documentElement.classList.add('embedded');</script></head><body><main class="app" id="e10App">
   <header class="top"><div><h1>Simulare udare</h1></div><span class="sim-only">SIMULARE</span></header>
   <section class="main-section" aria-labelledby="methodHeading"><div class="section-head"><h2 id="methodHeading">Mod</h2></div>
@@ -99,7 +107,7 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
     <button type="button" id="showDrafts" class="soft-btn">Programele mele <span aria-hidden="true">⌄</span></button>
   </div>
   <div id="draftsPanel" hidden>
-    <select id="savedPlans" aria-label="Selectează schiță salvată"><option value="">Alege un program</option></select>
+    <div id="savedMenu" class="saved-menu" role="group" aria-label="Programe salvate"></div><select id="savedPlans" hidden aria-label="Selectează schiță salvată"><option value="">Alege un program</option></select>
     <div class="library-actions"><button class="soft-btn" type="button" id="newPlan">Program nou</button><button class="soft-btn" type="button" id="savePlan">Salvează</button><button class="soft-btn button-clear" type="button" id="deletePlan">Șterge</button></div>
     <p class="saved-notice" id="savedPlanNotice" role="status" hidden></p>
   </div>
@@ -555,6 +563,7 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
     $('smartNew').hidden=state.mode!=='SMART';$('adaptiveNew').hidden=state.mode!=='ADAPTIVE';
     $('timedEditor').hidden=state.mode!=='FIX';$('sequenceEditor').hidden=state.mode!=='SEQUENCE';
     $('climateSlot').append($('climatePanel'));
+    refreshType();
     text('modeHint',({FIX:'O durată fixă aleasă de tine.',SMART:'Regulă sub prag / între praguri / peste prag.',ADAPTIVE:'Durate exacte pe intervale de temperatură, nu procente.',SEQUENCE:'Pași ON/OFF și pauze configurabile.'})[state.mode]);
     refreshNewControls();
     for(const prefix of ['s1','s2']){
@@ -690,7 +699,7 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
     },250);
     updateButton();updateProgress();
   }
-  const climateFields=['s1t','s1h','s2t','s2h','s1state','s2state','smartT','smartH','smartCombine','maxAge','minFactor','lowT','highT','lowH','highH'];
+  const climateFields=['s1t','s1h','s2t','s2h','s1state','s2state','smartT','smartH','smartCombine','maxAge','minFactor','lowT','highT','lowH','highH',...newFields];
   function climateSnapshot(){return Object.fromEntries(climateFields.map(id=>[id,$(id).value]));}
   function restoreClimate(saved){
     for(const id of climateFields){
@@ -703,13 +712,14 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
   function clearForm(){
     stop();state.selected='';state.mode='FIX';state.type='TIMED';state.steps=clone(baseSeq);
     state.planName='Udare dimineața';state.start='07:00';state.timedMinutes=10;
+    Object.assign(custom,{metric:'temperature',rule:'above',scope:'both',ref:'average'});
     $('planName').value=state.planName;$('planTime').value=state.start;$('timedMinutes').value='10';
     $('savedPlans').value='';$('savedPlanNotice').hidden=true;restoreClimate(null);refreshType();refreshMode();renderSteps();recompute();
   }
   function safeRead(){
     try{
       const stored=localStorage.getItem(savedKey),existing=JSON.parse(stored||'[]');
-      const valid=x=>x&&typeof x.id==='string'&&['FIX','SMART','ADAPTIVE'].includes(x.mode)&&['TIMED','SEQUENCE'].includes(x.type)&&x.plan&&Array.isArray(x.plan.steps);
+      const valid=x=>x&&typeof x.id==='string'&&['FIX','SMART','ADAPTIVE','SEQUENCE'].includes(x.mode)&&['TIMED','SEQUENCE'].includes(x.type)&&x.plan&&Array.isArray(x.plan.steps);
       if(stored!==null)return Array.isArray(existing)?existing.filter(valid).slice(0,8):[];
       // Migrate pre-redesign E10 browser drafts without changing or deleting them.
       const old=JSON.parse(localStorage.getItem('hidrofor-e10-dryrun-drafts-v1')||'[]');
@@ -722,13 +732,20 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
   }
   function showSaved(){
     const sel=$('savedPlans');sel.replaceChildren(new Option('Selectează un program',''));
-    for(const record of state.records)sel.append(new Option(record.plan.name+' · '+record.mode+' · '+(record.type==='TIMED'?'Simplu':'Cu pași'),record.id));
+    for(const record of state.records)sel.append(new Option(record.plan.name+' · '+(record.type==='SEQUENCE'?'Cu pași':record.mode),record.id));
+    const host=$('savedMenu');host.replaceChildren();
+    if(!state.records.length)host.append(el('p','e10-info','Niciun program salvat încă.'));
+    for(const record of state.records){
+      const b=el('button','saved-item');b.type='button';b.setAttribute('aria-current',String(record.id===state.selected));
+      b.append(el('strong','',record.plan.name),el('span','',record.type==='SEQUENCE'?'Cu pași':record.mode));
+      b.addEventListener('click',()=>{sel.value=record.id;load();});host.append(b);
+    }
     sel.value=state.selected;
   }
   function save(){
     let plan;try{plan=makePlan();}catch(e){markError(e.message);return;}
     const record={id:state.selected||String(Date.now())+'-'+Math.random().toString(36).slice(2,8),
-      mode:state.mode,type:state.type,plan,timedMinutes:state.timedMinutes,sequence:clone(state.steps),climate:climateSnapshot()};
+      mode:state.mode,type:state.mode==='SEQUENCE'?'SEQUENCE':'TIMED',plan,timedMinutes:state.timedMinutes,sequence:clone(state.steps),climate:climateSnapshot(),custom:{...custom}};
     let records=state.records.slice();
     if(state.selected){const i=records.findIndex(x=>x.id===state.selected);if(i>=0)records[i]=record;else records.push(record);}
     else {if(records.length>=8){markError('Sunt permise cel mult 8 schițe. Șterge una înainte să salvezi.');return;}records.push(record);}
@@ -741,13 +758,15 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
     const record=state.records.find(x=>x.id===selected);if(!record)return;
     try{
       const normalized=Engine.normalized(record.plan);
-      state.selected=record.id;state.mode=record.mode;state.type=record.type;
+      state.selected=record.id;state.mode=record.type==='SEQUENCE'?'SEQUENCE':record.mode;state.type=state.mode==='SEQUENCE'?'SEQUENCE':'TIMED';
+      Object.assign(custom,{metric:'temperature',rule:'above',scope:'both',ref:'average'},record.custom||{});
       state.planName=normalized.name;state.start=normalized.start;
       state.steps=record.sequence&&Array.isArray(record.sequence)?clone(record.sequence):clone(normalized.steps);
       state.timedMinutes=record.timedMinutes||normalized.steps.find(s=>s.type==='ON')?.minutes||10;
       $('planName').value=state.planName;$('planTime').value=state.start;$('timedMinutes').value=String(state.timedMinutes);
-      const hasClimate=record.climate && typeof record.climate==='object' && !Array.isArray(record.climate) && climateFields.every(id=>typeof record.climate[id]==='string');
+      const hasClimate=record.climate && typeof record.climate==='object' && !Array.isArray(record.climate) && ['s1t','s1h','s2t','s2h'].every(id=>typeof record.climate[id]==='string');
       restoreClimate(hasClimate?record.climate:null);
+      refreshNewControls();
       $('savedPlanNotice').textContent=hasClimate?'':'Schiță veche: valori de test implicite.';
       $('savedPlanNotice').hidden=Boolean(hasClimate);
       refreshType();refreshMode();renderSteps();recompute();
@@ -762,8 +781,26 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
   function init(){
     state.records=safeRead();showSaved();
     document.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click',()=>{state.mode=b.dataset.mode;refreshMode();recompute();}));
-    document.querySelectorAll('[data-type]').forEach(b=>b.addEventListener('click',()=>{state.type=b.dataset.type;refreshType();recompute();}));
-    $('planName').addEventListener('input',()=>{state.planName=$('planName').value;recompute();});
+
+    // Cele trei opțiuni SMART și intervalele ADAPTIVE au propria stare,
+    // independentă de vechiul calcul procentual.
+    for(const [attr,prop] of [['data-metric','metric'],['data-rule','rule'],['data-scope','scope'],['data-ref','ref']]){
+      document.querySelectorAll('['+attr+']').forEach(b=>b.addEventListener('click',()=>{
+        custom[prop]=b.getAttribute(attr);
+        if(prop==='metric'){
+          $('smartLimitLow').value=custom.metric==='humidity'?'45':'28';
+          $('smartLimitHigh').value=custom.metric==='humidity'?'65':'32';
+        }
+        refreshNewControls();recompute();
+      }));
+    }
+    for(const field of newFields){
+      $(field).addEventListener('input',()=>{refreshNewControls();recompute();});
+      $(field).addEventListener('change',()=>{refreshNewControls();recompute();});
+    }
+    $('showDrafts').addEventListener('click',()=>{$('draftsPanel').hidden=!$('draftsPanel').hidden;});
+
+    $('planName').addEventListener('input',()=>{state.planName=$('planName').value;text('activePlanName',state.planName||'Program fără nume');recompute();});
     $('planTime').addEventListener('change',()=>{state.start=$('planTime').value;recompute();});
     $('timedMinutes').addEventListener('input',()=>{const v=$('timedMinutes').value.trim();state.timedMinutes=v===''?NaN:Number(v);recompute();});
     for(const key of climateFields){
