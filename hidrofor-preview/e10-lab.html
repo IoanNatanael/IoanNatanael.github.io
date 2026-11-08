@@ -95,8 +95,8 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
     <div class="mode-bar" role="group" aria-label="Metoda de control">
       <button type="button" class="mode-btn" data-mode="FIX" aria-pressed="true">Fix</button>
       <button type="button" class="mode-btn" data-mode="SMART" aria-pressed="false">Smart</button>
-      <button type="button" class="mode-btn" data-mode="ADAPTIVE" aria-pressed="false">Adaptiv</button>
       <button type="button" class="mode-btn" data-mode="SEQUENCE" aria-pressed="false">Cu pași</button>
+      <button type="button" class="mode-btn" data-mode="ADAPTIVE" aria-pressed="false">Adaptiv</button>
     </div><p class="mode-hint" id="modeHint">Durata aleasă de tine</p>
     <div class="condition-wrap card" id="climatePanel" hidden>
       <div class="section-head"><h2>Valorile serelor</h2><small>Date de test</small></div>
@@ -527,6 +527,8 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
     text('activePlanName',state.planName||'Program fără nume');
   }
   function validateClimatePair(config){
+    if(!Number.isInteger(config.maxAgeMs)||config.maxAgeMs<1000||config.maxAgeMs>5400000)
+      throw new Error('Valabilitatea datelor trebuie să fie 1–5400 secunde.');
     const result=[];
     for(const [which,label] of [['sera1','Sera 1'],['sera2','Sera 2']]){
       const item=config.pair[which];
@@ -693,7 +695,7 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
       }
       if(preview.fault)history.append(el('li','',preview.event.message));
       updateProgress();updateButton();
-    }catch(e){displayEmpty(e.message,false);}
+     }catch(e){displayEmpty(e.message,state.mode==='SMART'||state.mode==='ADAPTIVE');}
   }
   function updateProgress(){
     const p=state.preview;if(!p)return;
@@ -793,8 +795,10 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
       const hasClimate=record.climate && typeof record.climate==='object' && !Array.isArray(record.climate) && ['s1t','s1h','s2t','s2h'].every(id=>typeof record.climate[id]==='string');
       restoreClimate(hasClimate?record.climate:null);
       refreshNewControls();
-      $('savedPlanNotice').textContent=hasClimate?'':'Schiță veche: valori de test implicite.';
-      $('savedPlanNotice').hidden=Boolean(hasClimate);
+      $('savedPlanNotice').textContent=record.type==='SEQUENCE'&&record.mode!=='FIX'&&record.mode!=='SEQUENCE'?
+        'Schiță veche: mutată în «Cu pași». Condițiile vechi SMART/ADAPTIVE nu se aplică; verifică programul.':
+        hasClimate?'':'Schiță veche: valori de test implicite.';
+      $('savedPlanNotice').hidden=Boolean(hasClimate)&&!(record.type==='SEQUENCE'&&record.mode!=='FIX'&&record.mode!=='SEQUENCE');
       refreshType();refreshMode();renderSteps();recompute();
     }catch(e){markError('Schița salvată nu mai are un format valid.');}
   }
