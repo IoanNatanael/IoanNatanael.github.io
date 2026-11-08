@@ -20,6 +20,53 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
 .embedded .top{display:none}.embedded .app{padding-top:20px}
 .mode-hint{min-height:0;margin:7px 2px 0}
 .saved-notice{margin:8px 0 0;color:var(--amber);font-size:12px}
+
+
+/* E10 flow layout, inspired by time evolution and service pages */
+:root{--e10-line:#2b3e45}
+.app{width:min(850px,calc(100% - 34px))}
+.main-section{border-top:1px solid var(--e10-line);padding:23px 0 27px;margin:0;background:transparent!important}
+.main-section>.card,.main-section .condition-wrap.card,.main-section .progress-card{border:0!important;box-shadow:none!important;background:transparent!important;padding:0!important;border-radius:0!important}
+.section-head{margin-bottom:16px}
+.mode-bar{grid-template-columns:repeat(4,minmax(0,1fr));background:#14262d;border:1px solid #2c4149;padding:4px;gap:3px}
+.mode-bar .mode-btn{border:0;border-radius:9px;font-size:12px;padding:10px 3px}
+.mode-bar .mode-btn[aria-pressed="true"]{background:#83e3c6;color:#0c2622;box-shadow:0 2px 8px #071a1855}
+.mode-hint{padding-bottom:7px}
+.program-library{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--e10-line);padding-bottom:13px;margin-bottom:14px;gap:8px}
+.program-library>div{min-width:0;display:grid;gap:2px}.program-library strong{font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.micro-label,.meta-label{font-size:10px;letter-spacing:.1em;color:#85a4a6;font-weight:700}
+#showDrafts{font-size:12px;flex-shrink:0;padding:9px 12px}
+#draftsPanel{padding:12px 0 17px;border-bottom:1px solid var(--e10-line);margin-bottom:16px}
+.program-basics{margin:7px 0 12px}
+.method-config{padding:15px 0 5px}
+.config-heading h3{font-size:15px;margin:0;font-weight:700}.config-heading p{font-size:11px;color:#9aafb3;margin:5px 0 18px}.meta-label{margin:15px 0 8px}
+.choice-group{display:flex;gap:4px;padding:3px;border:1px solid #314a52;background:#142930;border-radius:11px;width:max-content;max-width:100%}
+.choice-group button{border:0;background:transparent;color:#b7cecb;padding:9px 14px;border-radius:8px;font-size:12px;font-weight:600;min-height:37px;white-space:nowrap}
+.choice-group button[aria-pressed="true"]{background:#2c5a50;color:#d9f7e7}
+.choice-group.triple{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));width:100%}.choice-group.small button{font-size:11px;padding:7px 10px;min-height:34px}
+.threshold-fields{display:grid;grid-template-columns:repeat(2,minmax(0,170px));gap:10px;margin:14px 0}
+.config-line{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;border-top:1px solid var(--e10-line);padding:14px 0;font-size:12px}.config-line strong{font-size:13px}.config-line p{font-size:11px;margin:4px 0 0;color:#9aafb3}.config-line .choice-group{margin-left:auto}
+.duration-field{display:flex;align-items:center;gap:7px;color:#a9c6c6;border:1px solid #3a565c;border-radius:10px;background:#172c34;padding-right:10px}
+.duration-field input{width:65px!important;text-align:center;border:0!important;background:transparent!important;font-size:19px!important;font-weight:750;padding:5px!important}
+.band-list{border-top:1px solid var(--e10-line);margin:12px 0}
+.band-line{display:flex;justify-content:space-between;align-items:center;gap:12px;border-bottom:1px solid var(--e10-line);padding:10px 8px;border-left:3px solid transparent;font-size:13px}
+.band-line.active{background:#1a3b33;border-left-color:#82e3c6}
+.band-line>span:last-child{display:flex;align-items:center;gap:8px;color:#b6cbce;font-size:11px}
+.band-line input{width:65px!important;text-align:center;padding:8px!important;font-weight:700}
+.rule-feedback{font-size:11px;color:#93d7bd;line-height:1.6;margin:12px 0 0}
+#climatePanel{margin-top:13px!important;border-top:1px solid var(--e10-line)!important;padding-top:16px!important}
+#climatePanel .section-head{margin-bottom:8px}
+#climatePanel .greenhouse{background:transparent!important;border:0!important;padding:10px 0!important}
+#smartOptions,#adaptiveOptions,#adaptiveAdvanced{display:none!important}
+#sequenceEditor .steps{border-top:1px solid var(--e10-line)}
+#sequenceEditor .step{background:transparent!important;border:0!important;border-bottom:1px solid var(--e10-line)!important;border-radius:0!important}
+#sequenceEditor .add-actions{margin-top:14px}
+.progress-card{padding-top:0!important}
+.progress-card .kpis{background:transparent!important}
+.progress-card .kpi{background:transparent!important;border:0!important;border-radius:0!important;padding:8px 4px!important}
+.progress-card .interactive{padding-top:12px!important}
+@media(max-width:650px){.mode-bar .mode-btn{font-size:11px;padding:11px 1px}.config-line .choice-group{margin-left:0}.program-basics{grid-template-columns:1fr 120px}.threshold-fields{grid-template-columns:1fr 1fr}.choice-group.triple button{padding:8px 5px;font-size:11px}}
+@media(max-width:370px){.program-basics{grid-template-columns:1fr}.choice-group.small button{padding:7px 6px}.config-line{align-items:flex-start}.band-line input{width:52px!important}}
+
 </style><script>if(window.self!==window.top)document.documentElement.classList.add('embedded');</script></head><body><main class="app" id="e10App">
   <header class="top"><div><h1>Simulare udare</h1></div><span class="sim-only">SIMULARE</span></header>
   <section class="main-section" aria-labelledby="methodHeading"><div class="section-head"><h2 id="methodHeading">Mod</h2></div>
@@ -27,6 +74,7 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
       <button type="button" class="mode-btn" data-mode="FIX" aria-pressed="true">Fix</button>
       <button type="button" class="mode-btn" data-mode="SMART" aria-pressed="false">Smart</button>
       <button type="button" class="mode-btn" data-mode="ADAPTIVE" aria-pressed="false">Adaptiv</button>
+      <button type="button" class="mode-btn" data-mode="SEQUENCE" aria-pressed="false">Cu pași</button>
     </div><p class="mode-hint" id="modeHint">Durata aleasă de tine</p>
     <div class="condition-wrap card" id="climatePanel" hidden>
       <div class="section-head"><h2>Valorile serelor</h2><small>Date de test</small></div>
@@ -43,14 +91,50 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
       </div></details>
     </div>
   </section>
-  <section class="main-section" aria-labelledby="planHeading"><div class="section-head"><h2 id="planHeading">Program</h2></div><div class="card">
-    <div class="fields"><label class="control-label">Numele programului<input id="planName" value="Udare dimineața" maxlength="60" autocomplete="off"></label><label class="control-label">Pornire la ora<input id="planTime" type="time" value="07:00"></label></div>
-    <div class="pill-switch" role="group" aria-label="Tipul programului"><button type="button" data-type="TIMED" aria-pressed="true">Simplu</button><button type="button" data-type="SEQUENCE" aria-pressed="false">Cu pași</button></div>
-    <div id="timedEditor"><label class="control-label">Durată<div class="input-unit"><input id="timedMinutes" type="number" min="1" max="120" step="1" value="10"><span>minute</span></div></label></div>
-    <div id="sequenceEditor" hidden><div class="seq-head"><h3>Pași</h3><small>Maximum 16</small></div><div class="steps" id="stepRows"></div><div class="add-actions"><button class="soft-btn" type="button" id="addOn">+ Udare</button><button class="soft-btn" type="button" id="addOff">+ Pauză</button><button class="soft-btn" type="button" id="resetSeq">Exemplu</button></div></div>
-    <details class="details"><summary>Schițele mele</summary><div class="details-content"><label class="control-label">Salvate în acest browser<select id="savedPlans"><option value="">Program nesalvat</option></select></label><p class="saved-notice" id="savedPlanNotice" role="status" hidden></p><div class="library-actions"><button class="soft-btn" type="button" id="savePlan">Salvează</button><button class="soft-btn" type="button" id="newPlan">Program nou</button><button class="soft-btn button-clear" type="button" id="deletePlan">Șterge</button></div></div></details>
-  </div></section>
-  <section class="main-section" aria-labelledby="progressHeading"><div class="section-head"><h2 id="progressHeading">Simulare</h2></div>
+  
+<section class="main-section flow-program" aria-labelledby="planHeading">
+  <div class="section-head"><h2 id="planHeading">Programul</h2><small>Configurează doar ce ai ales</small></div>
+  <div class="program-library">
+    <div><span class="micro-label">PROGRAM ACTIV</span><strong id="activePlanName">Udare dimineața</strong></div>
+    <button type="button" id="showDrafts" class="soft-btn">Programele mele <span aria-hidden="true">⌄</span></button>
+  </div>
+  <div id="draftsPanel" hidden>
+    <select id="savedPlans" aria-label="Selectează schiță salvată"><option value="">Alege un program</option></select>
+    <div class="library-actions"><button class="soft-btn" type="button" id="newPlan">Program nou</button><button class="soft-btn" type="button" id="savePlan">Salvează</button><button class="soft-btn button-clear" type="button" id="deletePlan">Șterge</button></div>
+    <p class="saved-notice" id="savedPlanNotice" role="status" hidden></p>
+  </div>
+  <div class="fields program-basics">
+    <label class="control-label">Nume<input id="planName" value="Udare dimineața" maxlength="60" autocomplete="off"></label>
+    <label class="control-label">Ora de început<input id="planTime" type="time" value="07:00"></label>
+  </div>
+  <div id="climateSlot"></div>
+  <div id="smartNew" class="method-config" hidden>
+    <div class="config-heading"><h3>Condiții pentru udare</h3><p>Definești când sunt îndeplinite criteriile de pornire.</p></div>
+    <div class="meta-label">CE MĂSURĂM?</div>
+    <div class="choice-group" role="group" aria-label="Senzor SMART"><button type="button" data-metric="temperature" aria-pressed="true">Temperatură</button><button type="button" data-metric="humidity" aria-pressed="false">Umiditate</button></div>
+    <div class="meta-label">CÂND PORNEȘTE?</div>
+    <div class="choice-group triple" role="group" aria-label="Condiția SMART"><button type="button" data-rule="under" aria-pressed="false">Sub prag</button><button type="button" data-rule="between" aria-pressed="false">Între praguri</button><button type="button" data-rule="above" aria-pressed="true">Peste prag</button></div>
+    <div class="threshold-fields"><label class="control-label">Prag de referință <input id="smartLimitLow" type="number" step="0.1" min="-40" max="85" value="28"></label><label class="control-label" id="smartHighField" hidden>Prag superior <input id="smartLimitHigh" type="number" step="0.1" min="-40" max="85" value="32"></label></div>
+    <div class="config-line"><span>Sere necesare</span><div class="choice-group small" role="group" aria-label="Câte sere?"><button type="button" data-scope="both" aria-pressed="true">Ambele</button><button type="button" data-scope="one" aria-pressed="false">Cel puțin una</button></div></div>
+    <div class="config-line"><div><strong>Durata udării</strong><p>Dacă regula permite pornirea</p></div><label class="duration-field"><input id="smartDuration" type="number" min="1" max="120" value="10" aria-label="Minute udare SMART"><span>min</span></label></div>
+    <p class="rule-feedback" id="smartFeedback" role="status"></p>
+  </div>
+  <div id="adaptiveNew" class="method-config" hidden>
+    <div class="config-heading"><h3>Intervale și durate</h3><p>Fiecare interval de temperatură are o durată aleasă manual — fără procente.</p></div>
+    <div class="config-line"><span>Temperatura de referință</span><div class="choice-group small" role="group" aria-label="Referință ADAPTIVE"><button type="button" data-ref="average" aria-pressed="true">Media</button><button type="button" data-ref="s1" aria-pressed="false">Sera 1</button><button type="button" data-ref="s2" aria-pressed="false">Sera 2</button></div></div>
+    <div class="threshold-fields"><label class="control-label">Prag inferior °C<input id="adaptiveLowBound" type="number" min="-40" max="85" step="0.1" value="20"></label><label class="control-label">Prag superior °C<input id="adaptiveHighBound" type="number" min="-40" max="85" step="0.1" value="30"></label></div>
+    <div class="band-list" role="group" aria-label="Durata pe intervale">
+      <label class="band-line" id="adaptiveBandUnder"><span id="adaptiveBandUnderText">Sub 20°C</span><span><input id="adaptiveUnderM" type="number" min="1" max="120" step="1" value="5"> min</span></label>
+      <label class="band-line" id="adaptiveBandBetween"><span id="adaptiveBandBetweenText">20–30°C</span><span><input id="adaptiveBetweenM" type="number" min="1" max="120" step="1" value="8"> min</span></label>
+      <label class="band-line" id="adaptiveBandAbove"><span id="adaptiveBandAboveText">30°C și peste</span><span><input id="adaptiveAboveM" type="number" min="1" max="120" step="1" value="10"> min</span></label>
+    </div>
+    <p class="rule-feedback" id="adaptiveFeedback" role="status"></p>
+  </div>
+  <div id="timedEditor" class="method-config"><div class="config-line"><div><strong>Durată fixă</strong><p>Cu pauze de protecție simulate la 4 minute ON</p></div><label class="duration-field"><input id="timedMinutes" type="number" min="1" max="120" step="1" value="10" aria-label="Durata fixă în minute"><span>min</span></label></div></div>
+  <div id="sequenceEditor" class="method-config" hidden><div class="config-heading"><h3>Secvența de udare</h3><p>Fiecare pas reprezintă o udare sau o pauză.</p></div>
+    <div class="steps" id="stepRows"></div><div class="add-actions"><button class="soft-btn" type="button" id="addOn">+ Udare</button><button class="soft-btn" type="button" id="addOff">+ Pauză</button><button class="soft-btn" type="button" id="resetSeq">Exemplu 10 / 20 / 30</button></div></div>
+</section>
+<section class="main-section" aria-labelledby="progressHeading"><div class="section-head"><h2 id="progressHeading">Simulare</h2></div>
     <div class="progress-card"><div class="progress-top"><div><div class="eyebrow" id="progressMode">FIX · Temporizat</div><div class="headline" id="progressTitle">Pregătit pentru simulare</div><div class="progress-sub" id="progressText">Fără acces la pompa fizică.</div></div><span class="state off" id="pumpState">POMPĂ OFF</span></div>
       <div class="error" role="alert" id="validationError" hidden></div>
       <div class="timeline-wrapper"><div id="timeline" class="timeline" aria-label="Cronologia programului"></div><div id="timelineNeedle" class="needle"></div></div><div class="line-label"><span id="startClock">07:00</span><span id="endClock">07:10</span></div>
