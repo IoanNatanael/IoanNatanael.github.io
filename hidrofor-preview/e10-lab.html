@@ -75,6 +75,20 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
 .saved-item[aria-current="true"]{border-color:#82e3c6;background:#204039}
 .selected-band{border-left:3px solid #82e3c6;background:#1d3934}
 
+
+
+#sensorDetails{margin-top:16px;border-top:1px solid #2b3e45;border-bottom:1px solid #2b3e45;background:transparent;padding:0}
+#sensorDetails>summary{display:flex;justify-content:space-between;align-items:center;gap:10px;min-height:52px;font-size:12px;font-weight:650;color:#c8ddd9;cursor:pointer}
+#sensorSummary{font-weight:400;font-size:11px;color:#8faeb0}
+#sensorDetails #climatePanel{border:0!important;padding:8px 0 2px!important;margin:0!important}
+#sensorDetails .climate{gap:12px}
+#sensorDetails .greenhouse{border-bottom:1px solid #2b3e45!important}
+.step-choice{display:flex;gap:3px;background:#182c32;border:1px solid #365058;border-radius:9px;padding:3px;min-width:0}
+.step-choice button{flex:1;padding:8px 4px;border:0;border-radius:6px;background:transparent;color:#abc4c1;font-size:11px;font-weight:600;min-height:35px}
+.step-choice button[aria-pressed="true"]{background:#326252;color:#edfff7}
+.step{grid-template-columns:24px minmax(0,1fr) 74px 32px!important;gap:6px!important}
+@media(max-width:410px){.step-choice button{font-size:10px;padding-left:2px;padding-right:2px}.step{grid-template-columns:22px minmax(0,1fr) 57px 29px!important;gap:4px!important}}
+
 </style><script>if(window.self!==window.top)document.documentElement.classList.add('embedded');</script></head><body><main class="app" id="e10App">
   <header class="top"><div><h1>Simulare udare</h1></div><span class="sim-only">SIMULARE</span></header>
   <section class="main-section" aria-labelledby="methodHeading"><div class="section-head"><h2 id="methodHeading">Mod</h2></div>
@@ -115,7 +129,11 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
     <label class="control-label">Nume<input id="planName" value="Udare dimineața" maxlength="60" autocomplete="off"></label>
     <label class="control-label">Ora de început<input id="planTime" type="time" value="07:00"></label>
   </div>
-  <div id="climateSlot"></div>
+  <details class="details flow-sensors" id="sensorDetails" hidden>
+    <summary>Valorile serelor <span id="sensorSummary">Sera 1: 30°C · Sera 2: 32°C</span></summary>
+    <div id="climateSlot"></div>
+    <p class="e10-info">Numai date simulate. Senzorii reali nu sunt conectați la laborator.</p>
+  </details>
   <div id="smartNew" class="method-config" hidden>
     <div class="config-heading"><h3>Condiții pentru udare</h3><p>Definești când sunt îndeplinite criteriile de pornire.</p></div>
     <div class="meta-label">CE MĂSURĂM?</div>
@@ -559,6 +577,7 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
   function refreshMode(){
     document.querySelectorAll('[data-mode]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===state.mode)));
     $('climatePanel').hidden=state.mode==='FIX'||state.mode==='SEQUENCE';
+    $('sensorDetails').hidden=state.mode==='FIX'||state.mode==='SEQUENCE';
     $('smartOptions').hidden=true;$('adaptiveOptions').hidden=true;$('adaptiveAdvanced').hidden=true;
     $('smartNew').hidden=state.mode!=='SMART';$('adaptiveNew').hidden=state.mode!=='ADAPTIVE';
     $('timedEditor').hidden=state.mode!=='FIX';$('sequenceEditor').hidden=state.mode!=='SEQUENCE';
@@ -572,6 +591,8 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
       const reason={ok:'● Date de test valide',missing:'● Sera indisponibilă',stale:'● Date expirate',untrusted:'● Sursă neverificată'};
       health.textContent=st==='ok'&&!valid?'● Valori invalide':reason[st];health.dataset.healthy=String(valid);
     }
+    const displayTemp=id=>Number.isFinite(num(id))?String(num(id))+'°C':'—';
+    text('sensorSummary','Sera 1 '+displayTemp('s1t')+' · Sera 2 '+displayTemp('s2t'));
   }
   function refreshType(){
     state.type=state.mode==='SEQUENCE'?'SEQUENCE':'TIMED';
@@ -584,15 +605,20 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
     state.steps.forEach((step,index)=>{
       const row=el('div','step');row.dataset.kind=step.type;
       const marker=el('span','step-marker',String(index+1));
-      const sel=el('select');sel.setAttribute('aria-label','Starea pasului '+(index+1));
-      for(const type of ['ON','OFF']){const opt=new Option(type==='ON'?'Udare':'Pauză',type);sel.append(opt);}sel.value=step.type;
-      sel.addEventListener('change',()=>{
-        const draft=clone(state.steps);draft[index].type=sel.value;
-        if(index>0&&draft[index-1].type===draft[index].type || index+1<draft.length&&draft[index+1].type===draft[index].type || !draft.some(s=>s.type==='ON')){
-          sel.value=state.steps[index].type;markError('Pașii trebuie să alterneze ON și OFF, cu cel puțin un ON.');return;
-        }
-        state.steps=draft;renderSteps();recompute();
-      });
+
+      const sel=el('div','step-choice');sel.setAttribute('role','group');sel.setAttribute('aria-label','Starea pasului '+(index+1));
+      for(const type of ['ON','OFF']){
+        const b=el('button','',type==='ON'?'Udare':'Pauză');
+        b.type='button';b.setAttribute('aria-pressed',String(type===step.type));
+        b.addEventListener('click',()=>{
+          if(type===state.steps[index].type)return;
+          const draft=clone(state.steps);draft[index].type=type;
+          if(index>0&&draft[index-1].type===type||index+1<draft.length&&draft[index+1].type===type||!draft.some(v=>v.type==='ON')){
+            markError('Pașii trebuie să alterneze udări și pauze.');return;
+          }
+          state.steps=draft;renderSteps();recompute();
+        });sel.append(b);
+      }
       const inp=el('input');inp.type='number';inp.min='1';inp.max='120';inp.step='1';inp.value=String(step.minutes);
       inp.setAttribute('aria-label','Minutele pasului '+(index+1));
       inp.addEventListener('change',()=>{state.steps[index].minutes=inp.value.trim()===''?NaN:Number(inp.value);recompute();});
