@@ -5713,6 +5713,7 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
 <link rel="stylesheet" href="./advanced-programs.css?v=6">
 <script defer src="./e10-advanced-engine.js?v=1"></script>
 <script defer src="./advanced-programs.js?v=6"></script>
+<link rel="stylesheet" href="./hydro-hero-redesign.css?v=1">
 </head>
   <body class="hidro-v5">
     <div class="app">
@@ -6075,68 +6076,40 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
             <button id="ap-open" type="button" aria-pressed="false" aria-controls="ap-panel">Programe avansate</button>
           </div>
           <section class="hydro-grid">
-            <article class="hydro-hero">
+            <article class="hydro-hero" data-water-state="unknown" data-pump-state="unknown" aria-label="Hidrofor principal">
               <div class="card-heading">
-                <span class="eyebrow">HIDROFOR PRINCIPAL</span
-                ><svg
-                  class=""
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.65"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  aria-hidden="true"
-                >
-                  <path
-                    d="M12 3C9 7 5.5 10.3 5.5 14a6.5 6.5 0 0 0 13 0C18.5 10.3 15 7 12 3Z"
-                  ></path>
-                  <path d="M9 14a3 3 0 0 0 3 3"></path>
+                <span class="eyebrow">HIDROFOR PRINCIPAL</span>
+                <svg class="hydro-water-drop" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M12 2.5C9.3 6.6 5 10.9 5 15a7 7 0 0 0 14 0c0-4.1-4.3-8.4-7-12.5Z"></path>
+                  <path d="M9 16.2a3.3 3.3 0 0 0 3 2"></path>
                 </svg>
               </div>
               <div class="hydro-hero-top">
                 <div class="hydro-copy">
-                  <h2 id="hydroHeadline">Pompa de apă</h2>
+                  <span class="hydro-state-kicker">Stare actuală</span>
+                  <h2 id="hydroHeadline">Stare pompă necunoscută</h2>
+                  <span class="hydro-hero-timer" hidden id="hydroHeroTimer"></span>
+                  <p class="pump-action-hint" id="pumpActionHint">Se verifică disponibilitatea comenzilor</p>
                 </div>
-                <button
-                  aria-label="Porneste hidroforul"
-                  class="hydro-hero-button off"
-                  id="hydroHeroButton"
-                  type="button"
-                >
-                  <svg
-                    aria-hidden="true"
-                    class="hydro-hero-icon"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      d="M12 21s7-5.4 7-11.1A7 7 0 0 0 5 9.9C5 15.6 12 21 12 21Z"
-                    ></path>
+                <button aria-label="Porneste hidroforul" class="hydro-hero-button off" id="hydroHeroButton" type="button">
+                  <svg class="hydro-hero-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
+                    <path d="M12 3v9"></path><path d="M6.5 6.8a8 8 0 1 0 11 0"></path>
                   </svg>
-                  <span class="hydro-hero-status" id="hydroHeroStatus"
-                    >OPRIT</span
-                  >
-                  <span class="hydro-hero-timer" hidden="" id="hydroHeroTimer"
-                    >00:00</span
-                  >
+                  <span class="hydro-hero-status visually-hidden" id="hydroHeroStatus">NECUNOSCUT</span>
                 </button>
-                <div class="float-live-status tone-neutral" id="hydroFloatStatus" role="status">Plutitor indisponibil · pornirea blocată</div>
-                <p class="pump-action-hint" id="pumpActionHint">
-                  Apasă pentru a porni
-                </p>
+                <span class="hydro-power-indicator" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+                    <path d="M12 3v9"></path><path d="M6.5 6.8a8 8 0 1 0 11 0"></path>
+                  </svg>
+                </span>
+              </div>
+              <div class="float-live-status tone-neutral hydro-water-line" id="hydroFloatStatus" role="status">
+                <span class="hydro-water-reading"><span class="hydro-water-dot" aria-hidden="true"></span><span id="hydroWaterLabel">Semnal indisponibil</span></span>
+                <span class="hydro-water-source" id="hydroWaterSource">Pornirea blocată</span>
               </div>
               <div class="panic-stop-wrap">
-                <button
-                  class="panic-stop-btn"
-                  id="hydroPanicStop"
-                  type="button"
-                >
-                  Oprire de urgență
-                </button>
-                <div class="visually-hidden">
-                  Intrerupe imediat comanda curenta si opreste hidroforul,
-                  indiferent de modul activ.
-                </div>
+                <button class="panic-stop-btn" id="hydroPanicStop" type="button">Oprire de urgență</button>
+                <div class="visually-hidden">Întrerupe imediat comanda curentă și oprește hidroforul, indiferent de modul activ.</div>
               </div>
             </article>
             <section
@@ -9509,6 +9482,8 @@ const updateHydroHeroButton = (hydroState, runtimeText) => {
     );
   }
   const known = ["PORNIT", "OPRIT"].includes(String(hydroState || "").toUpperCase());
+  const hero = document.querySelector("#page-hidrofor .hydro-hero");
+  if (hero) hero.dataset.pumpState = !known ? "unknown" : hydroOn ? "on" : "off";
   setText("hydroHeroStatus", !known ? "NECUNOSCUT" : hydroOn ? "PORNIT" : "OPRIT");
   const timer = $("hydroHeroTimer");
   if (timer) {
@@ -13492,10 +13467,30 @@ const i5RenderWaterStatus = () => {
     DRY: ["Fără apă · plutitor simulat", "bad"], // stare proprie previzualizării WEB ONLY
     UNKNOWN: ["Plutitor indisponibil · pornirea blocată", "neutral"]
   }[state] || ["Plutitor indisponibil · pornirea blocată", "neutral"];
-  ["hydroFloatStatus", "homeFloatStatus"].forEach(id => {
-    const el = $(id);
-    if (el) { el.textContent = info[0]; el.className = "float-live-status tone-" + info[1]; }
-  });
+  // Același semnal validat ca înainte: nu colorăm albastru picătura pe date vechi sau necunoscute.
+  const waterVisual = state === "WET_READY" ? "wet" :
+    state === "WET_STABILIZING" ? "stabilizing" :
+    state === "DRY" || state === "DRY_OPEN" ? "dry" : "unknown";
+  const hero = document.querySelector("#page-hidrofor .hydro-hero");
+  if (hero) hero.dataset.waterState = waterVisual;
+  const hydro = $("hydroFloatStatus");
+  if (hydro) hydro.className = "float-live-status hydro-water-line tone-" + info[1];
+  const labels = {
+    WET_READY: "Apă prezentă",
+    WET_STABILIZING: "Apa se stabilizează",
+    DRY_OPEN: "Nivel critic",
+    DRY: "Fără apă",
+    UNKNOWN: "Semnal indisponibil"
+  };
+  setText("hydroWaterLabel", labels[state] || labels.UNKNOWN);
+  const source = forceMock() ? "Plutitor simulat" :
+    state === "WET_READY" ? "Plutitor confirmat" :
+    state === "WET_STABILIZING" ? "Confirmare în curs" :
+    state === "UNKNOWN" ? "Semnal neconfirmat" : "Pornirea blocată";
+  setText("hydroWaterSource", source);
+  // Indicatorul de pe pagina principală își păstrează contractul și structura anterioară.
+  const home = $("homeFloatStatus");
+  if (home) { home.textContent = info[0]; home.className = "float-live-status tone-" + info[1]; }
 };
 const i3Manual = () => normalize(uiState.controlMode) === "manual";
 const i3CommandReady = () => i3RemoteReady() && !i3Node()?.pending &&

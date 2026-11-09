@@ -1,0 +1,164 @@
+/* Hidrofor principal — componentă comună Manual / Automată / Programe avansate.
+   Doar prezentare. Nu modifică logica de START, STOP, PANIC sau semnalele ESP32. */
+#page-hidrofor .hydro-hero {
+  min-width:0;
+  padding:22px 21px 18px;
+  background:linear-gradient(150deg,#19343b 0%,#142b33 62%,#13282f 100%);
+  border:1px solid rgba(147,213,205,.10);
+  border-radius:25px;
+  box-shadow:0 18px 40px rgba(0,0,0,.13);
+}
+#page-hidrofor .hydro-hero .card-heading {align-items:center;gap:12px}
+#page-hidrofor .hydro-hero .eyebrow {
+  font-size:11px;letter-spacing:1.8px;font-weight:750;color:#a7c6cb;
+}
+#page-hidrofor .hydro-water-drop {
+  width:24px;height:24px;flex:none;color:#8faeb5;
+  transition:color .2s ease,filter .2s ease;
+}
+#page-hidrofor .hydro-hero[data-water-state="wet"] .hydro-water-drop {
+  color:#65c9ff;filter:drop-shadow(0 0 6px rgba(74,172,242,.22));
+}
+#page-hidrofor .hydro-hero[data-water-state="stabilizing"] .hydro-water-drop {color:#e4bd74}
+#page-hidrofor .hydro-hero[data-water-state="dry"] .hydro-water-drop {color:#ef8f98}
+#page-hidrofor .hydro-hero-top {
+  display:grid;grid-template-columns:minmax(0,1fr) 56px;align-items:center;
+  gap:13px;padding:23px 0 21px;min-width:0;
+}
+#page-hidrofor .hydro-copy {min-width:0;text-align:left}
+#page-hidrofor .hydro-state-kicker {
+  display:block;color:#9bb9bd;font-size:12px;font-weight:500;margin:0 0 7px;
+}
+#page-hidrofor .hydro-hero-top .hydro-copy h2 {
+  margin:0;font-size:clamp(20px,5.4vw,25px);font-weight:740;
+  line-height:1.2;letter-spacing:-.75px;color:#f4faf8;
+  overflow-wrap:break-word;
+}
+#page-hidrofor .hydro-hero-button,
+#page-hidrofor .hydro-power-indicator {
+  width:56px;height:56px;min-width:56px;min-height:56px;flex:none;
+  align-items:center;justify-content:center;border-radius:50%;
+  background:rgba(125,170,175,.055);color:#a5c4c9;
+  border:1px solid rgba(155,203,205,.15);box-shadow:none;
+  padding:0;margin:0;gap:0;
+}
+#page-hidrofor .hydro-hero-button {display:flex;cursor:pointer}
+#page-hidrofor .hydro-power-indicator {display:none;pointer-events:none}
+#page-hidrofor .hydro-hero-button .hydro-hero-icon,
+#page-hidrofor .hydro-power-indicator svg {
+  display:block;width:26px;height:26px;fill:none;stroke:currentColor;
+  stroke-width:1.6;
+}
+#page-hidrofor .hydro-hero-button.on,
+#page-hidrofor .hydro-hero[data-pump-state="on"] .hydro-power-indicator {
+  color:#a5f3d3;background:rgba(87,191,148,.12);
+  border-color:rgba(122,219,179,.32);box-shadow:none;
+}
+#page-hidrofor .hydro-hero[data-pump-state="unknown"] .hydro-power-indicator {color:#8faeb5}
+#page-hidrofor .hydro-hero-button:focus-visible {
+  outline:2px solid #7fdac6;outline-offset:4px;
+}
+#page-hidrofor .hydro-hero-button:disabled {cursor:not-allowed;opacity:.62}
+#page-hidrofor .hydro-hero-status.visually-hidden {
+  position:absolute!important;width:1px!important;height:1px!important;
+  padding:0!important;margin:-1px!important;overflow:hidden!important;
+  clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important;
+}
+#page-hidrofor .hydro-hero-timer:not([hidden]) {
+  display:inline-block;margin-top:8px;color:#9fe8cb;
+  font-size:12px;font-weight:650;font-variant-numeric:tabular-nums;
+  letter-spacing:0;
+}
+#page-hidrofor .hydro-hero-timer:not([hidden])::before {
+  content:"În funcțiune · ";font-weight:500;color:#a6c7c7;
+}
+#page-hidrofor .hydro-hero-timer[hidden] {display:none!important}
+#page-hidrofor #pumpActionHint {
+  margin:8px 0 0;text-align:left;color:#91b0b5;
+  font-size:11px;line-height:1.45;
+}
+#page-hidrofor #hydroFloatStatus.hydro-water-line {
+  display:flex;align-items:center;justify-content:space-between;
+  gap:10px;width:100%;max-width:none;min-height:0;
+  margin:0;padding:16px 0 18px;
+  background:none;border:0;border-top:1px solid rgba(185,221,217,.11);
+  border-radius:0;text-align:left;font-size:13px;line-height:1.35;
+}
+#page-hidrofor .hydro-water-reading {
+  display:flex;align-items:center;gap:10px;min-width:0;
+  color:#b0f0d8;font-weight:650;
+}
+#page-hidrofor .hydro-water-dot {
+  width:7px;height:7px;flex:none;border-radius:50%;
+  background:#71dfb6;box-shadow:0 0 0 4px rgba(113,223,182,.09);
+}
+#page-hidrofor .hydro-water-source {
+  color:#89a9ae;font-size:11px;font-weight:500;text-align:right;
+  min-width:0;overflow-wrap:break-word;
+}
+#page-hidrofor .hydro-hero[data-water-state="dry"] .hydro-water-reading {color:#f2a1ad}
+#page-hidrofor .hydro-hero[data-water-state="dry"] .hydro-water-dot {
+  background:#e78994;box-shadow:0 0 0 4px rgba(231,137,148,.10);
+}
+#page-hidrofor .hydro-hero[data-water-state="stabilizing"] .hydro-water-reading {color:#ebc989}
+#page-hidrofor .hydro-hero[data-water-state="stabilizing"] .hydro-water-dot {
+  background:#e4bd74;box-shadow:0 0 0 4px rgba(228,189,116,.1);
+}
+#page-hidrofor .hydro-hero[data-water-state="unknown"] .hydro-water-reading {color:#9bb9bd}
+#page-hidrofor .hydro-hero[data-water-state="unknown"] .hydro-water-dot {
+  background:#8da8b0;box-shadow:0 0 0 4px rgba(141,168,176,.08);
+}
+#page-hidrofor .panic-stop-wrap {margin:0}
+#page-hidrofor .panic-stop-btn {
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  width:100%;min-height:49px;padding:11px 14px;border-radius:13px;
+  border:1px solid rgba(239,119,132,.31);
+  background:rgba(203,80,101,.075);color:#f2a1ad;
+  font-size:13px;font-weight:700;line-height:1.25;
+}
+#page-hidrofor .panic-stop-btn::before {
+  content:"!";display:grid;place-items:center;flex:none;
+  width:17px;height:17px;border:1.5px solid currentColor;
+  border-radius:6px;font-size:12px;font-weight:800;line-height:1;
+}
+#page-hidrofor .panic-stop-btn:focus-visible {outline:2px solid #f2a1ad;outline-offset:3px}
+#page-hidrofor .panic-stop-btn:disabled {opacity:.6}
+#page-hidrofor .panic-stop-btn:not(:disabled):hover {background:rgba(203,80,101,.14)}
+/* În Automată și Programe avansate: aceeași pictogramă, doar indicator,
+   nu dezvăluim un nou START manual peste alte moduri. PANIC rămâne accesibil. */
+#page-hidrofor .hydro-grid:has(#autoControlSection:not([hidden])) .hydro-hero-button,
+#page-hidrofor .hydro-grid:has(#ap-panel:not([hidden])) .hydro-hero-button {
+  display:none!important;
+}
+#page-hidrofor .hydro-grid:has(#autoControlSection:not([hidden])) .hydro-power-indicator,
+#page-hidrofor .hydro-grid:has(#ap-panel:not([hidden])) .hydro-power-indicator {
+  display:flex;
+}
+#page-hidrofor .hydro-grid:has(#autoControlSection:not([hidden])) #pumpActionHint,
+#page-hidrofor .hydro-grid:has(#ap-panel:not([hidden])) #pumpActionHint {display:none}
+@media(max-width:699px) {
+  #page-hidrofor .hydro-grid:has(#autoControlSection:not([hidden])) .hydro-hero,
+  #page-hidrofor .hydro-grid:has(#wellControlSection:not([hidden])) .hydro-hero {
+    padding:22px 21px 18px;
+  }
+  #page-hidrofor .hydro-grid:has(#autoControlSection:not([hidden])) .hydro-copy h2,
+  #page-hidrofor .hydro-grid:has(#wellControlSection:not([hidden])) .hydro-copy h2 {
+    margin:0;font-size:clamp(20px,5.4vw,25px);
+  }
+  #page-hidrofor .hydro-grid:has(#autoControlSection:not([hidden])) .panic-stop-wrap,
+  #page-hidrofor .hydro-grid:has(#wellControlSection:not([hidden])) .panic-stop-wrap {margin:0}
+}
+@media(max-width:360px) {
+  #page-hidrofor .hydro-hero {padding:19px 16px 16px}
+  #page-hidrofor .hydro-hero-top {grid-template-columns:minmax(0,1fr) 49px;gap:10px;padding:21px 0 18px}
+  #page-hidrofor .hydro-hero-button,
+  #page-hidrofor .hydro-power-indicator {width:49px;height:49px;min-width:49px;min-height:49px}
+  #page-hidrofor #hydroFloatStatus.hydro-water-line {gap:8px}
+  #page-hidrofor .hydro-water-source {font-size:10px}
+  #page-hidrofor .hydro-water-reading {font-size:12px}
+  #page-hidrofor .hydro-grid:has(#autoControlSection:not([hidden])) .hydro-hero,
+  #page-hidrofor .hydro-grid:has(#wellControlSection:not([hidden])) .hydro-hero {padding:19px 16px 16px}
+}
+@media(prefers-reduced-motion:reduce) {
+  #page-hidrofor .hydro-water-drop {transition:none}
+}
