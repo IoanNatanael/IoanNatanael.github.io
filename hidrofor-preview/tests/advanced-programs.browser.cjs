@@ -44,6 +44,8 @@ const server=http.createServer((req,res)=>{
       assert.equal(await page.locator('#ap-current-name').textContent(),'Seră dimineața');
       assert.equal(await page.locator('#ap-editor').isVisible(),false);
       assert.match(await page.locator('#ap-overview-value').textContent(),/20°C până sub 35°C/);
+      assert.equal(await page.locator('#ap-summary-rows dt').textContent(),'Dacă se îndeplinește');
+      assert.equal(await page.locator('#ap-summary-rows dd').textContent(),'Udă 10 min');
       assert.match(await page.locator('#ap-climate-status').textContent(),/DEMO/);
       if(width===390){
         await page.evaluate(()=>{
@@ -140,6 +142,7 @@ const server=http.createServer((req,res)=>{
       assert.match(await page.locator('#ap-overview-value').textContent(),/20°C/);
       await page.locator('#ap-edit').click();
       await page.locator('#ap-smart-low').fill('22');
+      await page.locator('#ap-smart-duration').fill('12');
       await page.locator('#ap-save').click();
       assert.match(await page.locator('#ap-overview-value').textContent(),/22°C/);
       await page.locator('#ap-new').click();
@@ -152,6 +155,7 @@ const server=http.createServer((req,res)=>{
       await page.locator('#ap-open').click();
       assert.equal(await page.locator('#ap-current-name').textContent(),'Seră dimineața');
       assert.match(await page.locator('#ap-overview-value').textContent(),/22°C până sub 35°C/);
+      assert.equal(await page.locator('#ap-summary-rows dd').textContent(),'Udă 12 min');
       await page.locator('#ap-edit').click();
       await page.locator('#ap-delete').click();
       assert.equal(await page.locator('#ap-new').isVisible(),true);

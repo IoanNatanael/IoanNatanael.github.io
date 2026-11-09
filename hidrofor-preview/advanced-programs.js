@@ -43,36 +43,36 @@
   function renderSummary(m){
     const smart=state.mode==='SMART';
     const summaryRows=byId('ap-summary-rows');
-    summaryRows.hidden=smart;
     byId('ap-overview-value').hidden=!smart;
     text('ap-current-name',m.name);
     const meta=[modeLabels[state.mode],m.time];
-    let rows=[];
+    let rows;
     if(smart){
-      const {scope,metric,rule,low,high}=m.smart;
+      const {scope,metric,rule,low,high,duration}=m.smart;
       const humidity=metric==='humidity',unit=humidity?'%':'°C';
       const label=humidity?'Umiditatea aerului':'Temperatură';
       const threshold={under:'sub '+low+unit,above:'de la '+low+unit,between:'de la '+low+unit+' până sub '+high+unit};
       meta.push(sourceLabels[scope],label);
       text('ap-overview-label','Condiție de pornire');
       text('ap-overview-value',label+' '+threshold[rule]);
+      rows=[['Dacă se îndeplinește','Udă '+duration+' min']];
     }else if(state.mode==='ADAPTIVE'){
       meta.push(sourceLabels[m.adaptive.source]);
       text('ap-overview-label','Durate după temperatură');
       const labels=adaptiveLabels(m.adaptive);
-      rows=m.adaptive.durations.map((duration,index)=>[labels[index],duration]);
+      rows=m.adaptive.durations.map((duration,index)=>[labels[index],duration+' min']);
     }else{
       text('ap-overview-label','Secvență');
       rows=m.steps.map((step,index)=>[
-        (index+1)+'. '+(step.type==='ON'?'Udare':'Pauză'),step.minutes
+        (index+1)+'. '+(step.type==='ON'?'Udare':'Pauză'),step.minutes+' min'
       ]);
     }
-    summaryRows.replaceChildren(...rows.map(([name,duration])=>{
+    summaryRows.replaceChildren(...rows.map(([name,detail])=>{
       const row=document.createElement('div');
       const label=document.createElement('dt');
       const value=document.createElement('dd');
       label.textContent=name;
-      value.textContent=duration+' min';
+      value.textContent=detail;
       row.append(label,value);
       return row;
     }));
