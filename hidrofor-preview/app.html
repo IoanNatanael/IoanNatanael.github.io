@@ -5708,7 +5708,7 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
 .r15-control-note{font-size:11px;line-height:1.55;color:#a2b6ba;margin:15px 0 0}
 @media(max-width:380px){.r15-meter{padding:12px}.r15-meter-main strong{font-size:29px}.r15-meter-demo{font-size:9px;padding:5px 7px}.r15-load-card .r15-chip-label{font-size:9px}}
 </style>
-<link rel="stylesheet" href="./r18-schedules.css?v=3">
+<link rel="stylesheet" href="./r18-schedules.css?v=4">
 <script defer src="./r18-schedules.js?v=2"></script>
 <link rel="stylesheet" href="./advanced-programs.css?v=compact-selector-1">
 <script defer src="./e10-advanced-engine.js?v=1"></script>
@@ -6112,22 +6112,11 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
                 <div class="visually-hidden">Întrerupe imediat comanda curentă și oprește hidroforul, indiferent de modul activ.</div>
               </div>
             </article>
-            <section
-              aria-labelledby="autoControlTitle"
-              class="auto-control-grid"
-              hidden=""
-              id="autoControlSection"
-            >
+            <section id="manualTimedSection" class="auto-control-grid" aria-labelledby="manualTimedTitle">
               <p id="autoTimerContext" class="timer-context" role="status" aria-live="polite">Se verifică starea udării pe ESP32.</p>
               <article class="card auto-card r13-single-card">
-  <header class="r13-card-head">
-    <div>
-      
-      <h3 id="autoControlTitle">Udare automată</h3>
-    </div>
-    <span class="r13-auto-indicator">AUTO</span>
-  </header>
-  <div class="r13-unified-body">
+                <header class="r13-card-head"><h3 id="manualTimedTitle">Udare manuală temporizată</h3></header>
+                <div class="r13-unified-body">
     <h4 class="r13-control-label">Pornește acum</h4>
     <div class="timer-panel r13-timer-panel">
                     <div class="timer-dial-wrap">
@@ -6188,7 +6177,7 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
                         <button type="button" data-r12-water="unknown" aria-pressed="false">Necunoscut</button>
                       </div>
                     </div>
-                    
+
     </div>
     <section id="r13NowPane" class="r13-operation-pane" aria-label="Pornire imediată">
       <div class="auto-actions r12-auto-actions">
@@ -6196,6 +6185,21 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
         <button class="btn-bad" id="autoTimedStop" type="button">Oprește</button>
       </div>
     </section>
+                </div>
+              </article>
+            </section>
+            <section
+              aria-labelledby="autoControlTitle"
+              class="auto-control-grid"
+              hidden=""
+              id="autoControlSection"
+            >
+              <article class="card auto-card r13-single-card">
+  <header class="r13-card-head">
+    <h3 id="autoControlTitle">Udare automată</h3>
+    <span class="r13-auto-indicator">AUTO</span>
+  </header>
+  <div class="r13-unified-body">
     <section id="r13SchedulePane" class="r13-operation-pane r13-schedule-pane" aria-labelledby="r18ScheduleTitle">
       <h4 id="r18ScheduleTitle">Programări</h4>
       <p id="i9ScheduleStatus" class="r13-inline-status" role="status">Se citesc programările…</p>
@@ -8244,6 +8248,9 @@ const mockState = {
   previewResumeAt: 0,
   previewWater: "wet",
   previewSuspended: false,
+  previewScheduleMinute: Math.floor(Date.now() / 60000),
+  previewScheduleResult: "",
+  previewTimedOrigin: "",
   // R16: un singur consum comun DEMO, actualizat de ventilatoarele simulate.
   previewTotalLoadW: 2.6,
   previewWeather: "sun",
@@ -8876,6 +8883,7 @@ const mockHandleCommand = (nextState, source = "Website") => {
   mockState.live.modControl = "Manual";
   mockState.previewCommandCounter += 1;
   mockState.previewTimedEnd = 0;
+  mockState.previewTimedOrigin = "";
   mockState.previewTimedPhase = "IDLE";
   mockState.previewTimedRemainingMs = 0;
   mockState.hydroStartedAt = on ? Date.now() : null;
@@ -8905,6 +8913,7 @@ const mockHandleCommand = (nextState, source = "Website") => {
 };
 
 const mockHandlePanicStop = () => {
+  mockState.previewSuspended = true;
   mockHandleCommand("OPRIT", "Website");
   if (mockState.commands[0]) {
     mockState.commands[0].title = "STOP FORTAT hidrofor";
@@ -9046,10 +9055,48 @@ const mockSetAuto = () => {
   mockState.events = mockState.events.slice(0, 150);
 };
 
+const mockStartTimed = (minutes, refillMinutes, origin) => {
+  mockHandleCommand("PORNIT", origin === "schedule" ? "Programare · DEMO" : "Manual temporizat · DEMO");
+  mockState.previewTimedOrigin = origin;
+  mockState.previewTimedDurationMs = minutes * 60000;
+  mockState.previewTimedRemainingMs = mockState.previewTimedDurationMs;
+  mockState.previewTimedLastTick = Date.now();
+  mockState.previewRefillMin = refillMinutes;
+  mockState.previewTimedPhase = "RUNNING";
+  if (origin === "schedule") mockState.live.modControl = "Automat";
+};
+
+const mockScheduleTick = (now = new Date()) => {
+  const minute = Math.floor(now.getTime() / 60000);
+  if (minute === mockState.previewScheduleMinute) return;
+  mockState.previewScheduleMinute = minute;
+  if (mockState.previewSuspended || mockState.live.modControl !== "Automat") return;
+
+  const time = now.getHours() * 100 + now.getMinutes();
+  const date = now.getFullYear() * 10000 + (now.getMonth() + 1) * 100 + now.getDate();
+  const occurrence = date * 10000 + time;
+  for (const schedule of mockState.previewSchedules) {
+    if (!schedule.enabled || schedule.time !== time || schedule.lastOccurrence === occurrence) continue;
+    const matches = schedule.mode === 0 ? Number(schedule.date) === date :
+      schedule.mode === 1 || (schedule.mode === 2 && Boolean(schedule.weekdays & (1 << now.getDay())));
+    if (!matches) continue;
+    schedule.lastOccurrence = occurrence;
+    if (schedule.mode === 0) schedule.enabled = false;
+    const idle = mockState.live.stareHidrofor === "OPRIT" &&
+      !["RUNNING", "PAUSED", "RESUMING"].includes(mockState.previewTimedPhase);
+    if (!idle || mockState.previewWater !== "wet" || mockState.live.baterieOk !== true) {
+      mockState.previewScheduleResult = "DEMO · Programare omisă: pompa este ocupată sau apa și bateria nu sunt confirmate.";
+      continue;
+    }
+    mockStartTimed(schedule.minutes, schedule.refillMinutes, "schedule");
+    mockState.previewScheduleResult = "DEMO · Udare programată pornită.";
+  }
+};
+
 const r12MockTimedTick = () => {
   if (!["RUNNING", "PAUSED", "RESUMING"].includes(mockState.previewTimedPhase)) return;
   const now = Date.now();
-  const delta = Math.max(0, Math.min(5000, now - (mockState.previewTimedLastTick || now)));
+  const delta = Math.max(0, now - (mockState.previewTimedLastTick || now));
   mockState.previewTimedLastTick = now;
   if (mockState.previewTimedPhase === "RUNNING" && mockState.previewWater !== "wet") {
     mockState.previewTimedPhase = "PAUSED";
@@ -9062,9 +9109,14 @@ const r12MockTimedTick = () => {
     mockState.live.stareHidrofor = "PORNIT";
     mockState.hydroStartedAt = now;
   } else if (mockState.previewTimedPhase === "RUNNING") {
-    mockState.previewTimedRemainingMs = Math.max(0, mockState.previewTimedRemainingMs - delta);
+    mockState.previewTimedRemainingMs = Math.max(0, mockState.previewTimedRemainingMs - delta * 60);
     if (mockState.previewTimedRemainingMs <= 0) {
-      mockHandleCommand("OPRIT", "Udare automată finalizată · demo");
+      const scheduled = mockState.previewTimedOrigin === "schedule";
+      mockHandleCommand("OPRIT", "Udare temporizată finalizată · DEMO");
+      if (scheduled) {
+        mockState.live.modControl = "Automat";
+        mockState.previewScheduleResult = "DEMO · Udare programată încheiată.";
+      }
       mockState.previewTimedPhase = "DONE";
     }
   }
@@ -9072,6 +9124,7 @@ const r12MockTimedTick = () => {
 const mockTick = () => {
   r12MockTimedTick();
   if (!mockState.running) return;
+  mockScheduleTick();
   mockState.live.dataOra = mockNow();
   mockState.live.temperatura = clamp(
     mockState.live.temperatura + (Math.random() - 0.5) * 0.25,
@@ -9204,7 +9257,7 @@ const mockFetch = async (input, options = {}) => {
     canAttemptArm:true, bootRearmRequired:false, recoveryPending:false,
     storageAlarm:false,suspendWritePending:false,
     suspended:mockState.previewSuspended,needsFaultAck:false,
-    items:mockState.previewSchedules, pending:{active:false},lastResult:"Mod DEMO · fără execuții hardware"
+    items:mockState.previewSchedules, pending:{active:false},lastResult:mockState.previewScheduleResult || "DEMO · Se simulează la ora locală, cât timp pagina este deschisă în Automată."
   });
   if (path.startsWith("/api/schedules/") && options.method === "POST") {
     const form = new URLSearchParams(options.body || "");
@@ -10127,7 +10180,7 @@ const renderLive = (data) => {
   // automat cu plutitor ramane activ pe ESP32.
   // R12: un singur mod Automat. În PAUSED releul poate fi MANUAL/OFF,
   // dar sesiunea temporizată continuă să fie AUTOMATĂ la nivel ESP32.
-  const mode = i6TimedActive() || d.timedRun?.phase === "FAULT"
+  const mode = (i6TimedActive() && (!forceMock() || mockState.previewTimedOrigin !== "manual")) || d.timedRun?.phase === "FAULT"
     ? "Automat" : d.hidroforNode?.configured === true && d.hidroforNode?.online === true
     ? (d.hidroforNode.mode === "AUTO" ? "Automat" : "Manual")
     : (uiState.controlModeTouched && uiState.controlMode === "Automat" ? "Automat" : "Manual");
@@ -13329,7 +13382,7 @@ const askConfirm = ({ title, text, actionText = "Sterge" }) => {
 };
 
 const currentWateringMode = () =>
-  i6TimedActive() || i6Timed().phase === "FAULT" ||
+  (i6TimedActive() && (!forceMock() || mockState.previewTimedOrigin !== "manual")) || i6Timed().phase === "FAULT" ||
   i9State?.needsFaultAck === true || normalize(uiState.controlMode).includes("auto")
     ? "auto" : "manual";
 
@@ -13339,6 +13392,7 @@ const renderModeButtons = () => {
   const advanced = !$("ap-panel").hidden;
   const mode = currentWateringMode();
   $("autoControlSection").hidden = advanced || mode !== "auto";
+  $("manualTimedSection").hidden = advanced || (forceMock() ? mode !== "manual" : mode !== "auto");
   $("ap-open").classList.toggle("active", advanced);
   $("ap-open").setAttribute("aria-pressed", String(advanced));
   document.querySelectorAll("[data-hydro-mode]").forEach((b) => {
@@ -13693,7 +13747,10 @@ const i3Execute = async action => {
   if (forceMock()) {
     if (action === "panic") return i3Panic();
     if (action === "start") mockHandleCommand("PORNIT", "Website · demo");
-    else if (action === "stop") mockHandleCommand("OPRIT", "Website · demo");
+    else if (action === "stop") {
+      mockState.previewSuspended = true;
+      mockHandleCommand("OPRIT", "Website · demo");
+    }
     else if (action === "auto") { mockHandleCommand("OPRIT", "Website · demo"); mockSetAuto(); }
     else if (action === "manual") mockHandleCommand("OPRIT", "Website · demo");
     else return;
@@ -13760,7 +13817,7 @@ const i6SyncTimedControls = () => {
   const active = i6TimedActive();
   const canStart = i3CommandReady() && i5WaterReady() &&
     uiState.live?.baterieOk === true && i3Relay() === "OPRIT" &&
-    i3Node()?.mode === "AUTO" && !active && !i3.busy && !i3.panicBusy;
+    (forceMock() || i3Node()?.mode === "AUTO") && !active && !i3.busy && !i3.panicBusy;
   const start = $("autoTimedStart"), stop = $("autoTimedStop"), inp = $("autoTimerInput");
   if(start){start.disabled=!canStart;start.textContent=forceMock()?"Pornește udarea":"Pornește · ESP32";}
   if(stop){stop.disabled=!active && i3Relay()!=="PORNIT";stop.textContent="Oprește";}
@@ -13788,23 +13845,15 @@ const i6SyncTimedControls = () => {
 };
 const i6StartTimed = async (minutes, refillMinutes = 10) => {
   if (forceMock()) {
+    if (i6TimedActive() || mockState.live.stareHidrofor !== "OPRIT" ||
+        mockState.previewWater !== "wet" || mockState.live.baterieOk !== true)
+      return showAutoToast("Temporizator blocat · verifică pompa, apa și bateria");
     const duration = Math.max(1, Math.min(120, Math.round(Number(minutes) || 10)));
-    mockHandleCommand("PORNIT", "Temporizator · demo");
-    mockState.previewTimedDurationMs = duration * 60000;
-    mockState.previewTimedRemainingMs = mockState.previewTimedDurationMs;
-    mockState.previewTimedLastTick = Date.now();
-    mockState.previewRefillMin = Math.max(1, Math.min(120, Number(refillMinutes) || 10));
-    mockState.previewTimedPhase = mockState.previewWater === "wet" ? "RUNNING" : "PAUSED";
-    mockState.previewResumeAt = Date.now() + mockState.previewRefillMin * 1000;
-    if (mockState.previewTimedPhase === "PAUSED") {
-      mockState.live.stareHidrofor = "OPRIT";
-      mockState.hydroStartedAt = null;
-    }
-    mockState.live.modControl = "Automat";
-    uiState.controlMode = "Automat";
+    mockStartTimed(duration, Math.max(1, Math.min(120, Number(refillMinutes) || 10)), "manual");
+    uiState.controlMode = "Manual";
     uiState.controlModeTouched = true;
-    await loadLive(); renderModeButtons();
-    showAutoToast("Udare automată DEMO · " + duration + " min, pauză " + mockState.previewRefillMin + " min");
+    await loadLive();
+    showAutoToast("Udare manuală temporizată · DEMO");
     return;
   }
   if(i3.busy || i3.panicBusy || i6TimedActive())return showAutoToast("Comandă deja în curs");
@@ -15289,7 +15338,7 @@ function i9RenderSchedules(){
       : i9State.pending?.active
       ? "Așteaptă refacerea apei · maximum " + i9State.pending.maxMinutes +
         " min · rămase " + Math.ceil(i9State.pending.waitRemainingMs/60000) + " min"
-      : "Programările se execută pe ESP32 · " + (i9State.lastResult||"fără execuții recente");
+      : forceMock() ? i9State.lastResult : "Programările se execută pe ESP32 · " + (i9State.lastResult||"fără execuții recente");
   const arm=$("i9ScheduleArm"),suspend=$("i9ScheduleSuspend"),add=$("autoAddSchedule"),ack=$("i9ScheduleAcknowledge");
   if(ack){ack.hidden=!i9State.needsFaultAck;ack.disabled=!i9State.available||!i9State.needsFaultAck;}
   if(i9State.needsFaultAck && !i6TimedActive()) {
@@ -15485,9 +15534,8 @@ window.addEventListener("DOMContentLoaded", () => {
       e.target.value=String(Number.isInteger(n)?Math.max(1,Math.min(120,n)):10);
     });
     window.r12RenderUnified();
-    window.setInterval(() => { if (uiState.page==='udare' && forceMock() &&
+    window.setInterval(() => { if (forceMock() &&
       ['RUNNING','PAUSED','RESUMING'].includes(mockState.previewTimedPhase)) {
-      mockTick();
       loadLive().then(()=>window.r12RenderUnified());
     } },1000);
   });

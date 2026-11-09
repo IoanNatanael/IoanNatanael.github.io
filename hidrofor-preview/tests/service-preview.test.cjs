@@ -41,7 +41,7 @@ test('Modul demo rămâne explicit; nu sunt introduse rute hardware noi', () => 
 test('V13-R20: fișiere locale reale și încărcare în pagina de lucru', () => {
   assert.ok(existsSync(join(root, 'r18-schedules.js')));
   assert.ok(existsSync(join(root, 'r18-schedules.css')));
-  assert.match(app, /href="\.\/r18-schedules\.css\?v=3"/);
+  assert.match(app, /href="\.\/r18-schedules\.css\?v=4"/);
   assert.match(app, /src="\.\/r18-schedules\.js\?v=2"/);
   assert.match(script, /V13-R20/);
   assert.match(style, /V13-R20/);

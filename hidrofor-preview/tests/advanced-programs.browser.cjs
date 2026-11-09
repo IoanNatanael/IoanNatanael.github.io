@@ -38,9 +38,10 @@ const server=http.createServer((req,res)=>{
       assert.equal(await page.locator('[data-hydro-mode="manual"]').getAttribute('aria-pressed'),'true');
       assert.equal(await page.locator('#ap-panel').isVisible(),false);
       assert.equal(await page.evaluate(()=>mockState.commands.length),manualCommands);
+      assert.equal(await page.locator('#manualTimedSection #autoTimedStart').isVisible(),true);
       await page.locator('[data-hydro-mode="auto"]').click();
       await page.locator('#autoScheduleList .schedule-row').first().waitFor();
-      assert.equal(await page.locator('#autoTimedStart').isVisible(),true);
+      assert.equal(await page.locator('#autoTimedStart').isVisible(),false);
       assert.equal(await page.locator('#autoAddSchedule').isVisible(),false);
       await page.locator('#r18ScheduleEditor summary').click();
       const immediateDuration=await page.locator('#autoTimerInput').inputValue();
@@ -151,6 +152,27 @@ const server=http.createServer((req,res)=>{
       assert.equal(await page.locator('#ap-new').isVisible(),true);
       assert.deepEqual(errors,[]);assert.deepEqual(writes,[]);await ctx.close();console.log('PASS '+width+'px: inline view, SMART, steps, adaptive, saved programs, no writes');
     }
+    const timedContext=await browser.newContext();
+    const timedPage=await timedContext.newPage();
+    await timedPage.clock.install({time:new Date(2026,10,9,7,29,10)});
+    await timedPage.goto(origin+'/app.html');
+    await timedPage.locator('.tab-btn[data-page="hidrofor"]').click();
+    await timedPage.locator('#autoTimedStart').click();
+    assert.equal(await timedPage.locator('[data-hydro-mode="manual"]').getAttribute('aria-pressed'),'true');
+    assert.equal(await timedPage.evaluate(()=>mockState.previewTimedOrigin),'manual');
+    await timedPage.clock.fastForward(6000);
+    assert.equal(await timedPage.evaluate(()=>mockState.previewTimedPhase),'DONE');
+    await timedPage.locator('[data-hydro-mode="auto"]').click();
+    await timedPage.clock.fastForward(46000);
+    assert.equal(await timedPage.evaluate(()=>mockState.previewTimedOrigin),'schedule');
+    assert.equal(await timedPage.evaluate(()=>mockState.live.stareHidrofor),'PORNIT');
+    await timedPage.clock.fastForward(13000);
+    assert.equal(await timedPage.evaluate(()=>mockState.previewTimedPhase),'DONE');
+    assert.equal(await timedPage.evaluate(()=>mockState.live.stareHidrofor),'OPRIT');
+    assert.equal(await timedPage.locator('[data-hydro-mode="auto"]').getAttribute('aria-pressed'),'true');
+    await timedContext.close();
+    console.log('PASS manual timer and scheduled start/stop on the demo clock');
+
     const ctx=await browser.newContext(),page=await ctx.newPage();
     await page.addInitScript(()=>localStorage.setItem('hidrofor-advanced-programs-v1','{broken'));
     await page.goto(origin+'/app.html',{waitUntil:'load'});await page.locator('[data-page="hidrofor"]').first().click();await page.locator('[data-hydro-mode="auto"]').click();await page.locator('#ap-open').click();

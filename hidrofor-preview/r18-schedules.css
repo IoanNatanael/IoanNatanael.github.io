@@ -2,7 +2,19 @@
 #page-hidrofor .r12-refill-box { display: none !important; }
 #page-hidrofor .r13-timer-panel .timer-dial-wrap { margin-block: 10px 14px; }
 #page-hidrofor .r13-timer-panel .timer-dial { width: 104px; height: 104px; }
-#r13SchedulePane { border-top: 1px solid #2b484c; margin-top: 20px; padding-top: 16px; }
+#r13SchedulePane { margin-top: 0; }
+#manualTimedSection[hidden] { display: none !important; }
+@media (min-width: 700px) {
+  .hydro-grid:has(#manualTimedSection:not([hidden])) {
+    display: grid;
+    grid-template-columns: minmax(0,1fr) minmax(0,1fr);
+  }
+  .hydro-grid:has(#manualTimedSection:not([hidden])) .hydro-hero {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+  }
+}
 #r18ScheduleTitle { margin: 0 0 8px; font-size: 16px; }
 #r13SchedulePane .r13-inline-status { background: none; border: 0; padding: 0; }
 #r13SchedulePane .r13-schedule-management { margin: 0; border: 0; padding: 0; }
