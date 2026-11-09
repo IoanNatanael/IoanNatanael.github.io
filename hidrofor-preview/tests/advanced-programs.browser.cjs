@@ -3,7 +3,7 @@ const assert=require('node:assert/strict');
 const fs=require('node:fs'),http=require('node:http'),path=require('node:path');
 const {chromium}=require(process.env.PLAYWRIGHT_MODULE||path.join(process.env.USERPROFILE,'.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright'));
 const root=path.resolve(__dirname,'..');
-const files=new Set(['app.html','r18-schedules.js','r18-schedules.css','advanced-programs.css','advanced-programs.js','e10-advanced-engine.js','hydro-hero-redesign.css']);
+const files=new Set(['app.html','r18-schedules.js','r18-schedules.css','advanced-programs.css','advanced-programs.js','e10-advanced-engine.js','hydro-hero-redesign.css','manual-water-status.css']);
 const server=http.createServer((req,res)=>{
   const name=new URL(req.url,'http://localhost').pathname.slice(1);
   if(req.method!=='GET'||!files.has(name)){res.writeHead(404);return res.end();}
@@ -39,6 +39,24 @@ const server=http.createServer((req,res)=>{
       assert.equal(await page.locator('#ap-panel').isVisible(),false);
       assert.equal(await page.evaluate(()=>mockState.commands.length),manualCommands);
       assert.equal(await page.locator('#manualTimedSection #autoTimedStart').isVisible(),true);
+      const waterRow=page.locator('#r12DemoWater');
+      assert.equal(await waterRow.locator('summary').isVisible(),true);
+      assert.equal(await waterRow.evaluate(el=>el.open),false);
+      assert.equal(await waterRow.locator('.r12-demo-buttons').isVisible(),false);
+      await waterRow.locator('summary').click();
+      assert.equal(await waterRow.evaluate(el=>el.open),true);
+      await page.locator('[data-r12-water="dry"]').click();
+      await page.waitForFunction(()=>document.querySelector('#r12DemoWaterLabel')?.textContent==='Fără apă');
+      assert.equal(await waterRow.getAttribute('data-water-state'),'dry');
+      await page.locator('[data-r12-water="unknown"]').click();
+      await page.waitForFunction(()=>document.querySelector('#r12DemoWaterLabel')?.textContent==='Semnal necunoscut');
+      assert.equal(await waterRow.getAttribute('data-water-state'),'unknown');
+      await page.locator('[data-r12-water="wet"]').click();
+      await page.waitForFunction(()=>document.querySelector('#r12DemoWaterLabel')?.textContent==='Apă prezentă');
+      assert.equal(await waterRow.getAttribute('data-water-state'),'wet');
+      assert.equal(await page.locator('#r12DemoWaterSource').textContent(),'Plutitor simulat');
+      await waterRow.locator('summary').click();
+      assert.equal(await waterRow.evaluate(el=>el.open),false);
       await page.locator('[data-hydro-mode="auto"]').click();
       await page.locator('#autoScheduleList .schedule-row').first().waitFor();
       assert.equal(await page.locator('#autoTimedStart').isVisible(),false);

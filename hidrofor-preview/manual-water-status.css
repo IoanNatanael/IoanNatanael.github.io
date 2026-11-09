@@ -1,0 +1,77 @@
+/* Udare manuală temporizată: stare apă în stilul martorului din Hidrofor.
+   Panoul DEMO este accesibil doar la atingere; fără efect asupra comenzilor. */
+#page-hidrofor .r12-demo-water {
+  display:block;margin:12px 0 10px;padding:0;
+  border:0;border-top:1px solid rgba(185,221,217,.12);
+  border-radius:0;background:transparent;box-shadow:none;
+}
+#page-hidrofor .r12-demo-water .r12-demo-status {
+  display:flex;align-items:center;justify-content:space-between;
+  gap:10px;min-height:44px;margin:0;padding:11px 0;
+  border:0;border-radius:0;background:transparent;
+  list-style:none;cursor:pointer;touch-action:manipulation;
+}
+#page-hidrofor .r12-demo-status::-webkit-details-marker {display:none}
+#page-hidrofor .r12-demo-status::marker {content:""}
+#page-hidrofor .r12-demo-status:focus-visible {
+  outline:2px solid #83e1c6;outline-offset:3px;border-radius:4px;
+}
+#page-hidrofor .r12-demo-reading {
+  display:inline-flex;align-items:center;gap:10px;min-width:0;
+}
+#page-hidrofor .r12-demo-reading strong {
+  color:#b0f0d8;font-size:13px;font-weight:700;line-height:1.35;
+}
+#page-hidrofor .r12-demo-dot {
+  display:block;flex:none;width:8px;height:8px;border-radius:50%;
+  background:#71dfb6;box-shadow:0 0 0 4px rgba(113,223,182,.09);
+}
+#page-hidrofor .r12-demo-source {
+  display:inline-flex;align-items:center;justify-content:flex-end;
+  gap:7px;min-width:0;color:#92b9c5;
+  font-size:11px;font-weight:550;line-height:1.35;text-align:right;
+}
+#page-hidrofor .r12-demo-chevron {
+  width:14px;height:14px;flex:none;opacity:.7;
+  transition:transform .18s ease;
+}
+#page-hidrofor .r12-demo-water[open] .r12-demo-chevron {transform:rotate(180deg)}
+#page-hidrofor .r12-demo-status[aria-disabled="true"] {cursor:default}
+#page-hidrofor .r12-demo-status[aria-disabled="true"] .r12-demo-chevron {display:none}
+#page-hidrofor .r12-demo-water[data-water-state="dry"] .r12-demo-reading strong {color:#efa5ad}
+#page-hidrofor .r12-demo-water[data-water-state="dry"] .r12-demo-dot {
+  background:#e78994;box-shadow:0 0 0 4px rgba(231,137,148,.1);
+}
+#page-hidrofor .r12-demo-water[data-water-state="stabilizing"] .r12-demo-reading strong {color:#e9c888}
+#page-hidrofor .r12-demo-water[data-water-state="stabilizing"] .r12-demo-dot {
+  background:#e4bd74;box-shadow:0 0 0 4px rgba(228,189,116,.1);
+}
+#page-hidrofor .r12-demo-water[data-water-state="unknown"] .r12-demo-reading strong {color:#a9c0c6}
+#page-hidrofor .r12-demo-water[data-water-state="unknown"] .r12-demo-dot {
+  background:#8da8b0;box-shadow:0 0 0 4px rgba(141,168,176,.08);
+}
+#page-hidrofor .r12-demo-controls {
+  padding:1px 0 12px;
+}
+#page-hidrofor .r12-demo-controls[hidden] {display:none!important}
+#page-hidrofor .r12-demo-controls p {
+  margin:0 0 9px;color:#91b1b6;font-size:11px;line-height:1.35;
+}
+#page-hidrofor .r12-demo-buttons {gap:6px}
+#page-hidrofor .r12-demo-buttons button {
+  min-height:36px;border:1px solid rgba(129,177,179,.22);
+  border-radius:9px;background:rgba(16,43,49,.7);
+  color:#b4d0d0;font-size:11px;
+}
+#page-hidrofor .r12-demo-buttons button[aria-pressed="true"] {
+  border-color:rgba(117,211,176,.48);
+  background:rgba(92,190,154,.2);color:#c8f9e8;
+}
+@media(max-width:350px){
+  #page-hidrofor .r12-demo-source {font-size:10px;gap:4px}
+  #page-hidrofor .r12-demo-reading strong {font-size:12px}
+  #page-hidrofor .r12-demo-buttons button {font-size:10px}
+}
+@media(prefers-reduced-motion:reduce){
+  #page-hidrofor .r12-demo-chevron {transition:none}
+}

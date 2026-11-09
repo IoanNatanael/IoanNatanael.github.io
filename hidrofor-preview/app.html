@@ -5725,6 +5725,7 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
 <script defer src="./e10-advanced-engine.js?v=1"></script>
 <script defer src="./advanced-programs.js?v=adaptive-tints-5"></script>
 <link rel="stylesheet" href="./hydro-hero-redesign.css?v=4">
+<link rel="stylesheet" href="./manual-water-status.css?v=1">
 </head>
   <body class="hidro-v5">
     <div class="app">
@@ -6181,14 +6182,26 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
                       </div>
                       <div class="r12-refill-input"><input id="autoRefillMinutes" type="number" min="1" max="120" step="1" value="10" inputmode="numeric" aria-label="Pauză pentru refacerea apei în minute"><span>min</span></div>
                     </div>
-<div class="r12-demo-water" id="r12DemoWater">
-                      <div class="r12-demo-title"><strong>Test plutitor · DEMO</strong></div>
-                      <div class="r12-demo-buttons" role="group" aria-label="Simulare nivel apă">
-                        <button type="button" data-r12-water="wet" aria-pressed="true">Apă prezentă</button>
-                        <button type="button" data-r12-water="dry" aria-pressed="false">Fără apă</button>
-                        <button type="button" data-r12-water="unknown" aria-pressed="false">Necunoscut</button>
+<details class="r12-demo-water" id="r12DemoWater" data-water-state="unknown">
+                      <summary class="r12-demo-status">
+                        <span class="r12-demo-reading" aria-live="polite">
+                          <span class="r12-demo-dot" aria-hidden="true"></span>
+                          <strong id="r12DemoWaterLabel">Semnal necunoscut</strong>
+                        </span>
+                        <span class="r12-demo-source">
+                          <span id="r12DemoWaterSource">Plutitor simulat</span>
+                          <svg class="r12-demo-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>
+                        </span>
+                      </summary>
+                      <div class="r12-demo-controls">
+                        <p>Simulare plutitor · doar DEMO</p>
+                        <div class="r12-demo-buttons" role="group" aria-label="Simulare nivel apă">
+                          <button type="button" data-r12-water="wet" aria-pressed="true">Apă prezentă</button>
+                          <button type="button" data-r12-water="dry" aria-pressed="false">Fără apă</button>
+                          <button type="button" data-r12-water="unknown" aria-pressed="false">Necunoscut</button>
+                        </div>
                       </div>
-                    </div>
+                    </details>
 
     </div>
     <section id="r13NowPane" class="r13-operation-pane" aria-label="Pornire imediată">
@@ -15657,9 +15670,41 @@ window.addEventListener("DOMContentLoaded", () => {
     if ($('r12PhaseLine')) $('r12PhaseLine').textContent=line;
     const refill=$('autoRefillMinutes');
     if(refill) refill.disabled = active;
+    // Indicator compact: în DEMO citim simularea; în ACTIVE afișăm numai
+    // telemetria recentă și confirmată, fără să deducem apă din date vechi.
+    const node=i3Node(),liveWater=node?.water;
+    const validWater=i3Fresh() && node?.online===true && liveWater?.fresh===true;
+    const visualWater=forceMock()
+      ? (['wet','dry','unknown'].includes(mockState.previewWater)?mockState.previewWater:'unknown')
+      : !validWater ? 'unknown'
+      : liveWater?.state==='WET_READY' && liveWater?.ready===true ? 'wet'
+      : liveWater?.state==='WET_STABILIZING' ? 'stabilizing'
+      : ['DRY','DRY_OPEN'].includes(liveWater?.state) ? 'dry' : 'unknown';
+    const demoStatus=$('r12DemoWater');
+    if(demoStatus){
+      const demo=forceMock();
+      demoStatus.dataset.waterState=visualWater;
+      const summary=demoStatus.querySelector('summary');
+      summary.setAttribute('aria-disabled',String(!demo));
+      summary.tabIndex=demo?0:-1;
+      demoStatus.querySelector('.r12-demo-controls').hidden=!demo;
+      if(!demo)demoStatus.open=false;
+      $('r12DemoWaterLabel').textContent={
+        wet:'Apă prezentă',dry:'Fără apă',
+        stabilizing:'Apa se stabilizează',unknown:'Semnal necunoscut'
+      }[visualWater];
+      $('r12DemoWaterSource').textContent=demo?'Plutitor simulat':
+        visualWater==='wet'?'Plutitor confirmat':
+        visualWater==='stabilizing'?'Confirmare în curs':
+        visualWater==='dry'?'Pornirea blocată':'Semnal neconfirmat';
+    }
     document.querySelectorAll('[data-r12-water]').forEach(button => button.setAttribute('aria-pressed',String(button.dataset.r12Water===water)));
   };
   document.addEventListener('DOMContentLoaded', () => {
+    // În ACTIVE rândul este exclusiv informativ; testarea rămâne doar în DEMO.
+    $('r12DemoWater')?.querySelector('summary')?.addEventListener('click',event=>{
+      if(!forceMock())event.preventDefault();
+    });
     document.querySelectorAll('[data-r12-water]').forEach(button => button.addEventListener('click', async () => {
       if (!forceMock()) return;
       mockState.previewWater=button.dataset.r12Water;
