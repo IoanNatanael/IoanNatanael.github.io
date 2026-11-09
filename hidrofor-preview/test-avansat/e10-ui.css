@@ -1,0 +1,151 @@
+
+/* Hidrofor E10 — redesign orientat pe sarcină, inspirat de paginile Service V13-R21.
+   Exclusiv prezentare; motorul E10 de simulare este nemodificat. */
+:root{color-scheme:dark;--e10-bg:#0d2027;--e10-panel:#132b32;--e10-raised:#19353c;--e10-line:#2b4b50;--e10-ink:#e7f3ef;--e10-soft:#b1cbc8;--e10-quiet:#82a4a4;--e10-accent:#86dfbf;--e10-warn:#f0cf93;--e10-danger:#f2aaa7}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:var(--e10-bg)}
+main{width:100%;max-width:none;margin:0;padding:0}
+/* If JavaScript cannot initialize, the user sees an explanation instead of a blank screen. */
+main>h1,main>p{display:block!important}
+main>h1{color:#e7f3ef;margin:18px 0 8px}
+main>p{color:#b1cbc8;margin:0 0 14px}
+body:has(#e10LabDialog[open]) > main{display:none!important}
+#e10LabButton{display:none!important}
+#e10LabDialog{inset:0;position:fixed;top:0;left:0;margin:0!important;padding:0;border:0;border-radius:0;width:100%;height:100dvh;max-height:100dvh;max-width:none;box-shadow:none;background:var(--e10-bg);color:var(--e10-ink)}
+#e10LabDialog::backdrop{background:var(--e10-bg)}
+#e10LabDialog>header{display:none!important}
+#e10LabDialog .e10-body{max-height:100dvh;height:100dvh;overflow-y:auto;overflow-x:hidden;padding:0 22px 34px;background:var(--e10-bg);scrollbar-color:#41676b transparent}
+#e10LabDialog .e10-safe{background:none;border:0;border-top:1px solid #31464c;color:var(--e10-quiet);padding:14px 0;font-size:11px;margin:0;line-height:1.55}
+#e10LabDialog .e10-safe strong{color:var(--e10-accent);font-weight:700}
+#e10LabDialog .e10-wizard-hero{padding:22px 0 15px;display:flex;justify-content:space-between;gap:14px;align-items:flex-start}
+#e10LabDialog .e10-wizard-hero h2{font-size:22px;letter-spacing:-.65px;font-weight:650;line-height:1.2;margin:3px 0 6px;color:var(--e10-ink)}
+#e10LabDialog .e10-wizard-hero p{color:var(--e10-soft);font-size:12px;line-height:1.5;margin:0;max-width:560px}
+#e10LabDialog .e10-eyebrow{display:block;color:var(--e10-accent);text-transform:uppercase;letter-spacing:.14em;font-weight:750;font-size:10px}
+#e10LabDialog .e10-status{flex-shrink:0;padding:7px 9px;border:1px solid #356257;border-radius:99px;color:var(--e10-accent);font-size:10px;font-weight:750;letter-spacing:.02em;background:#17382f}
+#e10LabDialog .e10-wizard-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;padding:4px;background:#10272e;border:1px solid #26434b;border-radius:13px;position:sticky;top:0;z-index:30;margin:0 0 22px;box-shadow:0 8px 20px #0614199e}
+#e10LabDialog .e10-tab{min-height:47px;display:flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:9px;padding:8px 5px;background:transparent;color:#a0bdba;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap}
+#e10LabDialog .e10-tab .e10-index{font-size:10px;opacity:.75}
+#e10LabDialog .e10-tab[aria-selected="true"]{color:#082923;background:var(--e10-accent);font-weight:800;box-shadow:0 2px 8px #0002}
+#e10LabDialog .e10-tab:focus-visible,#e10LabDialog .e10-mode-button:focus-visible{outline:2px solid #b9ffdf;outline-offset:2px}
+#e10LabDialog .e10-wizard-panel[hidden]{display:none!important}
+#e10LabDialog .e10-wizard-panel{display:grid;gap:18px;min-width:0;animation:e10Fade .16s ease-out}
+@keyframes e10Fade{from{opacity:.6;transform:translateY(3px)}to{opacity:1;transform:none}}
+#e10LabDialog .e10-section-header{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin-bottom:0}
+#e10LabDialog .e10-section-header h3{font-size:18px;margin:0;color:var(--e10-ink);font-weight:650;letter-spacing:-.35px}
+#e10LabDialog .e10-section-header p{font-size:12px;margin:5px 0 0;color:var(--e10-soft);line-height:1.55}
+#e10LabDialog .e10-surface{background:var(--e10-panel);border:1px solid #28464b;border-radius:17px;padding:18px;min-width:0}
+#e10LabDialog .e10-surface-muted{background:#10262c}
+#e10LabDialog .e10-surface h3{margin:0 0 12px;font-size:15px}
+#e10LabDialog label{font-size:12px;color:#bad2ce;font-weight:500;gap:7px}
+#e10LabDialog input,#e10LabDialog select{border:1px solid #3a5a60!important;border-radius:10px!important;background:#102931!important;color:#e7f4f0!important;min-height:44px!important;padding:10px 11px!important;font-size:13px;max-width:100%}
+#e10LabDialog input:focus,#e10LabDialog select:focus{border-color:#87dfbd!important}
+#e10LabDialog input[type="checkbox"]{width:18px;min-height:18px!important;height:18px;padding:0!important;accent-color:var(--e10-accent)}
+#e10LabDialog .e10-fields{gap:13px;grid-template-columns:minmax(0,1.65fr) minmax(135px,.7fr)}
+#e10LabDialog .e10-controls{margin:0;gap:8px}
+#e10LabDialog .e10-controls button{min-height:43px;display:inline-flex;align-items:center;justify-content:center;padding:10px 13px;border:1px solid #3c6264;border-radius:10px;background:#1a3a40;color:#daefe7;font-weight:650;font-size:12px}
+#e10LabDialog .e10-controls .e10-primary{background:var(--e10-accent)!important;color:#082e25!important;border-color:transparent!important}
+#e10LabDialog .e10-controls .e10-danger{background:transparent;color:var(--e10-danger)!important;border-color:#705259!important}
+#e10LabDialog .e10-library{display:grid;gap:12px}
+#e10LabDialog .e10-library>.e10-controls{display:grid;grid-template-columns:1fr 1.5fr 1.1fr}
+#e10LabDialog .e10-library .e10-controls button{padding:9px 6px;line-height:1.3}
+#e10LabDialog .e10-steps{display:grid;gap:8px;margin:0!important}
+#e10LabDialog .e10-step{border:1px solid #345057;background:#17323a;grid-template-columns:minmax(170px,1.3fr) minmax(96px,.6fr) auto;gap:10px;align-items:end;padding:12px 12px 12px 17px;border-radius:12px;position:relative;overflow:hidden}
+#e10LabDialog .e10-step:before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:#86dfbf}
+#e10LabDialog .e10-step[data-state="OFF"]:before{background:#89a5b3}
+#e10LabDialog .e10-step[data-state="OFF"]{background:#142b34}
+#e10LabDialog .e10-step .e10-step-actions{gap:4px;align-self:end}
+#e10LabDialog .e10-step-actions button{min-width:36px;min-height:44px;padding:8px 9px;border:1px solid #395d62;border-radius:9px;background:#234249;color:#cee6e1;font-size:16px}
+#e10LabDialog .e10-step-actions button:disabled{opacity:.24}
+#e10LabDialog .e10-step select{font-weight:650}
+#e10LabDialog .e10-step[data-state="ON"] select{color:#b8f3d5!important}
+#e10LabDialog .e10-add-actions{display:flex;gap:8px;flex-wrap:wrap}
+#e10LabDialog .e10-add-actions button{flex:1;min-width:110px}
+#e10LabDialog .e10-info{font-size:11px;color:#96b4b2;line-height:1.6;margin:0}
+#e10LabDialog .e10-actions-footer{display:flex;justify-content:space-between;gap:10px;align-items:center;border-top:1px solid #28454d;padding-top:16px}
+#e10LabDialog .e10-actions-footer button{min-height:45px;padding:10px 14px;border-radius:10px;font-size:12px;background:#19373e;color:#d6ebe5;border:1px solid #3c6064;font-weight:650}
+#e10LabDialog .e10-actions-footer .e10-next{background:var(--e10-accent);border-color:transparent;color:#0b2f28;font-weight:750}
+#e10LabDialog .e10-methods{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+#e10LabDialog .e10-mode-button{background:#142c33;border:1px solid #36525a;border-radius:13px;padding:14px 10px;min-height:91px;display:flex;flex-direction:column;gap:5px;text-align:left;color:#c6ddda;font-size:13px;font-weight:750}
+#e10LabDialog .e10-mode-button span{font-size:10px;font-weight:400;color:#9db8b5;line-height:1.4}
+#e10LabDialog .e10-mode-button[aria-pressed="true"]{border-color:#85ddb9;background:#1a3d39;color:#c9fbe5;box-shadow:inset 0 0 0 1px #85ddb97d}
+#e10LabDialog .e10-mode-button[aria-pressed="true"] span{color:#bbe8d4}
+#e10LabDialog .e10-strategy-input{position:absolute!important;width:1px!important;height:1px!important;min-height:1px!important;opacity:0!important;pointer-events:none;overflow:hidden}
+#e10LabDialog .e10-method-note{padding:10px 12px;border-left:3px solid #6fb99f;background:#173431;border-radius:0 9px 9px 0;color:#b5d4ca;font-size:11px;line-height:1.5;margin:0}
+#e10LabDialog .e10-climate-grid{margin:0;gap:12px}
+#e10LabDialog fieldset{background:var(--e10-panel);border:1px solid #2b4b51;border-radius:14px;padding:15px;gap:13px}
+#e10LabDialog legend{font-size:12px;font-weight:750;color:#d1f6e8;letter-spacing:.01em;padding:0 5px}
+#e10LabDialog .e10-readings{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+#e10LabDialog .e10-readings label{font-size:11px;color:#aacac3}
+#e10LabDialog .e10-node-indicator{margin:0;font-size:10px;color:#9dd7bf;line-height:1.5}
+#e10LabDialog .e10-node-indicator[data-health="bad"]{color:#f3b7a5}
+#e10LabDialog .e10-advanced{border-top:1px solid #345057;padding-top:8px;margin-top:2px}
+#e10LabDialog .e10-advanced summary{cursor:pointer;list-style:none;font-size:11px;font-weight:650;color:#9ec4bc;padding:8px 0;display:flex;align-items:center;gap:7px}
+#e10LabDialog .e10-advanced summary::after{content:"+";margin-left:auto;font-size:18px;font-weight:400}
+#e10LabDialog .e10-advanced[open] summary::after{content:"−"}
+#e10LabDialog .e10-advanced-content{display:grid;gap:12px;padding:8px 0 4px}
+#e10LabDialog .e10-check{flex-direction:row;align-items:center;font-size:11px;gap:9px}
+#e10LabDialog .e10-rules-wrap{background:#112830;border:1px solid #314d53;border-radius:12px;padding:13px}
+#e10LabDialog .e10-rules-wrap>summary{color:#c9e9de;font-size:12px;font-weight:650}
+#e10LabDialog .e10-rules-wrap .e10-climate-grid{margin-top:12px}
+#e10LabDialog .e10-rules-wrap fieldset{background:#10272e}
+#e10LabDialog .e10-results-hero{background:linear-gradient(130deg,#1a3a3d,#122d34);border:1px solid #335657;border-radius:17px;padding:18px}
+#e10LabDialog .e10-error{color:#f3ada9;padding:0;min-height:0;margin:0;font-size:12px}
+#e10LabDialog .e10-summary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:12px 0 19px}
+#e10LabDialog .e10-summary .e10-metric{padding:12px 13px;background:#0f2a31;border:1px solid #30535a;border-radius:12px;min-height:77px;display:grid;align-content:center;gap:5px}
+#e10LabDialog .e10-metric small{color:#92b7b2;font-size:10px;font-weight:500}
+#e10LabDialog .e10-metric strong{color:#e5faf1;font-size:19px;font-variant-numeric:tabular-nums;letter-spacing:-.5px;font-weight:650}
+#e10LabDialog .e10-metric:first-child{border-color:#3b826f}
+#e10LabDialog .e10-timeline{height:40px;border:1px solid #385a5b;border-radius:10px}
+#e10LabDialog .e10-timeline .e10-on{background:#75d4aa}
+#e10LabDialog .e10-timeline .e10-off{background:#6b8991}
+#e10LabDialog .e10-legend{gap:12px;font-size:10px;margin:10px 0 17px}
+#e10LabDialog .e10-current{font-size:14px;font-weight:650;line-height:1.6;margin:0 0 12px;color:#d7efe5}
+#e10LabDialog .e10-time{accent-color:var(--e10-accent);width:100%;height:32px;padding:0!important}
+#e10LabDialog .e10-elapsed{font-variant-numeric:tabular-nums;color:#9cbeb8;font-size:11px;text-align:right}
+#e10LabDialog .e10-decision-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+#e10LabDialog .e10-decision-card{border:1px solid #34545a;background:#153039;border-radius:12px;padding:12px;display:grid;gap:7px;text-align:left;min-width:0;color:#def1ea}
+#e10LabDialog .e10-decision-card[data-selected="true"]{border-color:#84dfbe;background:#1b3d38}
+#e10LabDialog .e10-decision-card[data-eligible="false"]{opacity:.66}
+#e10LabDialog .e10-decision-card strong{font-size:13px}
+#e10LabDialog .e10-decision-card small{font-size:10px;color:#a9c8c1;line-height:1.45}
+#e10LabDialog .e10-decision-card b{font-size:17px;font-weight:700;color:#e1f5ec}
+#e10LabDialog .e10-decision-card .e10-decision-status{font-size:10px;color:#a7e3c6}
+#e10LabDialog .e10-decision-card[data-eligible="false"] .e10-decision-status{color:#f3bdaf}
+#e10LabDialog .e10-table-wrap{border:1px solid #31535b;background:#10272f}
+#e10LabDialog .e10-fold{border:1px solid #304d54;border-radius:12px;padding:0 14px;background:#10272e}
+#e10LabDialog .e10-fold>summary{font-size:12px;display:flex;align-items:center;min-height:46px;color:#c4e4dc;font-weight:650;cursor:pointer;list-style:none}
+#e10LabDialog .e10-fold>summary::after{content:"+";margin-left:auto;font-size:19px;font-weight:400}
+#e10LabDialog .e10-fold[open]>summary::after{content:"−"}
+#e10LabDialog .e10-fold-body{display:grid;gap:11px;padding:0 0 15px}
+#e10LabDialog .e10-history{max-height:260px;font-size:11px;line-height:1.8}
+#e10LabDialog .e10-fault-note{padding:8px 0 0;color:#a7c3bf;font-size:11px}
+@media(max-width:700px){
+ #e10LabDialog .e10-body{padding:0 14px 25px}
+ #e10LabDialog .e10-wizard-hero{padding:17px 2px 13px}
+ #e10LabDialog .e10-wizard-hero h2{font-size:20px}
+ #e10LabDialog .e10-status{padding:6px 8px}
+ #e10LabDialog .e10-section-header h3{font-size:17px}
+ #e10LabDialog .e10-surface{padding:14px}
+ #e10LabDialog .e10-step{grid-template-columns:minmax(0,1fr) 91px;gap:9px}
+ #e10LabDialog .e10-step-actions{grid-column:1/-1;justify-content:flex-end}
+ #e10LabDialog .e10-step-actions button{min-width:48px}
+ #e10LabDialog .e10-fields{grid-template-columns:minmax(0,1fr) 120px}
+ #e10LabDialog .e10-methods{gap:6px}
+ #e10LabDialog .e10-mode-button{padding:11px 8px;font-size:12px}
+ #e10LabDialog .e10-climate-grid{grid-template-columns:1fr}
+ #e10LabDialog .e10-decision-cards{grid-template-columns:1fr}
+ #e10LabDialog .e10-decision-card{grid-template-columns:1fr auto;align-items:center;column-gap:10px}
+ #e10LabDialog .e10-decision-card strong{grid-column:1}
+ #e10LabDialog .e10-decision-card b{grid-column:2;grid-row:1/3}
+ #e10LabDialog .e10-decision-card small{grid-column:1}
+}
+@media(max-width:380px){
+ #e10LabDialog .e10-tab{font-size:11px;gap:4px}
+ #e10LabDialog .e10-tab .e10-index{display:none}
+ #e10LabDialog .e10-library>.e10-controls{grid-template-columns:1fr 1fr}
+ #e10LabDialog .e10-library>.e10-controls button:last-child{grid-column:1/-1}
+ #e10LabDialog .e10-fields{grid-template-columns:1fr}
+ #e10LabDialog .e10-summary{gap:7px}
+ #e10LabDialog .e10-metric strong{font-size:16px}
+}
+@media(prefers-reduced-motion:reduce){#e10LabDialog .e10-wizard-panel{animation:none}}

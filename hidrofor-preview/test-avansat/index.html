@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Hidrofor V13 · Previzualizare telefon</title>
+  <style>
+    :root { --phone-width:390px; }
+    * {box-sizing:border-box}
+    html,body {margin:0;min-height:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    body {background:#e9eeea;color:#203d33}
+    main {min-height:100dvh;display:flex;justify-content:center;align-items:center;gap:clamp(36px,6vw,100px);padding:30px 25px}
+    .intro {width:300px;max-width:30vw}
+    .eyebrow {font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#557469;font-weight:700}
+    h1 {font-size:clamp(33px,3.6vw,49px);line-height:1.08;font-weight:650;letter-spacing:-.045em;margin:17px 0 18px}
+    p {font-size:14px;line-height:1.7;color:#61766d}
+    .switches {display:flex;flex-wrap:wrap;gap:9px;margin:26px 0}
+    button {font:inherit;font-size:13px;padding:11px 14px;border-radius:11px;border:1px solid #b8cbbf;background:transparent;color:#325543;cursor:pointer;min-height:44px;transition:background .16s,color .16s}
+    button.active {background:#2c6554;border-color:#2c6554;color:#fff;font-weight:650}
+    button:focus-visible,a:focus-visible {outline:3px solid #70cbae;outline-offset:3px}
+    a {font-size:14px;font-weight:650;color:#245845;text-underline-offset:4px}
+    .help {margin-top:33px;font-size:12px;color:#71877b}
+    .phone {width:calc(var(--phone-width) + 20px);flex:0 0 auto;max-width:calc(100vw - 32px);padding:10px;background:#263d36;border:1px solid #4b7968;border-radius:38px;box-shadow:0 22px 80px #163d2b27;transition:width .2s}
+    .phone iframe {width:100%;height:min(844px,calc(100dvh - 84px));min-height:500px;display:block;border:0;border-radius:29px;background:#0c171c}
+    .sr-only {position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+    @media(max-height:650px) and (min-width:801px) {.phone iframe {min-height:0;height:calc(100dvh - 55px)}main{padding:15px}}
+    @media(max-width:800px) {
+      html,body {height:100%}
+      main {padding:0;display:block;min-height:100dvh}
+      .intro {display:none}
+      .phone {width:100%!important;max-width:none;height:100dvh;padding:0;border:0;border-radius:0;box-shadow:none}
+      .phone iframe {width:100%;height:100dvh;min-height:0;border-radius:0}
+    }
+    @media(prefers-reduced-motion:reduce){.phone,button{transition:none}}
+  </style>
+</head>
+<body>
+<main>
+  <section class="intro" aria-label="Opțiuni de previzualizare">
+    <div class="eyebrow">Hidrofor · V13 · Web only</div>
+    <h1>Interfața pe telefon.</h1>
+    <p>Previzualizează aplicația într-un ecran de telefon. Navigarea, comenzile și datele sunt simulate, fără acces la instalația reală.</p>
+    <div class="switches" role="group" aria-label="Lățimea ecranului de telefon">
+      <button type="button" data-width="360" aria-pressed="false">Compact</button>
+      <button type="button" data-width="390" class="active" aria-pressed="true">Normal</button>
+      <button type="button" data-width="430" aria-pressed="false">Mare</button>
+    </div>
+    <a href="./app.html" target="_blank" rel="noopener">Deschide interfața pe tot ecranul ↗</a>
+    <p class="help">Link permanent pentru toate versiunile V13.<br>După modificări, reîncarcă pagina (Ctrl + F5).<br>Firmware-ul ACTIVE nu este conectat.</p>
+  </section>
+  <div class="phone" aria-label="Simulare de ecran de telefon">
+    <iframe id="hidrofor-preview-frame" title="Hidrofor V13 · interfață de telefon" src="./app.html" allow="fullscreen"></iframe>
+  </div>
+</main>
+<script>
+  const frame = document.getElementById('hidrofor-preview-frame');
+  // A fresh URL on each page reload prevents retaining an older web-only candidate in the frame.
+  frame.src = './app.html?reload=' + Date.now();
+  document.querySelectorAll('[data-width]').forEach(button => {
+    button.addEventListener('click', () => {
+      const width = Number(button.dataset.width);
+      if (![360,390,430].includes(width)) return;
+      document.documentElement.style.setProperty('--phone-width', width + 'px');
+      document.querySelectorAll('[data-width]').forEach(item => {
+        const active = item === button;
+        item.classList.toggle('active', active);
+        item.setAttribute('aria-pressed', String(active));
+      });
+    });
+  });
+</script>
+</body>
+</html>
