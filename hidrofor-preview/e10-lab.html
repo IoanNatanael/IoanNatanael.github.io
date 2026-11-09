@@ -88,9 +88,17 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
 .step-choice button[aria-pressed="true"]{background:#326252;color:#edfff7}
 .step{grid-template-columns:24px minmax(0,1fr) 74px 32px!important;gap:6px!important}
 @media(max-width:410px){.step-choice button{font-size:10px;padding-left:2px;padding-right:2px}.step{grid-template-columns:22px minmax(0,1fr) 57px 29px!important;gap:4px!important}}
+.program-picker summary{list-style:none;cursor:pointer;border:1px solid #3b5b63;border-radius:11px;background:#102a32;color:var(--ink);min-height:45px;display:flex;align-items:center;justify-content:space-between;padding:10px 12px;font-weight:650}.program-picker summary::-webkit-details-marker{display:none}.program-picker summary:after{content:'⌄';font-size:18px;color:var(--accent)}#draftsPanel{padding:0;margin:0;border:0}#savedMenu{gap:2px;background:#10272e;border:1px solid #3b5b63;border-radius:11px;margin:6px 0 0;padding:5px;max-height:230px;overflow:auto}.saved-item{background:transparent;border:0;border-radius:8px;color:var(--ink)}.saved-item:hover{background:#284550}.saved-item[aria-current="true"]{background:#285d4e}.saved-item[aria-current="true"]:hover{box-shadow:inset 0 0 0 2px #9bdec9}.program-new{width:100%;margin-top:12px;text-align:center;border-style:dashed;color:var(--accent)}.program-form{margin-top:14px;padding-top:14px;border-top:1px solid var(--border)}.program-form .library-actions{margin-top:10px}.program-form .primary-btn{min-height:42px;flex:1}.program-actions .soft-btn:first-child{flex:1}.program-basics{display:block}.program-basics .control-label input{max-width:180px}.saved-notice{margin:8px 0 0;color:var(--amber);font-size:12px}
 
 </style><script>if(window.self!==window.top)document.documentElement.classList.add('embedded');</script></head><body><main class="app" id="e10App">
   <header class="top"><div><h1>Simulare udare</h1></div><span class="sim-only">SIMULARE</span></header>
+  <section class="main-section" aria-labelledby="pickerHeading"><div class="section-head"><h2 id="pickerHeading">Programul meu</h2></div>
+    <details id="programPicker" class="program-picker"><summary id="showDrafts" aria-label="Programul curent; alege alt program"><span id="activePlanName">Udare dimineața · nesalvat</span></summary><div id="draftsPanel"><div id="savedMenu" role="group" aria-label="Programe salvate în modul curent"></div></div></details>
+    <select id="savedPlans" hidden aria-hidden="true" tabindex="-1"><option value="">Alege un program</option></select>
+    <button class="soft-btn program-new" type="button" id="newPlan" aria-expanded="false" aria-controls="newPlanForm">+ Program nou</button>
+    <div class="program-form" id="newPlanForm" hidden><label class="control-label">Numele programului<input id="planName" maxlength="60" autocomplete="off" placeholder="De exemplu, Udare dimineața"></label><p class="desc">Se salvează setările afișate mai jos.</p><p class="saved-notice" id="nameError" role="alert" hidden></p><div class="library-actions"><button class="primary-btn" type="button" id="createPlan">Salvează programul</button><button class="soft-btn" type="button" id="cancelNew">Renunță</button></div></div>
+    <div class="library-actions program-actions" id="programActions" hidden><button class="soft-btn" type="button" id="savePlan" hidden>Salvează modificările</button><button class="soft-btn button-clear" type="button" id="deletePlan">Șterge</button></div><p class="saved-notice" id="savedPlanNotice" role="status" hidden></p>
+  </section>
   <section class="main-section" aria-labelledby="methodHeading"><div class="section-head"><h2 id="methodHeading">Mod</h2></div>
     <div class="mode-bar" role="group" aria-label="Metoda de control">
       <button type="button" class="mode-btn" data-mode="FIX" aria-pressed="true">Fix</button>
@@ -116,17 +124,7 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
   
 <section class="main-section flow-program" aria-labelledby="planHeading">
   <div class="section-head"><h2 id="planHeading">Programul</h2><small>Configurează doar ce ai ales</small></div>
-  <div class="program-library">
-    <div><span class="micro-label">PROGRAM ACTIV</span><strong id="activePlanName">Udare dimineața</strong></div>
-    <button type="button" id="showDrafts" class="soft-btn">Programele mele <span aria-hidden="true">⌄</span></button>
-  </div>
-  <div id="draftsPanel" hidden>
-    <div id="savedMenu" class="saved-menu" role="group" aria-label="Programe salvate"></div><select id="savedPlans" hidden aria-label="Selectează schiță salvată"><option value="">Alege un program</option></select>
-    <div class="library-actions"><button class="soft-btn" type="button" id="newPlan">Program nou</button><button class="soft-btn" type="button" id="savePlan">Salvează</button><button class="soft-btn button-clear" type="button" id="deletePlan">Șterge</button></div>
-    <p class="saved-notice" id="savedPlanNotice" role="status" hidden></p>
-  </div>
   <div class="fields program-basics">
-    <label class="control-label">Nume<input id="planName" value="Udare dimineața" maxlength="60" autocomplete="off"></label>
     <label class="control-label">Ora de început<input id="planTime" type="time" value="07:00"></label>
   </div>
   <details class="details flow-sensors" id="sensorDetails" hidden>
@@ -482,6 +480,9 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
   const clone=x=>JSON.parse(JSON.stringify(x));
   const state={mode:'FIX',type:'TIMED',steps:clone(baseSeq),planName:'Udare dimineața',start:'07:00',timedMinutes:10,
     records:[],selected:'', preview:null,planned:null,option:null,at:0,timer:null,started:false};
+  const modeSessions=Object.create(null);
+  let savedSnapshot=null;
+  let storageReadError=false;
   const fmt=seconds=>Math.floor(seconds/60)+'m '+String(Math.round(seconds%60)).padStart(2,'0')+'s';
   const fmtClock=seconds=>Engine.wallClock(state.start,seconds);
   const el=(tag,className,text)=>{const x=document.createElement(tag);if(className)x.className=className;if(text!==undefined)x.textContent=String(text);return x;};
@@ -524,7 +525,7 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
     text('adaptiveBandUnderText','Sub '+(Number.isFinite(low)?low:'—')+'°C');
     text('adaptiveBandBetweenText',(Number.isFinite(low)?low:'—')+'–'+(Number.isFinite(high)?high:'—')+'°C');
     text('adaptiveBandAboveText',(Number.isFinite(high)?high:'—')+'°C și peste');
-    text('activePlanName',state.planName||'Program fără nume');
+    text('activePlanName',(state.planName||'Program fără nume')+(state.selected?'':' · nesalvat'));
   }
   function validateClimatePair(config){
     if(!Number.isInteger(config.maxAgeMs)||config.maxAgeMs<1000||config.maxAgeMs>5400000)
@@ -653,7 +654,7 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
     if(reason)markError(reason);updateButton();
   }
   function recompute(){
-    stop();state.at=0;state.started=false;markError('');
+    stop();state.at=0;state.started=false;markError('');updateDirty();
     text('progressMode',(state.mode==='SEQUENCE'?'Cu pași':state.mode==='SMART'?'SMART':state.mode==='ADAPTIVE'?'ADAPTIVE':'FIX')+' · '+(state.mode==='SEQUENCE'?'Secvențial':'Temporizat'));
     let plan,chosen,climate;
     try{
@@ -729,6 +730,8 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
   }
   const climateFields=['s1t','s1h','s2t','s2h','s1state','s2state','smartT','smartH','smartCombine','maxAge','minFactor','lowT','highT','lowH','highH',...newFields];
   function climateSnapshot(){return Object.fromEntries(climateFields.map(id=>[id,$(id).value]));}
+  function currentSnapshot(){return JSON.stringify({mode:state.mode,type:state.type,steps:state.steps,name:state.planName,start:state.start,timedMinutes:state.timedMinutes,custom:{...custom},climate:climateSnapshot()});}
+  function updateDirty(){$('savePlan').hidden=!state.selected||savedSnapshot===currentSnapshot();}
   function restoreClimate(saved){
     for(const id of climateFields){
       const field=$(id);
@@ -737,53 +740,81 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
       field.value=field.tagName==='SELECT' && ![...field.options].some(o=>o.value===value) ? fallback : value;
     }
   }
-  function clearForm(){
-    stop();state.selected='';state.mode='FIX';state.type='TIMED';state.steps=clone(baseSeq);
-    state.planName='Udare dimineața';state.start='07:00';state.timedMinutes=10;
-    Object.assign(custom,{metric:'temperature',rule:'above',scope:'both',ref:'average'});
-    $('planName').value=state.planName;$('planTime').value=state.start;$('timedMinutes').value='10';
-    $('savedPlans').value='';$('savedPlanNotice').hidden=true;restoreClimate(null);refreshType();refreshMode();renderSteps();recompute();
+  function showNewForm(open){
+    $('newPlanForm').hidden=!open;$('newPlan').hidden=open;$('newPlan').setAttribute('aria-expanded',String(open));
+    $('programActions').hidden=open||!state.selected;$('nameError').hidden=true;
+    if(open){$('programPicker').open=false;$('planName').value='';$('planName').focus();}
+  }
+  function modeOf(record){
+    if(!record||typeof record.id!=='string'||!['FIX','SMART','ADAPTIVE','SEQUENCE'].includes(record.mode)||!['TIMED','SEQUENCE'].includes(record.type)||!record.plan||!Array.isArray(record.plan.steps))return null;
+    return record.type==='SEQUENCE'?'SEQUENCE':record.mode;
+  }
+  function switchMode(mode){
+    if(mode===state.mode)return;
+    modeSessions[state.mode]={selected:state.selected,name:state.planName,start:state.start,timedMinutes:state.timedMinutes,steps:state.steps.map(step=>({...step})),custom:{...custom},climate:climateSnapshot(),savedSnapshot,notice:$('savedPlanNotice').textContent,noticeHidden:$('savedPlanNotice').hidden};
+    const session=modeSessions[mode];
+    state.mode=mode;state.type=mode==='SEQUENCE'?'SEQUENCE':'TIMED';
+    state.selected=session?.selected||'';state.planName=session?.name||'Program nou';state.start=session?.start||'07:00';state.timedMinutes=session?session.timedMinutes:10;
+    state.steps=session?session.steps.map(step=>({...step})):clone(baseSeq);
+    Object.assign(custom,{metric:'temperature',rule:'above',scope:'both',ref:'average'},session?.custom||{});
+    restoreClimate(session?.climate||null);savedSnapshot=session?.savedSnapshot||null;
+    $('planTime').value=state.start;$('timedMinutes').value=String(state.timedMinutes);
+    $('savedPlanNotice').textContent=session?.notice||'';$('savedPlanNotice').hidden=session?.noticeHidden??true;
+    $('programPicker').open=false;showNewForm(false);refreshMode();renderSteps();showSaved();recompute();
   }
   function safeRead(){
     try{
       const stored=localStorage.getItem(savedKey),existing=JSON.parse(stored||'[]');
-      const valid=x=>x&&typeof x.id==='string'&&['FIX','SMART','ADAPTIVE','SEQUENCE'].includes(x.mode)&&['TIMED','SEQUENCE'].includes(x.type)&&x.plan&&Array.isArray(x.plan.steps);
-      if(stored!==null)return Array.isArray(existing)?existing.filter(valid).slice(0,8):[];
+      if(stored!==null){if(!Array.isArray(existing)){storageReadError=true;return [];}return existing;}
       // Migrate pre-redesign E10 browser drafts without changing or deleting them.
       const old=JSON.parse(localStorage.getItem('hidrofor-e10-dryrun-drafts-v1')||'[]');
-      if(Array.isArray(old))return old.slice(0,8).flatMap((item,i)=>{
+      if(Array.isArray(old))return old.flatMap((item,i)=>{
         try{const plan=Engine.normalized(item);return [{id:'legacy-'+i,mode:'FIX',type:'SEQUENCE',plan,sequence:clone(plan.steps),timedMinutes:plan.steps.find(x=>x.type==='ON')?.minutes||10}];}
         catch(_){return [];}
       });
-    }catch(_){}
+    }catch(_){storageReadError=true;}
     return [];
   }
   function showSaved(){
     const sel=$('savedPlans');sel.replaceChildren(new Option('Selectează un program',''));
-    for(const record of state.records)sel.append(new Option(record.plan.name+' · '+(record.type==='SEQUENCE'?'Cu pași':record.mode),record.id));
+    const matching=state.records.filter(record=>modeOf(record)===state.mode);
+    for(const record of matching)sel.append(new Option(record.plan.name,record.id));
     const host=$('savedMenu');host.replaceChildren();
-    if(!state.records.length)host.append(el('p','e10-info','Niciun program salvat încă.'));
-    for(const record of state.records){
+    if(!matching.length)host.append(el('p','e10-info','Niciun program salvat în acest mod.'));
+    for(const record of matching){
       const b=el('button','saved-item');b.type='button';b.setAttribute('aria-current',String(record.id===state.selected));
-      b.append(el('strong','',record.plan.name),el('span','',record.type==='SEQUENCE'?'Cu pași':record.mode));
+      b.append(el('strong','',record.plan.name));
       b.addEventListener('click',()=>{sel.value=record.id;load();});host.append(b);
     }
     sel.value=state.selected;
+    $('programActions').hidden=!state.selected||!$('newPlanForm').hidden;
+    refreshNewControls();updateDirty();
+    if(storageReadError){$('savedPlanNotice').textContent='Programele salvate nu pot fi citite. Nu se pot salva modificări în această sesiune.';$('savedPlanNotice').hidden=false;}
   }
   function save(){
-    let plan;try{plan=makePlan();}catch(e){markError(e.message);return;}
+    if(storageReadError){markError('Programele salvate nu pot fi citite; salvarea este oprită pentru a le proteja.');return false;}
+    let plan;try{plan=makePlan();}catch(e){markError(e.message);return false;}
+    if(state.selected&&modeOf(state.records.find(r=>r?.id===state.selected))!==state.mode){markError('Programul selectat aparține altui mod. Alege un program din modul curent.');return false;}
     const record={id:state.selected||String(Date.now())+'-'+Math.random().toString(36).slice(2,8),
       mode:state.mode,type:state.mode==='SEQUENCE'?'SEQUENCE':'TIMED',plan,timedMinutes:state.timedMinutes,sequence:clone(state.steps),climate:climateSnapshot(),custom:{...custom}};
     let records=state.records.slice();
     if(state.selected){const i=records.findIndex(x=>x.id===state.selected);if(i>=0)records[i]=record;else records.push(record);}
-    else {if(records.length>=8){markError('Sunt permise cel mult 8 schițe. Șterge una înainte să salvezi.');return;}records.push(record);}
-    try{localStorage.setItem(savedKey,JSON.stringify(records));}catch(e){markError('Browserul nu permite salvarea locală.');return;}
-    state.records=records;state.selected=record.id;showSaved();markError('');$('savedPlanNotice').hidden=true;
-    $('savePlan').textContent='✓ Salvat';setTimeout(()=>{$('savePlan').textContent='Salvează';},1200);
+    else {if(records.length>=8){markError('Sunt permise cel mult 8 schițe. Șterge una înainte să salvezi.');return false;}records.push(record);}
+    try{localStorage.setItem(savedKey,JSON.stringify(records));}catch(e){markError('Browserul nu permite salvarea locală.');return false;}
+    state.records=records;state.selected=record.id;savedSnapshot=currentSnapshot();showSaved();markError('');$('savedPlanNotice').hidden=true;
+    return true;
+  }
+  function createPlan(){
+    const name=$('planName').value.trim();
+    if(!name||name.length>60||/[\x00-\x1f]/.test(name)){$('nameError').textContent='Scrie un nume pentru program.';$('nameError').hidden=false;$('planName').focus();return;}
+    const previousName=state.planName,previousSelected=state.selected;
+    state.planName=name;state.selected='';
+    if(save()){showNewForm(false);showSaved();recompute();$('showDrafts').focus();}
+    else{state.planName=previousName;state.selected=previousSelected;showSaved();}
   }
   function load(){
     const selected=$('savedPlans').value;if(!selected){state.selected='';return;}
-    const record=state.records.find(x=>x.id===selected);if(!record)return;
+    const record=state.records.find(x=>x?.id===selected);if(!record||modeOf(record)!==state.mode)return;
     try{
       const normalized=Engine.normalized(record.plan);
       state.selected=record.id;state.mode=record.type==='SEQUENCE'?'SEQUENCE':record.mode;state.type=state.mode==='SEQUENCE'?'SEQUENCE':'TIMED';
@@ -791,26 +822,27 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
       state.planName=normalized.name;state.start=normalized.start;
       state.steps=record.sequence&&Array.isArray(record.sequence)?clone(record.sequence):clone(normalized.steps);
       state.timedMinutes=record.timedMinutes||normalized.steps.find(s=>s.type==='ON')?.minutes||10;
-      $('planName').value=state.planName;$('planTime').value=state.start;$('timedMinutes').value=String(state.timedMinutes);
+      $('planTime').value=state.start;$('timedMinutes').value=String(state.timedMinutes);
       const hasClimate=record.climate && typeof record.climate==='object' && !Array.isArray(record.climate) && ['s1t','s1h','s2t','s2h'].every(id=>typeof record.climate[id]==='string');
       restoreClimate(hasClimate?record.climate:null);
       refreshNewControls();
-      $('savedPlanNotice').textContent=record.type==='SEQUENCE'&&record.mode!=='FIX'&&record.mode!=='SEQUENCE'?
-        'Schiță veche: mutată în «Cu pași». Condițiile vechi SMART/ADAPTIVE nu se aplică; verifică programul.':
-        hasClimate?'':'Schiță veche: valori de test implicite.';
-      $('savedPlanNotice').hidden=Boolean(hasClimate)&&!(record.type==='SEQUENCE'&&record.mode!=='FIX'&&record.mode!=='SEQUENCE');
-      refreshType();refreshMode();renderSteps();recompute();
+      const legacySequence=record.type==='SEQUENCE'&&record.mode!=='FIX'&&record.mode!=='SEQUENCE';
+      const legacyCombined=record.schema===2&&(record.mode==='SMART'||record.adaptive===true);
+      $('savedPlanNotice').textContent=legacySequence?'Schiță veche: mutată în «Cu pași». Condițiile vechi SMART/ADAPTIVE nu se aplică; verifică programul.':legacyCombined?'Schiță veche: regulile Smart sau Adaptive erau diferite. Verifică setările înainte de a salva.':hasClimate?'':'Schiță veche: valori de test implicite.';
+      $('savedPlanNotice').hidden=Boolean(hasClimate)&&!legacySequence&&!legacyCombined;
+      savedSnapshot=currentSnapshot();$('programPicker').open=false;showNewForm(false);refreshType();refreshMode();renderSteps();showSaved();recompute();
     }catch(e){markError('Schița salvată nu mai are un format valid.');}
   }
   function removeSaved(){
+    if(storageReadError){markError('Programele salvate nu pot fi citite; ștergerea este oprită pentru a le proteja.');return;}
     if(!state.selected){markError('Selectează mai întâi o schiță.');return;}
-    const rows=state.records.filter(x=>x.id!==state.selected);
+    const rows=state.records.filter(x=>x?.id!==state.selected);
     try{localStorage.setItem(savedKey,JSON.stringify(rows));}catch(e){markError('Nu se poate modifica memoria locală.');return;}
     state.records=rows;state.selected='';showSaved();markError('');$('savedPlanNotice').hidden=true;
   }
   function init(){
     state.records=safeRead();showSaved();
-    document.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click',()=>{state.mode=b.dataset.mode;refreshMode();recompute();}));
+    document.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click',()=>switchMode(b.dataset.mode)));
 
     // Cele trei opțiuni SMART și intervalele ADAPTIVE au propria stare,
     // independentă de vechiul calcul procentual.
@@ -828,9 +860,8 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
       $(field).addEventListener('input',()=>{refreshNewControls();recompute();});
       $(field).addEventListener('change',()=>{refreshNewControls();recompute();});
     }
-    $('showDrafts').addEventListener('click',()=>{$('draftsPanel').hidden=!$('draftsPanel').hidden;});
-
-    $('planName').addEventListener('input',()=>{state.planName=$('planName').value;text('activePlanName',state.planName||'Program fără nume');recompute();});
+    $('planName').addEventListener('input',()=>{$('nameError').hidden=true;});
+    $('planName').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();createPlan();}});
     $('planTime').addEventListener('change',()=>{state.start=$('planTime').value;recompute();});
     $('timedMinutes').addEventListener('input',()=>{const v=$('timedMinutes').value.trim();state.timedMinutes=v===''?NaN:Number(v);recompute();});
     for(const key of climateFields){
@@ -844,7 +875,8 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
     $('scrubber').addEventListener('input',()=>{stop();state.started=true;state.at=Number($('scrubber').value);updateProgress();});
     $('playSimulation').addEventListener('click',startStop);
     $('restartSimulation').addEventListener('click',()=>{stop();state.at=0;state.started=false;updateProgress();});
-    $('savePlan').addEventListener('click',save);$('newPlan').addEventListener('click',clearForm);
+    $('savePlan').addEventListener('click',save);$('newPlan').addEventListener('click',()=>showNewForm(true));
+    $('createPlan').addEventListener('click',createPlan);$('cancelNew').addEventListener('click',()=>{showNewForm(false);$('newPlan').focus();});
     $('savedPlans').addEventListener('change',load);$('deletePlan').addEventListener('click',removeSaved);
     refreshType();refreshMode();renderSteps();recompute();
   }

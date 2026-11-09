@@ -27,7 +27,7 @@ const server=http.createServer((req,res)=>{
   const origin='http://127.0.0.1:'+server.address().port;
   const browser=await chromium.launch({headless:true,channel:process.env.PLAYWRIGHT_CHANNEL||'chromium'});
   try{
-    for(const width of [360,390,1280]){
+    for(const width of [360,390,430,1280]){
       const context=await browser.newContext({viewport:{width,height:850}});
       const page=await context.newPage(),errors=[],external=[];
       page.on('pageerror',e=>errors.push(e.message));
@@ -43,7 +43,11 @@ const server=http.createServer((req,res)=>{
       await page.locator('[data-mode="SMART"]').click();
       assert.equal(await page.locator('#smartNew').isVisible(),true);
       assert.equal(await page.locator('#adaptiveNew').isVisible(),false);
-      await page.locator('#sensorDetails summary').click();
+      await page.locator('#sensorDetails > summary').click();
+      await page.locator('#s1t').fill('');assert.equal(await page.locator('#playSimulation').isDisabled(),true);
+      await page.locator('#s1t').fill('30');
+      await page.locator('[data-rule="above"]').click();await page.locator('#smartLimitLow').fill('30');
+      assert.equal(await page.locator('#playSimulation').isEnabled(),true,'above uses inclusive lower boundary');
       await page.locator('[data-rule="under"]').click();
       await page.locator('#smartLimitLow').fill('35');
       assert.equal(await page.locator('#playSimulation').isEnabled(),true);
@@ -53,8 +57,10 @@ const server=http.createServer((req,res)=>{
       assert.equal(await page.locator('#playSimulation').isDisabled(),true);
       await page.locator('[data-scope="one"]').click();
       assert.equal(await page.locator('#playSimulation').isEnabled(),true);
+      await page.locator('#climatePanel > details > summary').click();
       await page.locator('#s2state').selectOption('missing');
       assert.equal(await page.locator('#playSimulation').isDisabled(),true,'missing node must block even for ANY');
+      await page.locator('#s2state').selectOption('stale');assert.equal(await page.locator('#playSimulation').isDisabled(),true,'stale climate must block');
       await page.locator('#s2state').selectOption('ok');
 
       await page.locator('[data-mode="ADAPTIVE"]').click();
@@ -76,10 +82,14 @@ const server=http.createServer((req,res)=>{
       await page.locator('#playSimulation').click();
       assert.match(await page.locator('#elapsed').textContent(),/[0-9]+m [0-9]{2}s/);
       await page.locator('#restartSimulation').click();
+      await page.locator('summary').filter({hasText:'Testează un defect'}).click();
+      await page.locator('#faultSelect').selectOption('LINK');assert.match(await page.locator('#eventList').textContent(),/DEFECT SIMULAT/);
+      await page.locator('#faultSelect').selectOption('NONE');
+      await page.locator('#newPlan').click();await page.locator('#planName').fill('Udare cu pași');await page.locator('#createPlan').click();
       await page.locator('#showDrafts').click();
-      await page.locator('#savePlan').click();
       assert.equal(await page.locator('#savedMenu .saved-item').count(),1);
       await page.reload();
+      await page.locator('[data-mode="SEQUENCE"]').click();
       await page.locator('#showDrafts').click();
       assert.equal(await page.locator('#savedMenu .saved-item').count(),1);
       await page.locator('#savedMenu .saved-item').first().click();
@@ -89,6 +99,37 @@ const server=http.createServer((req,res)=>{
       await context.close();
       console.log('PASS',width+'px','FIX, SMART, ADAPTIVE, Cu pași, draft save/load, no network');
     }
+    const ctx=await browser.newContext({viewport:{width:390,height:850}}),page=await ctx.newPage(),errors=[];
+    page.on('pageerror',e=>errors.push(e.message));
+    await page.addInitScript(()=>{if(localStorage.getItem('hidrofor-e10-lab-simplu-v3')===null)localStorage.setItem('hidrofor-e10-lab-simplu-v3',JSON.stringify([{id:'unknown',mode:'FUTURE',type:'TIMED',plan:{name:'Păstrat',steps:[]}}]));});
+    await page.goto(origin+'/e10-lab.html');
+    async function create(name){await page.locator('#newPlan').click();await page.locator('#planName').fill(name);await page.locator('#createPlan').click();}
+    async function only(name){await page.locator('#showDrafts').click();assert.deepEqual(await page.locator('#savedMenu .saved-item strong').allTextContents(),name?[name]:[]);await page.locator('#showDrafts').click();}
+    await create('Fix A');const fixId=await page.locator('#savedPlans').inputValue();
+    assert.equal(await page.locator('#savePlan').isVisible(),false);
+    await page.locator('#timedMinutes').fill('13');assert.equal(await page.locator('#savePlan').isVisible(),true);
+    await page.locator('[data-mode="SMART"]').click();await only(null);
+    assert.match(await page.locator('#activePlanName').textContent(),/nesalvat/);
+    await create('Smart B');const smartId=await page.locator('#savedPlans').inputValue();await only('Smart B');
+    await page.locator('[data-mode="FIX"]').click();assert.equal(await page.locator('#activePlanName').textContent(),'Fix A');
+    assert.equal(await page.locator('#timedMinutes').inputValue(),'13');assert.equal(await page.locator('#savePlan').isVisible(),true);await only('Fix A');
+    await page.locator('#savePlan').click();assert.equal(await page.locator('#savePlan').isVisible(),false);
+    await page.locator('[data-mode="SEQUENCE"]').click();await only(null);await create('Pași C');await only('Pași C');
+    await page.locator('[data-mode="ADAPTIVE"]').click();await only(null);await create('Adaptiv D');await only('Adaptiv D');
+    await page.locator('[data-mode="SMART"]').click();await only('Smart B');assert.equal(await page.locator('#savedPlans').inputValue(),smartId);
+    if(process.env.E10_SCREENSHOT){await page.locator('#showDrafts').click();await page.screenshot({path:process.env.E10_SCREENSHOT,fullPage:true});await page.locator('#showDrafts').click();}
+    const stored=await page.evaluate(()=>JSON.parse(localStorage.getItem('hidrofor-e10-lab-simplu-v3')));
+    assert.equal(stored.length,5);assert(stored.some(r=>r.id==='unknown'),'unrecognized records must be preserved');
+    assert.equal(stored.find(r=>r.id===fixId).plan.steps[0].minutes,13);assert.equal(stored.find(r=>r.id===smartId).mode,'SMART');
+    await page.reload();await page.locator('[data-mode="ADAPTIVE"]').click();await only('Adaptiv D');
+    await page.locator('[data-mode="FIX"]').click();await page.locator('#showDrafts').click();await page.locator('#savedMenu .saved-item').click();
+    assert.equal(await page.locator('#timedMinutes').inputValue(),'13');assert.equal(await page.locator('#savePlan').isVisible(),false);
+    assert.deepEqual(errors,[]);await ctx.close();console.log('PASS mode isolation, unsaved state, separate saves, data preservation and reload');
+    const bad=await browser.newContext(),badPage=await bad.newPage();
+    await badPage.addInitScript(()=>localStorage.setItem('hidrofor-e10-lab-simplu-v3','{invalid'));
+    await badPage.goto(origin+'/e10-lab.html');await badPage.locator('#newPlan').click();await badPage.locator('#planName').fill('Nu suprascrie');await badPage.locator('#createPlan').click();
+    assert.equal(await badPage.evaluate(()=>localStorage.getItem('hidrofor-e10-lab-simplu-v3')),'{invalid');
+    assert.match(await badPage.locator('#savedPlanNotice').textContent(),/nu pot fi citite/i);await bad.close();console.log('PASS unreadable saved data is never overwritten');
   }finally{
     await browser.close();
     await new Promise(resolve=>server.close(resolve));
