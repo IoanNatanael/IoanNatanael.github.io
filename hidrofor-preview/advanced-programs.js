@@ -41,7 +41,7 @@
     const smart=state.mode==='SMART';
     const summaryRows=byId('ap-summary-rows');
     byId('ap-overview-value').hidden=!smart;
-    text('ap-current-name',m.name);
+    text('ap-title',m.name);
     const meta=[modeLabels[state.mode],m.time];
     let rows;
     if(smart){
@@ -88,7 +88,18 @@
     const picker=byId('ap-program-picker');
     picker.open=false;
     picker.hidden=editing||!records.length;
-    if(!selected)text('ap-current-name','Alege un program');
+    // Numele programului apare o singură dată: ca titlu al secțiunii.
+    // Selectorul de dedesubt rămâne o acțiune, nu un al doilea titlu.
+    text('ap-current-name','Schimbă programul');
+    if(editing){
+      text('ap-title',m.editing==='new'?'Program nou':m.name);
+      text('ap-program-meta',m.editing==='new'
+        ? modeLabels[state.mode]+' · Configurare locală'
+        : modeLabels[state.mode]+' · Editezi programul');
+    }else if(!selected){
+      text('ap-title','Programe avansate');
+      text('ap-program-meta',modeLabels[state.mode]+(records.length?' · Alege un program':' · Creează primul program'));
+    }
     byId('ap-new').hidden=editing;
     byId('ap-new').setAttribute('aria-expanded',String(editing));
     byId('ap-editor').hidden=!editing;

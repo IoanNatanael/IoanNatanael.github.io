@@ -76,7 +76,8 @@ const server=http.createServer((req,res)=>{
       await page.locator('#ap-smart-low').fill('20');
       await page.locator('#ap-smart-high').fill('35');
       await page.locator('#ap-save').click();
-      assert.equal(await page.locator('#ap-current-name').textContent(),'Seră dimineața');
+      assert.equal(await page.locator('#ap-title').textContent(),'Seră dimineața');
+      assert.equal(await page.locator('#ap-current-name').textContent(),'Schimbă programul');
       assert.equal(await page.locator('#ap-editor').isVisible(),false);
       assert.match(await page.locator('#ap-overview-value').textContent(),/20°C până sub 35°C/);
       assert.equal(await page.locator('#ap-summary-rows dt').textContent(),'Dacă se îndeplinește');
@@ -140,11 +141,13 @@ const server=http.createServer((req,res)=>{
       assert.equal(await page.locator('#ap-name').inputValue(),'');
       assert.equal(await page.locator('#ap-smart-low').inputValue(),'28');
       await page.locator('#ap-cancel').click();
-      assert.equal(await page.locator('#ap-current-name').textContent(),'Seră dimineața');
+      assert.equal(await page.locator('#ap-title').textContent(),'Seră dimineața');
+      assert.equal(await page.locator('#ap-current-name').textContent(),'Schimbă programul');
       await page.reload({waitUntil:'load'});
       await page.locator('[data-page="hidrofor"]').first().click();
       await page.locator('#ap-open').click();
-      assert.equal(await page.locator('#ap-current-name').textContent(),'Seră dimineața');
+      assert.equal(await page.locator('#ap-title').textContent(),'Seră dimineața');
+      assert.equal(await page.locator('#ap-current-name').textContent(),'Schimbă programul');
       assert.match(await page.locator('#ap-overview-value').textContent(),/22°C până sub 35°C/);
       assert.equal(await page.locator('#ap-summary-rows dd').textContent(),'Udă 12 min');
       await page.locator('#ap-edit').click();
