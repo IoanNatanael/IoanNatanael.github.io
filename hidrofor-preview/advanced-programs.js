@@ -38,11 +38,14 @@
     return ['Sub '+lower,'De la '+lower+' până sub '+upper,upper+' și peste'];
   }
   function renderSummary(m){
-    const smart=state.mode==='SMART';
+    const smart=state.mode==='SMART',sequence=state.mode==='SEQUENCE';
     const summaryRows=byId('ap-summary-rows');
     byId('ap-overview-value').hidden=!smart;
+    byId('ap-sequence-start').hidden=!sequence;
+    byId('ap-sequence-end').hidden=!sequence;
     text('ap-title',m.name);
-    const meta=[modeLabels[state.mode],m.time];
+    // Ora este afișată în prima linie a secvenței, nu duplicată în subtitlu.
+    const meta=sequence?[modeLabels[state.mode]]:[modeLabels[state.mode],m.time];
     let rows;
     if(smart){
       const {scope,metric,rule,low,high,duration}=m.smart;
@@ -60,6 +63,14 @@
       rows=m.adaptive.durations.map((duration,index)=>[labels[index],duration+' min']);
     }else{
       text('ap-overview-label','Secvență');
+      // Totalul include udarea și pauzele OFF planificate, dar nu pauzele
+      // suplimentare de protecție sau întârzierile hardware.
+      const totalMinutes=m.steps.reduce((sum,step)=>sum+number(step.minutes),0);
+      const startMinutes=Number(m.time.slice(0,2))*60+Number(m.time.slice(3));
+      const nextDay=startMinutes+totalMinutes>=24*60;
+      text('ap-sequence-start-time',m.time);
+      text('ap-sequence-end-time',engine.sequence.wallClock(m.time,totalMinutes*60)+(nextDay?' · +1 zi':''));
+      text('ap-sequence-end-note',totalMinutes+' min în total, cu pauzele programate · fără întârzieri de protecție');
       rows=m.steps.map((step,index)=>[
         (index+1)+'. '+(step.type==='ON'?'Udare':'Pauză'),step.minutes+' min',step.type
       ]);

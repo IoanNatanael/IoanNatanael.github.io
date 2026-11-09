@@ -231,3 +231,37 @@
   .ap-summary-rows .ap-summary-step {padding-inline:9px}
   .ap-steps .ap-step-row {padding-inline:5px}
 }
+
+/* Cronologie Cu pași: pornire, secvențe, final estimat, fără carduri suplimentare. */
+.ap-overview .ap-sequence-start,
+.ap-overview .ap-sequence-end-line {
+  display:flex;align-items:baseline;justify-content:space-between;
+  gap:12px;min-width:0;
+}
+.ap-overview .ap-sequence-start {
+  margin:0 0 15px;padding:0 0 13px;
+  border-bottom:1px solid rgba(169,215,208,.14);
+  color:#afc8c5;font-size:12px;font-weight:600;
+}
+.ap-overview .ap-sequence-start strong {
+  color:#a5ebd7;font-size:18px;font-weight:750;letter-spacing:-.3px;
+  white-space:nowrap;font-variant-numeric:tabular-nums;
+}
+.ap-overview .ap-sequence-finish {
+  margin-top:14px;padding-top:13px;
+  border-top:1px solid rgba(169,215,208,.14);
+}
+.ap-overview .ap-sequence-end-line {
+  color:#c2dcd5;font-size:13px;font-weight:650;
+}
+.ap-overview .ap-sequence-end-line strong {
+  color:#a5ebd7;font-size:19px;font-weight:750;letter-spacing:-.3px;
+  white-space:nowrap;font-variant-numeric:tabular-nums;
+}
+.ap-overview .ap-sequence-end-note {
+  margin:5px 0 0;color:#90b1ae;
+  font-size:11px;font-weight:500;line-height:1.45;
+}
+@media(max-width:350px){
+  .ap-overview .ap-sequence-end-line strong {font-size:17px}
+}

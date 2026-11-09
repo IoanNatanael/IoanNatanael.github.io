@@ -5721,9 +5721,9 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
 </style>
 <link rel="stylesheet" href="./r18-schedules.css?v=4">
 <script defer src="./r18-schedules.js?v=2"></script>
-<link rel="stylesheet" href="./advanced-programs.css?v=flat-stripes-7">
+<link rel="stylesheet" href="./advanced-programs.css?v=sequence-clock-1">
 <script defer src="./e10-advanced-engine.js?v=1"></script>
-<script defer src="./advanced-programs.js?v=adaptive-tints-5"></script>
+<script defer src="./advanced-programs.js?v=sequence-clock-1"></script>
 <link rel="stylesheet" href="./hydro-hero-redesign.css?v=4">
 <link rel="stylesheet" href="./manual-water-status.css?v=1">
 </head>
@@ -6307,8 +6307,15 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
                 <button class="ap-new" id="ap-new" type="button" aria-expanded="false" aria-controls="ap-editor"><span class="ap-new-glyph" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></span><span>Program nou</span></button>
               </div>
               <section class="ap-section ap-overview" id="ap-overview" aria-labelledby="ap-overview-label" hidden>
+                <div class="ap-sequence-start" id="ap-sequence-start" hidden>
+                  <span>Ora de pornire</span><strong id="ap-sequence-start-time">—</strong>
+                </div>
                 <div class="ap-section-head"><div><h2 id="ap-overview-label"></h2><p id="ap-overview-value"></p></div><button class="ap-secondary" id="ap-edit" type="button">Editează</button></div>
                 <dl class="ap-summary-rows" id="ap-summary-rows" aria-labelledby="ap-overview-label"></dl>
+                <div class="ap-sequence-finish" id="ap-sequence-end" hidden>
+                  <div class="ap-sequence-end-line"><span>Final teoretic</span><strong id="ap-sequence-end-time">—</strong></div>
+                  <p class="ap-sequence-end-note" id="ap-sequence-end-note"></p>
+                </div>
               </section>
               <div id="ap-editor" hidden>
                 <section class="ap-section" aria-labelledby="ap-editor-title">

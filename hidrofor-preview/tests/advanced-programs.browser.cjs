@@ -145,6 +145,12 @@ const server=http.createServer((req,res)=>{
       await page.locator('#ap-save').click();
       assert.deepEqual(await page.locator('#ap-summary-rows dt').allTextContents(),['1. Udare','2. Pauză','3. Udare']);
       assert.deepEqual(await page.locator('#ap-summary-rows dd').allTextContents(),['10 min','20 min','30 min']);
+      assert.equal(await page.locator('#ap-sequence-start-time').textContent(),'07:00');
+      assert.equal(await page.locator('#ap-sequence-end-time').textContent(),'08:00');
+      assert.match(await page.locator('#ap-sequence-end-note').textContent(),/60 min.*pauzele programate.*protecție/);
+      assert.equal(await page.locator('#ap-sequence-start').isVisible(),true);
+      assert.equal(await page.locator('#ap-sequence-end').isVisible(),true);
+      assert.equal(await page.locator('#ap-program-meta').textContent(),'Cu pași');
       assert.deepEqual(await page.locator('#ap-summary-rows .ap-summary-step').evaluateAll(
         rows=>rows.map(row=>row.dataset.apStepState)),['on','off','on']);
       const stepTints=await page.locator('#ap-summary-rows .ap-summary-step').evaluateAll(rows=>
@@ -156,11 +162,34 @@ const server=http.createServer((req,res)=>{
       assert.notEqual(stepTints[0].background,stepTints[1].background);
       assert.equal(stepTints[0].background,stepTints[2].background);
       assert.ok(stepTints.every(row=>row.image==='none'&&row.shadow==='none'));
+      // Verifică trecerea în ziua următoare.
+      await page.locator('#ap-edit').click();
+      await page.locator('#ap-time').fill('23:50');
+      await page.locator('#ap-save').click();
+      assert.equal(await page.locator('#ap-sequence-start-time').textContent(),'23:50');
+      assert.equal(await page.locator('#ap-sequence-end-time').textContent(),'00:50 · +1 zi');
+      // Cinci pași: 15 + 10 + 5 + 3 + 2 = 35 minute.
+      await page.locator('#ap-edit').click();
+      await page.locator('#ap-time').fill('07:00');
+      await page.locator('#ap-steps input').nth(0).fill('15');
+      await page.locator('#ap-steps input').nth(1).fill('10');
+      await page.locator('#ap-steps input').nth(2).fill('5');
+      await page.locator('#ap-add-off').click();
+      await page.locator('#ap-steps input').nth(3).fill('3');
+      await page.locator('#ap-add-on').click();
+      await page.locator('#ap-steps input').nth(4).fill('2');
+      await page.locator('#ap-save').click();
+      assert.equal(await page.locator('#ap-sequence-start-time').textContent(),'07:00');
+      assert.equal(await page.locator('#ap-sequence-end-time').textContent(),'07:35');
+      assert.deepEqual(await page.locator('#ap-summary-rows dd').allTextContents(),['15 min','10 min','5 min','3 min','2 min']);
+      assert.match(await page.locator('#ap-sequence-end-note').textContent(),/35 min/);
       await page.locator('#ap-program-picker summary').click();
       assert.deepEqual(await page.locator('#ap-program-list button').allTextContents(),['Program cu pași']);
       await page.keyboard.press('Escape');
 
       await page.locator('[data-ap-mode="ADAPTIVE"]').click();
+      assert.equal(await page.locator('#ap-sequence-start').isVisible(),false);
+      assert.equal(await page.locator('#ap-sequence-end').isVisible(),false);
       await page.locator('#ap-new').click();
       await page.locator('#ap-name').fill('Program adaptiv');
       await page.locator('#ap-adaptive-low').fill('18');

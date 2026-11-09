@@ -43,6 +43,12 @@ singure necesarul de apă al plantelor. Pragurile din exemple sunt pentru
 
 ## CU PAȘI
 
+Sumarul afișează **ora programată de pornire**, secvențele ON/OFF în ordine
+și **ora teoretică de final**. Aceasta însumează minutele de udare și pauzele
+OFF configurate; nu include pauzele sau opririle de protecție și întârzierile
+la reluare. Trecerea peste miezul nopții este indicată prin „+1 zi”.
+Este o estimare WEB DEMO, nu confirmarea unei execuții reale.
+
 Un program cu pași conține segmente de udare ON și pauză OFF. Modelul E10
 validează 1–16 pași alternanți, cu cel puțin un ON și durate întregi de 1–120
 minute pe pas. Cronologia din laboratorul E10 distinge minutele de udare
