@@ -41,11 +41,21 @@
   width:158px;height:158px;min-width:158px;min-height:158px;
   margin:26px auto 0;padding:10px;border-radius:50%;cursor:pointer;
   color:#badbd7;background:#233f46;border:1px solid #406066;
-  box-shadow:0 0 0 8px #1a333a,0 0 0 9px #2b4950;
+  /* OPRIT / NECUNOSCUT: un singur cerc, fără inel exterior. */
+  box-shadow:none;animation:none;
 }
 #page-hidrofor .hydro-hero-button.on {
   color:#b9ffe3;background:#255b4f;border-color:#6bbc9e;
-  box-shadow:0 0 0 8px #1a3933,0 0 0 9px #406a5d;
+  /* PORNIT confirmat: pulsație verde numai în jurul butonului mare. */
+  animation:hydroManualPowerPulse 2.4s ease-in-out infinite;
+}
+@keyframes hydroManualPowerPulse {
+  0%,100% {
+    box-shadow:0 0 0 0 rgba(91,225,161,.17),0 0 15px rgba(86,222,151,.13);
+  }
+  50% {
+    box-shadow:0 0 0 12px rgba(91,225,161,0),0 0 30px rgba(86,222,151,.28);
+  }
 }
 #page-hidrofor .hydro-hero-button .hydro-hero-icon {
   display:block;width:30px;height:30px;fill:none;stroke:currentColor;
@@ -206,5 +216,7 @@
 }
 @media(prefers-reduced-motion:reduce) {
   #page-hidrofor .hydro-water-drop {transition:none}
-  #page-hidrofor .hydro-power-indicator {animation:none!important;transform:none!important}
+  #page-hidrofor .hydro-power-indicator,
+  #page-hidrofor .hydro-hero-button.on {animation:none!important;transform:none!important}
+  #page-hidrofor .hydro-hero-button.on {box-shadow:0 0 0 2px rgba(91,225,161,.20)}
 }
