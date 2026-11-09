@@ -6316,13 +6316,25 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
                   <label class="ap-field">Numele programului<input id="ap-name" type="text" maxlength="60" autocomplete="off" placeholder="De exemplu, Udare dimineața"></label>
                   <label class="ap-field ap-time">Ora programului<input id="ap-time" type="time" value="07:00"></label>
                 </section>
-                <section class="ap-section" data-ap-panel="SMART" aria-labelledby="ap-smart-heading"><h2 id="ap-smart-heading">Condiții de pornire</h2>
-                  <span class="ap-label">Sera monitorizată</span><div class="ap-choice ap-scope" role="group" aria-label="Sera sau regula de combinare"><button type="button" data-ap-scope="s1" aria-pressed="true">Sera 1</button><button type="button" data-ap-scope="s2" aria-pressed="false">Sera 2</button><button type="button" data-ap-scope="either" aria-pressed="false">Oricare seră</button><button type="button" data-ap-scope="both" aria-pressed="false">Ambele sere</button></div>
-                  <span class="ap-label">În funcție de</span><div class="ap-choice" role="group" aria-label="Mărimea urmărită"><button type="button" data-ap-metric="temperature" aria-pressed="true">Temperatură</button><button type="button" data-ap-metric="humidity" aria-pressed="false">Umiditatea aerului</button></div>
-                  <span class="ap-label">Udă când valoarea este</span><div class="ap-choice" role="group" aria-label="Condiția de pornire"><button type="button" data-ap-rule="under" aria-pressed="false">Sub</button><button type="button" data-ap-rule="between" aria-pressed="false">Între</button><button type="button" data-ap-rule="above" aria-pressed="true">Peste</button></div>
-                  <p class="ap-muted">„Între” include primul prag; „Peste” include pragul afișat.</p>
-                  <div class="ap-fields"><label class="ap-field">Prag<input id="ap-smart-low" type="number" min="-40" max="85" step="0.1" value="28"></label><label class="ap-field" id="ap-smart-high-wrap" hidden>Prag superior<input id="ap-smart-high" type="number" min="-40" max="85" step="0.1" value="32"></label><label class="ap-field">Durată · min<input id="ap-smart-duration" type="number" min="1" max="120" step="1" value="10"></label></div>
-                </section>
+                <div data-ap-panel="SMART">
+                  <section class="ap-section" aria-labelledby="ap-smart-heading">
+                    <h2 id="ap-smart-heading">Condiții de pornire</h2>
+                    <span class="ap-label">Sera monitorizată</span><div class="ap-choice ap-scope" role="group" aria-label="Sera sau regula de combinare"><button type="button" data-ap-scope="s1" aria-pressed="true">Sera 1</button><button type="button" data-ap-scope="s2" aria-pressed="false">Sera 2</button><button type="button" data-ap-scope="either" aria-pressed="false">Oricare seră</button><button type="button" data-ap-scope="both" aria-pressed="false">Ambele sere</button></div>
+                    <span class="ap-label">În funcție de</span><div class="ap-choice" role="group" aria-label="Mărimea urmărită"><button type="button" data-ap-metric="temperature" aria-pressed="true">Temperatură</button><button type="button" data-ap-metric="humidity" aria-pressed="false">Umiditatea aerului</button></div>
+                    <span class="ap-label">Udă când valoarea este</span><div class="ap-choice" role="group" aria-label="Condiția de pornire"><button type="button" data-ap-rule="under" aria-pressed="false">Sub</button><button type="button" data-ap-rule="between" aria-pressed="false">Între</button><button type="button" data-ap-rule="above" aria-pressed="true">Peste</button></div>
+                    <p class="ap-muted">„Între” include primul prag; „Peste” include pragul afișat.</p>
+                    <div class="ap-fields">
+                      <label class="ap-field">Prag<input id="ap-smart-low" type="number" min="-40" max="85" step="0.1" value="28"></label>
+                      <label class="ap-field" id="ap-smart-high-wrap" hidden>Prag superior<input id="ap-smart-high" type="number" min="-40" max="85" step="0.1" value="32"></label>
+                    </div>
+                  </section>
+                  <section class="ap-section" aria-labelledby="ap-smart-duration-heading">
+                    <h2 id="ap-smart-duration-heading">Durata udării</h2>
+                    <div class="ap-fields">
+                      <label class="ap-field">Minute<input id="ap-smart-duration" type="number" min="1" max="120" step="1" value="10"></label>
+                    </div>
+                  </section>
+                </div>
                 <section class="ap-section" data-ap-panel="SEQUENCE" aria-labelledby="ap-steps-heading" hidden><div class="ap-section-head"><h2 id="ap-steps-heading">Pași de udare</h2><small>Maximum 16</small></div><div class="ap-steps" id="ap-steps"></div><div class="ap-actions ap-step-actions"><button class="ap-secondary" id="ap-add-on" type="button">+ Udare</button><button class="ap-secondary" id="ap-add-off" type="button">+ Pauză</button></div></section>
                 <section class="ap-section" data-ap-panel="ADAPTIVE" aria-labelledby="ap-adaptive-heading" hidden><h2 id="ap-adaptive-heading">Durata după temperatură</h2>
                   <span class="ap-label">Temperatura de referință</span><div class="ap-choice" role="group" aria-label="Sursa temperaturii"><button type="button" data-ap-reference="s1" aria-pressed="true">Sera 1</button><button type="button" data-ap-reference="s2" aria-pressed="false">Sera 2</button><button type="button" data-ap-reference="average" aria-pressed="false">Media</button></div>

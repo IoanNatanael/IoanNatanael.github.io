@@ -250,6 +250,7 @@ const server=http.createServer((req,res)=>{
     const remainingArc=await dial.evaluate(el=>parseFloat(el.style.getPropertyValue('--remaining')));
     assert.ok(remainingArc>0 && remainingArc<360);
     assert.ok(await timedPage.evaluate(()=>mockState.previewTimedRemainingMs)>9*60000);
+    await timedPage.locator('#r12DemoWater summary').click();
     await timedPage.locator('[data-r12-water="dry"]').click();
     assert.equal(await timedPage.evaluate(()=>mockState.previewTimedPhase),'PAUSED');
     const remaining=await timedPage.evaluate(()=>mockState.previewTimedRemainingMs);
