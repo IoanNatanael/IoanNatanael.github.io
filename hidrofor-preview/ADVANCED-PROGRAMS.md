@@ -8,7 +8,7 @@ conectată sau pregătită să ude.
 
 Interfața publicată în acest repository setează `HIDROFOR_PREVIEW_ONLY` și
 folosește date și răspunsuri simulate. Datele afișate ca DEMO nu sunt citiri
-hardware. Laboratorul E10 rămâne disponibil separat pentru teste și scenarii de
+hardware. Laboratorul E10 se poate rula local pentru teste și scenarii de
 defect; previzualizarea din Programe avansate este tot o simulare.
 
 ## Programe locale și programări existente

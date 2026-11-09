@@ -123,7 +123,7 @@ Teste de regresie: `node --test hidrofor-preview/tests/service-simplified.test.c
 În **Hidrofor → Automat → Programe avansate** se pot configura și simula
 SMART, Cu pași și Adaptiv. Programele sunt salvate numai în browserul curent,
 separat pentru fiecare metodă. Datele afișate în preview sunt DEMO; simularea
-nu programează ESP32 și nu pornește pompa. Laboratorul E10 rămâne separat.
+nu programează ESP32 și nu pornește pompa. Laboratorul E10 se poate rula local pentru teste.
 
 Regulile simulate, limitele și pașii necesari integrării ulterioare pe hardware
 sunt descrise în [ADVANCED-PROGRAMS.md](ADVANCED-PROGRAMS.md).

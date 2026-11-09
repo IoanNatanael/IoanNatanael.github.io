@@ -48,12 +48,14 @@ jobs:
           cp -a main-source/hidrofor-preview/. site/hidrofor-preview/
           cp -a main-source/hidrofor-service-preview/. site/hidrofor-service-preview/
           cp -a main-source/hidrofor-preview/. site/hidrofor-lucru/
+          # The standalone lab is kept for local development.
+          rm -f site/hidrofor-preview/e10-lab.html site/hidrofor-lucru/e10-lab.html
           # Working URL: direct application, not the phone frame.
           cp main-source/hidrofor-preview/app.html site/hidrofor-lucru/index.html
           cp main-source/hidrofor-preview/index.html site/hidrofor-lucru/telefon.html
           touch site/.nojekyll
           test -s site/hidrofor-lucru/index.html
-          test -s site/hidrofor-lucru/e10-lab.html
+          test -s site/hidrofor-lucru/e10-advanced-engine.js
           test -s site/hidrofor-lucru/r18-schedules.js
           test -s site/hidrofor-lucru/advanced-programs.js
           grep -q 'id="ap-open"' site/hidrofor-lucru/app.html
