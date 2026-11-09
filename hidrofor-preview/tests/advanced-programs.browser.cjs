@@ -166,9 +166,16 @@ const server=http.createServer((req,res)=>{
     await timedPage.clock.fastForward(46000);
     assert.equal(await timedPage.evaluate(()=>mockState.previewTimedOrigin),'schedule');
     assert.equal(await timedPage.evaluate(()=>mockState.live.stareHidrofor),'PORNIT');
+    const indicator=timedPage.locator('.hydro-power-indicator');
+    assert.equal(await indicator.evaluate(el=>getComputedStyle(el).animationName),'hydroPowerLivePulse');
+    assert.match(await timedPage.locator('#hydroScheduleActivity').textContent(),/07:30 · în curs/);
     await timedPage.clock.fastForward(13000);
+    assert.equal(await timedPage.evaluate(()=>mockState.live.stareHidrofor),'PORNIT','programarea folosește minute reale');
+    await timedPage.clock.fastForward(12*60000);
     assert.equal(await timedPage.evaluate(()=>mockState.previewTimedPhase),'DONE');
     assert.equal(await timedPage.evaluate(()=>mockState.live.stareHidrofor),'OPRIT');
+    assert.equal(await indicator.evaluate(el=>getComputedStyle(el).animationName),'none');
+    assert.match(await timedPage.locator('#hydroScheduleActivity').textContent(),/07:30 · încheiată/);
     assert.equal(await timedPage.locator('[data-hydro-mode="auto"]').getAttribute('aria-pressed'),'true');
     await timedContext.close();
     console.log('PASS manual timer and scheduled start/stop on the demo clock');

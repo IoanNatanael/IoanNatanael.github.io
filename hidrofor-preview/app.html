@@ -5713,7 +5713,7 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
 <link rel="stylesheet" href="./advanced-programs.css?v=compact-selector-1">
 <script defer src="./e10-advanced-engine.js?v=1"></script>
 <script defer src="./advanced-programs.js?v=6"></script>
-<link rel="stylesheet" href="./hydro-hero-redesign.css?v=3">
+<link rel="stylesheet" href="./hydro-hero-redesign.css?v=4">
 </head>
   <body class="hidro-v5">
     <div class="app">
@@ -6088,6 +6088,7 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
                 <div class="hydro-copy">
                   <span class="hydro-state-kicker">Stare actuală</span>
                   <h2 id="hydroHeadline">Stare pompă necunoscută</h2>
+                  <p id="hydroScheduleActivity" class="hydro-schedule-activity" role="status" hidden></p>
                   <span class="hydro-hero-timer" hidden id="hydroHeroTimer"></span>
                 </div>
                 <button aria-label="Porneste hidroforul" class="hydro-hero-button off" id="hydroHeroButton" type="button">
@@ -8249,7 +8250,7 @@ const mockState = {
   previewWater: "wet",
   previewSuspended: false,
   previewScheduleMinute: Math.floor(Date.now() / 60000),
-  previewScheduleResult: "",
+  previewScheduleActivity: null,
   previewTimedOrigin: "",
   // R16: un singur consum comun DEMO, actualizat de ventilatoarele simulate.
   previewTotalLoadW: 2.6,
@@ -8792,6 +8793,7 @@ const mockLivePayload = () => {
     stareHidrofor: mockState.live.stareHidrofor,
     stareSistem: mockState.live.stareSistem,
     modControl: mockState.live.modControl,
+    demoScheduleActivity: mockScheduleActivityText(),
     // R11 WEB PREVIEW ONLY: telemetrie demo coerentă pentru butoanele Udare.
     // Nu există răspuns fizic de la ESP-01S; se simulează local.
     hidroforNode: {
@@ -8879,6 +8881,7 @@ const mockHistoryText = (node, windowName) =>
 
 const mockHandleCommand = (nextState, source = "Website") => {
   const on = nextState === "PORNIT";
+  mockInterruptSchedule();
   mockState.live.stareHidrofor = nextState;
   mockState.live.modControl = "Manual";
   mockState.previewCommandCounter += 1;
@@ -8983,6 +8986,7 @@ const mockPushEvent = ({
 };
 
 const mockResetHydroFaults = () => {
+  mockInterruptSchedule();
   mockState.live.stareSistem = "ACTIV";
   mockState.live.modControl = "Manual";
   mockState.live.stareHidrofor = "OPRIT";
@@ -9066,6 +9070,24 @@ const mockStartTimed = (minutes, refillMinutes, origin) => {
   if (origin === "schedule") mockState.live.modControl = "Automat";
 };
 
+const mockInterruptSchedule = () => {
+  if (mockState.previewScheduleActivity?.phase === "running")
+    mockState.previewScheduleActivity.phase = "interrupted";
+};
+
+const mockScheduleActivityText = (withReason = false) => {
+  const activity = mockState.previewScheduleActivity;
+  if (!activity) return "";
+  const label = {
+    running: mockState.previewTimedPhase === "PAUSED" ? "în pauză" : "în curs",
+    done: "încheiată",
+    interrupted: "întreruptă",
+    skipped: "omisă",
+  }[activity.phase];
+  const reason = withReason && activity.reason ? ` · ${activity.reason}` : "";
+  return `Programarea de la ${activity.time} · ${label}${reason}`;
+};
+
 const mockScheduleTick = (now = new Date()) => {
   const minute = Math.floor(now.getTime() / 60000);
   if (minute === mockState.previewScheduleMinute) return;
@@ -9073,6 +9095,7 @@ const mockScheduleTick = (now = new Date()) => {
   if (mockState.previewSuspended || mockState.live.modControl !== "Automat") return;
 
   const time = now.getHours() * 100 + now.getMinutes();
+  const timeLabel = String(now.getHours()).padStart(2, "0") + ":" + String(now.getMinutes()).padStart(2, "0");
   const date = now.getFullYear() * 10000 + (now.getMonth() + 1) * 100 + now.getDate();
   const occurrence = date * 10000 + time;
   for (const schedule of mockState.previewSchedules) {
@@ -9085,11 +9108,14 @@ const mockScheduleTick = (now = new Date()) => {
     const idle = mockState.live.stareHidrofor === "OPRIT" &&
       !["RUNNING", "PAUSED", "RESUMING"].includes(mockState.previewTimedPhase);
     if (!idle || mockState.previewWater !== "wet" || mockState.live.baterieOk !== true) {
-      mockState.previewScheduleResult = "DEMO · Programare omisă: pompa este ocupată sau apa și bateria nu sunt confirmate.";
+      if (mockState.previewScheduleActivity?.phase !== "running") {
+        const reason = !idle ? "pompa este ocupată" : "apa sau bateria nu este confirmată";
+        mockState.previewScheduleActivity = { time: timeLabel, phase: "skipped", reason };
+      }
       continue;
     }
     mockStartTimed(schedule.minutes, schedule.refillMinutes, "schedule");
-    mockState.previewScheduleResult = "DEMO · Udare programată pornită.";
+    mockState.previewScheduleActivity = { time: timeLabel, phase: "running" };
   }
 };
 
@@ -9109,13 +9135,14 @@ const r12MockTimedTick = () => {
     mockState.live.stareHidrofor = "PORNIT";
     mockState.hydroStartedAt = now;
   } else if (mockState.previewTimedPhase === "RUNNING") {
-    mockState.previewTimedRemainingMs = Math.max(0, mockState.previewTimedRemainingMs - delta * 60);
+    const speed = mockState.previewTimedOrigin === "schedule" ? 1 : 60;
+    mockState.previewTimedRemainingMs = Math.max(0, mockState.previewTimedRemainingMs - delta * speed);
     if (mockState.previewTimedRemainingMs <= 0) {
       const scheduled = mockState.previewTimedOrigin === "schedule";
+      if (scheduled) mockState.previewScheduleActivity.phase = "done";
       mockHandleCommand("OPRIT", "Udare temporizată finalizată · DEMO");
       if (scheduled) {
         mockState.live.modControl = "Automat";
-        mockState.previewScheduleResult = "DEMO · Udare programată încheiată.";
       }
       mockState.previewTimedPhase = "DONE";
     }
@@ -9257,7 +9284,8 @@ const mockFetch = async (input, options = {}) => {
     canAttemptArm:true, bootRearmRequired:false, recoveryPending:false,
     storageAlarm:false,suspendWritePending:false,
     suspended:mockState.previewSuspended,needsFaultAck:false,
-    items:mockState.previewSchedules, pending:{active:false},lastResult:mockState.previewScheduleResult || "DEMO · Se simulează la ora locală, cât timp pagina este deschisă în Automată."
+    items:mockState.previewSchedules, pending:{active:false},
+    lastResult:"DEMO · " + (mockScheduleActivityText(true) || "Se simulează la ora locală, cât timp pagina este deschisă în Automată.")
   });
   if (path.startsWith("/api/schedules/") && options.method === "POST") {
     const form = new URLSearchParams(options.body || "");
@@ -10154,6 +10182,10 @@ const renderLive = (data) => {
   const hydroKnown = hydroState === "PORNIT" || hydroState === "OPRIT";
   setText("hydroHeadline", !hydroKnown ? "Stare pompă neconfirmată" :
     hydroOn ? "Apa este în mers" : "Pompa este oprită");
+  const scheduleActivity = forceMock() && hydroKnown ? d.demoScheduleActivity : "";
+  $("hydroScheduleActivity").hidden = !scheduleActivity;
+  if (scheduleActivity && $("hydroScheduleActivity").textContent !== scheduleActivity)
+    setText("hydroScheduleActivity", scheduleActivity);
   // i3SyncControls overwrites the hint after rendering the node state.
   setText("hydroUpdated", d.dataOra || "-");
   const runtimeText =
@@ -12670,6 +12702,7 @@ const loadLive = () => {
     i3SyncControls();
     i5RenderWaterStatus();
     setText("hydroHeadline", "Stare pompă necunoscută");
+    $("hydroScheduleActivity").hidden = true;
     setText("hydroUpdated", "—");
     updateHydroHeroButton("NECUNOSCUT", "—");
     setText("autoTimerContext", "Datele ESP32 sunt indisponibile; temporizarea și oprirea nu sunt confirmate.");
