@@ -8800,7 +8800,9 @@ const mockLivePayload = () => {
     stareHidrofor: mockState.live.stareHidrofor,
     stareSistem: mockState.live.stareSistem,
     modControl: mockState.live.modControl,
-    demoScheduleActivity: mockScheduleActivityText(),
+    demoWateringDetail: mockState.live.stareHidrofor === "PORNIT"
+      ? mockWateringSource()
+      : mockNextWateringText(new Date(now)),
     // R11 WEB PREVIEW ONLY: telemetrie demo coerentă pentru butoanele Udare.
     // Nu există răspuns fizic de la ESP-01S; se simulează local.
     hidroforNode: {
@@ -9095,6 +9097,52 @@ const mockScheduleActivityText = (withReason = false) => {
   return `Programarea de la ${activity.time} · ${label}${reason}`;
 };
 
+const scheduleDateKey = date =>
+  date.getFullYear() * 10000 + (date.getMonth() + 1) * 100 + date.getDate();
+
+const scheduleMatchesDay = (schedule, date) => {
+  if (schedule.mode === 0) return Number(schedule.date) === scheduleDateKey(date);
+  if (schedule.mode === 1) return true;
+  return schedule.mode === 2 && Boolean(schedule.weekdays & (1 << date.getDay()));
+};
+
+const scheduleClock = date =>
+  String(date.getHours()).padStart(2, "0") + ":" + String(date.getMinutes()).padStart(2, "0");
+
+const mockNextWateringText = now => {
+  if (mockState.previewSuspended || mockState.live.modControl !== "Automat") return "";
+  let next = null;
+  for (const schedule of mockState.previewSchedules) {
+    const hour = Math.floor(schedule.time / 100), minute = schedule.time % 100;
+    if (!schedule.enabled || !Number.isInteger(schedule.time) ||
+        hour < 0 || hour > 23 || minute < 0 || minute > 59) continue;
+    const once = schedule.mode === 0;
+    const date = Number(schedule.date);
+    const firstDay = once
+      ? new Date(Math.floor(date / 10000), Math.floor(date / 100) % 100 - 1, date % 100)
+      : now;
+    for (let offset = 0; offset <= (once ? 0 : 7); offset++) {
+      const start = new Date(firstDay.getFullYear(), firstDay.getMonth(), firstDay.getDate() + offset, hour, minute);
+      if (start <= now || start.getHours() !== hour || start.getMinutes() !== minute ||
+          !scheduleMatchesDay(schedule, start) ||
+          schedule.lastOccurrence === scheduleDateKey(start) * 10000 + schedule.time) continue;
+      if (!next || start < next) next = start;
+      break;
+    }
+  }
+  if (!next) return "";
+  const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+  const day = scheduleDateKey(next) === scheduleDateKey(now) ? "azi" :
+    scheduleDateKey(next) === scheduleDateKey(tomorrow) ? "mâine" :
+    next.toLocaleDateString("ro-RO", { day: "numeric", month: "short", ...(next.getFullYear() !== now.getFullYear() && { year: "numeric" }) });
+  return `Următoarea udare · ${day}, ${scheduleClock(next)} · Automată`;
+};
+
+const mockWateringSource = () => {
+  if (mockState.previewTimedOrigin === "schedule") return `Automată · ${mockScheduleActivityText()}`;
+  return mockState.previewTimedOrigin === "manual" ? "Manual temporizat" : "Manual";
+};
+
 const mockScheduleTick = (now = new Date()) => {
   const minute = Math.floor(now.getTime() / 60000);
   if (minute === mockState.previewScheduleMinute) return;
@@ -9102,14 +9150,11 @@ const mockScheduleTick = (now = new Date()) => {
   if (mockState.previewSuspended || mockState.live.modControl !== "Automat") return;
 
   const time = now.getHours() * 100 + now.getMinutes();
-  const timeLabel = String(now.getHours()).padStart(2, "0") + ":" + String(now.getMinutes()).padStart(2, "0");
-  const date = now.getFullYear() * 10000 + (now.getMonth() + 1) * 100 + now.getDate();
-  const occurrence = date * 10000 + time;
+  const timeLabel = scheduleClock(now);
+  const occurrence = scheduleDateKey(now) * 10000 + time;
   for (const schedule of mockState.previewSchedules) {
     if (!schedule.enabled || schedule.time !== time || schedule.lastOccurrence === occurrence) continue;
-    const matches = schedule.mode === 0 ? Number(schedule.date) === date :
-      schedule.mode === 1 || (schedule.mode === 2 && Boolean(schedule.weekdays & (1 << now.getDay())));
-    if (!matches) continue;
+    if (!scheduleMatchesDay(schedule, now)) continue;
     schedule.lastOccurrence = occurrence;
     if (schedule.mode === 0) schedule.enabled = false;
     const idle = mockState.live.stareHidrofor === "OPRIT" &&
@@ -10187,8 +10232,8 @@ const renderLive = (data) => {
   const hydroOn = hydroState === "PORNIT";
   const hydroKnown = hydroState === "PORNIT" || hydroState === "OPRIT";
   setText("hydroHeadline", !hydroKnown ? "Stare pompă neconfirmată" :
-    hydroOn ? "Apa este în mers" : "Pompa este oprită");
-  const scheduleActivity = forceMock() && hydroKnown ? d.demoScheduleActivity : "";
+    hydroOn ? "Pompa este pornită" : "Pompa este oprită");
+  const scheduleActivity = forceMock() && hydroKnown ? d.demoWateringDetail : "";
   $("hydroScheduleActivity").hidden = !scheduleActivity;
   if (scheduleActivity && $("hydroScheduleActivity").textContent !== scheduleActivity)
     setText("hydroScheduleActivity", scheduleActivity);
