@@ -3,7 +3,7 @@ const assert=require('node:assert/strict');
 const fs=require('node:fs'),http=require('node:http'),path=require('node:path');
 const {chromium}=require(process.env.PLAYWRIGHT_MODULE||path.join(process.env.USERPROFILE,'.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright'));
 const root=path.resolve(__dirname,'..');
-const files=new Set(['app.html','r18-schedules.js','r18-schedules.css','advanced-programs.css','advanced-programs.js','e10-advanced-engine.js']);
+const files=new Set(['app.html','r18-schedules.js','r18-schedules.css','advanced-programs.css','advanced-programs.js','e10-advanced-engine.js','hydro-hero-redesign.css']);
 const server=http.createServer((req,res)=>{
   const name=new URL(req.url,'http://localhost').pathname.slice(1);
   if(req.method!=='GET'||!files.has(name)){res.writeHead(404);return res.end();}
@@ -39,9 +39,20 @@ const server=http.createServer((req,res)=>{
       assert.equal(await page.locator('#ap-panel').isVisible(),false);
       assert.equal(await page.evaluate(()=>mockState.commands.length),manualCommands);
       await page.locator('[data-hydro-mode="auto"]').click();
-      assert.equal(await page.locator('#r18OpenSchedules').isVisible(),true);
-      await page.locator('#r18OpenSchedules').click();assert.equal(await page.locator('#r18ScheduleDialog').evaluate(e=>e.open),true);
-      await page.locator('#r18CloseDialog').click();assert.equal(await page.locator('#r18ScheduleDialog').evaluate(e=>e.open),false);
+      await page.locator('#autoScheduleList .schedule-row').first().waitFor();
+      assert.equal(await page.locator('#autoTimedStart').isVisible(),true);
+      assert.equal(await page.locator('#autoAddSchedule').isVisible(),false);
+      await page.locator('#r18ScheduleEditor summary').click();
+      const immediateDuration=await page.locator('#autoTimerInput').inputValue();
+      await page.locator('#autoScheduleTime').fill('14:17');
+      await page.locator('#autoScheduleMode').selectOption('weekly');
+      await page.locator('[data-i9-weekday="1"]').check();
+      await page.locator('#r18ScheduleMinutes').fill('13');
+      await page.locator('#autoAddSchedule').click();
+      await page.locator('#autoScheduleList .schedule-row').filter({hasText:'14:17'}).waitFor();
+      assert.match(await page.locator('#autoScheduleList .schedule-row').filter({hasText:'14:17'}).innerText(),/13 min/);
+      assert.equal(await page.locator('#autoTimerInput').inputValue(),immediateDuration);
+      assert.equal(await page.locator('#r18ScheduleEditor').evaluate(editor=>editor.open),false);
       const autoCommands=await page.evaluate(()=>mockState.commands.length);
       await page.locator('#ap-open').click();
       assert.equal(await page.locator('#ap-panel').isVisible(),true);

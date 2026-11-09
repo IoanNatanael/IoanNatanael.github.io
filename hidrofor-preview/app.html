@@ -5708,8 +5708,8 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
 .r15-control-note{font-size:11px;line-height:1.55;color:#a2b6ba;margin:15px 0 0}
 @media(max-width:380px){.r15-meter{padding:12px}.r15-meter-main strong{font-size:29px}.r15-meter-demo{font-size:9px;padding:5px 7px}.r15-load-card .r15-chip-label{font-size:9px}}
 </style>
-<link rel="stylesheet" href="./r18-schedules.css?v=2">
-<script defer src="./r18-schedules.js?v=1"></script>
+<link rel="stylesheet" href="./r18-schedules.css?v=3">
+<script defer src="./r18-schedules.js?v=2"></script>
 <link rel="stylesheet" href="./advanced-programs.css?v=6">
 <script defer src="./e10-advanced-engine.js?v=1"></script>
 <script defer src="./advanced-programs.js?v=6"></script>
@@ -6128,7 +6128,7 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
     <span class="r13-auto-indicator">AUTO</span>
   </header>
   <div class="r13-unified-body">
-    <div class="r13-control-label"><strong>Durata udării</strong></div>
+    <h4 class="r13-control-label">Pornește acum</h4>
     <div class="timer-panel r13-timer-panel">
                     <div class="timer-dial-wrap">
                       <button
@@ -6190,62 +6190,62 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
                     </div>
                     
     </div>
-    <div class="r13-start-picker">
-      <span class="r13-start-label">Când pornește?</span>
-      <div class="r13-start-tabs" role="group" aria-label="Alege pornirea udării">
-        <button type="button" data-r13-start="now" aria-pressed="true" class="selected">Acum</button>
-        <button type="button" data-r13-start="schedule" aria-pressed="false">Programat</button>
-      </div>
-    </div>
     <section id="r13NowPane" class="r13-operation-pane" aria-label="Pornire imediată">
       <div class="auto-actions r12-auto-actions">
         <button class="btn-good" id="autoTimedStart" type="button">Pornește udarea</button>
         <button class="btn-bad" id="autoTimedStop" type="button">Oprește</button>
       </div>
     </section>
-    <section id="r13SchedulePane" class="r13-operation-pane r13-schedule-pane" aria-label="Pornire programată" hidden>
-      <div class="r13-schedule-heading"><strong>Programare</strong></div>
+    <section id="r13SchedulePane" class="r13-operation-pane r13-schedule-pane" aria-labelledby="r18ScheduleTitle">
+      <h4 id="r18ScheduleTitle">Programări</h4>
       <p id="i9ScheduleStatus" class="r13-inline-status" role="status">Se citesc programările…</p>
-      <div class="schedule-panel">
-<div class="schedule-form">
-                      <div>
-                        <label class="field-caption" for="autoScheduleTime">Ora pornirii</label>
-                        <input id="autoScheduleTime" type="time" />
-                      </div>
-                      <!-- Parametru vechi ACTIVE: păstrat intern pentru compatibilitatea preview-ului. Viitor: estimare adaptivă a refacerii apei. -->
-                      <input type="hidden" id="autoScheduleWaterWait" value="120">
-                      <div>
-                        <label class="field-caption" for="autoScheduleMode">Repetare</label>
-                        <select id="autoScheduleMode">
-                          <option value="once">O singură dată</option>
-                          <option value="daily">Zilnic</option>
-                          <option value="weekly">În anumite zile</option>
-                        </select>
-                      </div>
-                      <div id="i9OnceRow">
-                        <label class="field-caption" for="autoScheduleDate">Data</label>
-                        <input id="autoScheduleDate" type="date" />
-                      </div>
-                      <div id="i9WeekRow" hidden>
-                        <span class="field-caption">Zilele săptămânii</span>
-                        <div class="i9-weekdays">
-                          <label><input type="checkbox" data-i9-weekday="1">Lu</label>
-                          <label><input type="checkbox" data-i9-weekday="2">Ma</label>
-                          <label><input type="checkbox" data-i9-weekday="3">Mi</label>
-                          <label><input type="checkbox" data-i9-weekday="4">Jo</label>
-                          <label><input type="checkbox" data-i9-weekday="5">Vi</label>
-                          <label><input type="checkbox" data-i9-weekday="6">Sa</label>
-                          <label><input type="checkbox" data-i9-weekday="0">Du</label>
-                        </div>
-                      </div>
-                    </div>
-      </div>
-      <div class="r13-schedule-submit">
-        <button class="btn-primary" id="autoAddSchedule" type="button">Salvează programarea</button>
-      </div>
       <div class="r13-schedule-management">
-        <div class="r13-management-top"><strong>Programările mele</strong><span>maxim 8</span></div>
         <div class="schedule-list" id="autoScheduleList"></div>
+        <details id="r18ScheduleEditor">
+          <summary>+ Program nou</summary>
+          <div class="schedule-panel">
+    <div class="schedule-form">
+                          <div>
+                            <label class="field-caption" for="autoScheduleTime">Ora pornirii</label>
+                            <input id="autoScheduleTime" type="time" />
+                          </div>
+                          <div>
+                            <label class="field-caption" for="r18ScheduleMinutes">Durata udării (min)</label>
+                            <input id="r18ScheduleMinutes" type="number" min="1" max="120" step="1" inputmode="numeric" value="10">
+                          </div>
+                          <!-- Parametru vechi ACTIVE: păstrat intern pentru compatibilitatea preview-ului. Viitor: estimare adaptivă a refacerii apei. -->
+                          <input type="hidden" id="autoScheduleWaterWait" value="120">
+                          <div>
+                            <label class="field-caption" for="autoScheduleMode">Repetare</label>
+                            <select id="autoScheduleMode">
+                              <option value="once">O singură dată</option>
+                              <option value="daily">Zilnic</option>
+                              <option value="weekly">În anumite zile</option>
+                            </select>
+                          </div>
+                          <div id="i9OnceRow">
+                            <label class="field-caption" for="autoScheduleDate">Data</label>
+                            <input id="autoScheduleDate" type="date" />
+                          </div>
+                          <div id="i9WeekRow" hidden>
+                            <span class="field-caption">Zilele săptămânii</span>
+                            <div class="i9-weekdays">
+                              <label><input type="checkbox" data-i9-weekday="1">Lu</label>
+                              <label><input type="checkbox" data-i9-weekday="2">Ma</label>
+                              <label><input type="checkbox" data-i9-weekday="3">Mi</label>
+                              <label><input type="checkbox" data-i9-weekday="4">Jo</label>
+                              <label><input type="checkbox" data-i9-weekday="5">Vi</label>
+                              <label><input type="checkbox" data-i9-weekday="6">Sa</label>
+                              <label><input type="checkbox" data-i9-weekday="0">Du</label>
+                            </div>
+                          </div>
+                        </div>
+          </div>
+          <div class="r13-schedule-submit">
+            <button class="btn-primary" id="autoAddSchedule" type="button">Salvează programarea</button>
+            <button class="btn-secondary" id="r18CloseEditor" type="button">Închide</button>
+          </div>
+        </details>
         <div class="i9-actions r13-schedule-actions">
           <button class="btn-secondary" id="i9ScheduleAcknowledge" type="button" hidden>Confirmă defectul (după verificare)</button>
           <button class="btn-secondary" id="i9ScheduleArm" type="button">Reactivează</button>
@@ -11616,7 +11616,7 @@ const bindAutoEvents = () => {
   if(HIDROFOR_BROWSER_AUTOMATIONS_ALLOWED) {
   $("autoAddSchedule")?.addEventListener("click", () => {
     const time = $("autoScheduleTime")?.value || "";
-    const minutes = clampAutoMinutes($("autoTimerInput")?.value || autoState.selectedMinutes);
+    const minutes = clampAutoMinutes($("r18ScheduleMinutes")?.value ?? autoState.selectedMinutes);
     if (!isValidAutoTime(time)) {
       showAutoToast("Alege ora de pornire");
       return;
@@ -15305,8 +15305,8 @@ function i9RenderSchedules(){
     const date=e.mode===0?String(e.date).slice(6,8)+"."+String(e.date).slice(4,6)+"."+String(e.date).slice(0,4)
       :e.mode===1?"zilnic":i9Days.filter((d,i)=>(e.weekdays&(1<<i))).join(" · ");
     return '<article class="schedule-row">'+
-    '<button class="schedule-toggle '+(e.enabled?'on':'off')+'" type="button" data-i9-toggle="'+e.id+'" title="Activează / dezactivează">'+(e.enabled?'on':'off')+'</button>'+
-    '<div><div class="schedule-time">'+hr+'</div><div class="schedule-meta">'+e.minutes+' min · refacere '+e.refillMinutes+' min · '+date+'</div></div>'+
+    '<button class="schedule-toggle '+(e.enabled?'on':'off')+'" type="button" data-i9-toggle="'+e.id+'" aria-pressed="'+Boolean(e.enabled)+'" title="Activează / dezactivează">'+(e.enabled?'Activă':'Oprită')+'</button>'+
+    '<div><div class="schedule-time">'+hr+'</div><div class="schedule-meta">'+e.minutes+' min · '+date+'</div></div>'+
     '<button class="schedule-delete" type="button" data-i9-delete="'+e.id+'" aria-label="Șterge programarea">×</button></article>';
   }).join("");
 }
@@ -15341,13 +15341,14 @@ function i9ModeChanged(){
   if(weekly)weekly.hidden=mode!=="weekly";
 }
 async function i9Submit(url,params){
-  if(i9State.loading)return;
+  if(i9State.loading)return false;
   i9State.loading=true;
   try{
     const r=await apiFetch(url,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams(params).toString()});
     if(!r.ok)throw new Error((await r.text()).slice(0,90)||"HTTP_"+r.status);
     await i9Refresh();showAutoToast(forceMock() ? 'Programări actualizate în DEMO (fără ESP32)' : 'Programările au fost actualizate pe ESP32');
-  }catch(error){showAutoToast('Nu s-a salvat pe ESP32: '+String(error.message).slice(0,80));}
+    return true;
+  }catch(error){showAutoToast('Nu s-a salvat pe ESP32: '+String(error.message).slice(0,80));return false;}
   finally{i9State.loading=false;}
 }
 window.addEventListener('DOMContentLoaded',()=>{
@@ -15356,10 +15357,10 @@ window.addEventListener('DOMContentLoaded',()=>{
   i9ModeChanged();
   const date=$("autoScheduleDate");
   if(date){const d=new Date();date.value=[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');}
-  $("autoAddSchedule")?.addEventListener('click',()=>{
+  $("autoAddSchedule")?.addEventListener('click',async ()=>{
     const time=$("autoScheduleTime")?.value||"";
     if(!/^\d{2}:\d{2}$/.test(time))return showAutoToast('Alege ora de pornire');
-    const duration=Number($("autoTimerInput")?.value || autoState.selectedMinutes);
+    const duration=Number($("r18ScheduleMinutes")?.value ?? autoState.selectedMinutes);
     const refill=Number($("autoRefillMinutes")?.value);
     const waitWater=Number($("autoScheduleWaterWait")?.value);
     if(!Number.isInteger(duration)||duration<1||duration>120||!Number.isInteger(refill)||refill<1||refill>120)
@@ -15373,8 +15374,9 @@ window.addEventListener('DOMContentLoaded',()=>{
     let days=0;
     document.querySelectorAll('[data-i9-weekday]').forEach(c=>{if(c.checked)days|=1<<Number(c.dataset.i9Weekday);});
     if(mode===2&&!days)return showAutoToast('Alege cel puțin o zi');
-    i9Submit('/api/schedules/save',{id:'new',hour:time.slice(0,2),minute:time.slice(3,5),
+    const saved=await i9Submit('/api/schedules/save',{id:'new',hour:time.slice(0,2),minute:time.slice(3,5),
       duration:String(duration),refill:String(refill),waitWater:String(waitWater),mode:String(mode),date:rawDate||'0',weekdays:String(days)});
+    if(saved && $("r18ScheduleEditor").open) $("r18CloseEditor").click();
   });
   $("autoScheduleList")?.addEventListener('click',e=>{
     const t=e.target.closest('[data-i9-toggle]'),d=e.target.closest('[data-i9-delete]');
@@ -15404,7 +15406,7 @@ window.addEventListener("DOMContentLoaded", () => {
   document.querySelectorAll([
     "#autoTimedStart", "#autoTimedStop", "#autoAddSchedule",
     "#autoSavePreset", "#autoResetPreset", "#autoTimerDec", "#autoTimerInc",
-    "#autoTimerInput", "#autoScheduleMinutes", "#autoScheduleTime", "#autoScheduleRepeat",
+    "#autoTimerInput", "#autoScheduleMinutes", "#r18ScheduleMinutes", "#autoScheduleTime", "#autoScheduleRepeat",
     "#wellStart", "#wellStop", "#wellDuration", "#wellDelay", "#wellPolarity",
     "[data-well-signal]", "[data-clear]", "[data-clear-hydro]"
   ].join(",")).forEach(el => {
@@ -15420,7 +15422,7 @@ window.addEventListener("DOMContentLoaded", () => {
   ["wellStart","wellStop","wellDuration","wellDelay"].forEach(id=>{
     const el=$(id);if(el){el.removeAttribute("aria-disabled");el.disabled=false;}
   });
-  ["autoAddSchedule","autoScheduleMinutes","autoScheduleTime","autoScheduleDate",
+  ["autoAddSchedule","autoScheduleMinutes","r18ScheduleMinutes","autoScheduleTime","autoScheduleDate",
     "autoScheduleMode","autoScheduleRefill","autoScheduleWaterWait","i9ScheduleArm","i9ScheduleAcknowledge","i9ScheduleSuspend","i9ScheduleSync"]
     .forEach(id=>{const el=$(id);if(el){el.removeAttribute("aria-disabled");el.disabled=false;}});
   i6SyncTimedControls();wellRender();i9RenderSchedules();
@@ -15789,27 +15791,6 @@ window.addEventListener("DOMContentLoaded", () => {
      if (lastTrigger?.isConnected) lastTrigger.focus({preventScroll:true});
    });
  });
-})();
-</script>
-<script id="v13-r13-tab-controller">
-(() => {
-  "use strict";
-  const switchPane = (type) => {
-    const schedule = type === 'schedule';
-    const now = document.getElementById('r13NowPane');
-    const later = document.getElementById('r13SchedulePane');
-    if(now) now.hidden = schedule;
-    if(later) later.hidden = !schedule;
-    document.querySelectorAll('[data-r13-start]').forEach(btn => {
-      const active = btn.dataset.r13Start === type;
-      btn.classList.toggle('selected', active);
-      btn.setAttribute('aria-pressed', String(active));
-    });
-  };
-  document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('[data-r13-start]').forEach(btn => btn.addEventListener('click', () => switchPane(btn.dataset.r13Start)));
-    switchPane('now');
-  });
 })();
 </script>
 <script id="v13-r15-load-demo">
