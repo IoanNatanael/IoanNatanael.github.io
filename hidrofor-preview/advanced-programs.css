@@ -161,79 +161,68 @@
   .ap-title-picker .ap-heading-chevron {transition:none}
 }
 
-/* Secvență: ON verde-mint, pauză albastru-cenușiu.
-   Nuanțe fade, fără carduri grele și fără a sugera stare live a pompei. */
-.ap-summary-rows--steps {gap:3px;margin-top:12px}
-.ap-summary-rows .ap-summary-step {
-  min-height:38px;align-items:center;
-  padding:8px 11px 8px 13px;border-radius:9px;
+/* Benzi uniforme ca într-un tabel, fără gradient, strălucire sau bordură.
+   Culori foarte discrete: Udare = mentă, Pauză = albastru-cenușiu.
+   Sunt culori ale TIPULUI DE PAS, nu indicatoare de stare live. */
+.ap-pane {
+  --ap-water-row:rgba(120,216,181,.095);
+  --ap-pause-row:rgba(123,167,205,.12);
+  --ap-temp-warm-row:rgba(215,177,127,.09);
 }
-.ap-summary-rows .ap-summary-step[data-ap-step-state="on"] {
-  background:linear-gradient(90deg,
-    rgba(109,218,176,.13) 0%,
-    rgba(109,218,176,.065) 52%,
-    rgba(109,218,176,.012) 100%);
-  box-shadow:inset 2px 0 rgba(126,224,190,.54);
-}
-.ap-summary-rows .ap-summary-step[data-ap-step-state="off"] {
-  background:linear-gradient(90deg,
-    rgba(112,163,206,.115) 0%,
-    rgba(112,163,206,.052) 52%,
-    rgba(112,163,206,.008) 100%);
-  box-shadow:inset 2px 0 rgba(141,186,224,.50);
-}
-.ap-summary-rows .ap-summary-step[data-ap-step-state="on"] dt {color:#c2e9db}
-.ap-summary-rows .ap-summary-step[data-ap-step-state="on"] dd {color:#b7f1d9}
-.ap-summary-rows .ap-summary-step[data-ap-step-state="off"] dt {color:#b8d0e1}
-.ap-summary-rows .ap-summary-step[data-ap-step-state="off"] dd {color:#c5ddec}
-
-/* Aceleași accente fade și în editorul Cu pași; culorile urmează tipul,
-   inclusiv când un pas este mutat sau schimbat din Udare în Pauză. */
-.ap-steps {display:grid;gap:4px}
-.ap-steps .ap-step-row {
-  padding:9px 8px;border-bottom:0;border-radius:9px;
-}
-.ap-steps .ap-step-row[data-ap-step-state="on"] {
-  background:linear-gradient(90deg,rgba(109,218,176,.105),rgba(109,218,176,.012));
-  box-shadow:inset 2px 0 rgba(126,224,190,.43);
-}
-.ap-steps .ap-step-row[data-ap-step-state="off"] {
-  background:linear-gradient(90deg,rgba(112,163,206,.105),rgba(112,163,206,.012));
-  box-shadow:inset 2px 0 rgba(141,186,224,.43);
-}
-.ap-steps .ap-step-row[data-ap-step-state="on"] .ap-step-type {color:#b9efdc}
-.ap-steps .ap-step-row[data-ap-step-state="off"] .ap-step-type {color:#c3d9e9}
-
-/* Adaptiv: trei benzi discrete de temperatură (toate reprezintă UDARE,
-   nu alternanță fictivă pornit/pauză). Nuanțe progresive reci → calde. */
-.ap-summary-rows--adaptive {gap:3px;margin-top:12px}
+.ap-summary-rows--steps,
+.ap-summary-rows--adaptive {gap:0;margin-top:12px}
+.ap-summary-rows .ap-summary-step,
 .ap-summary-rows .ap-summary-band {
   min-height:38px;align-items:center;
-  padding:8px 11px 8px 13px;border-radius:9px;
+  padding:8px 11px;border-radius:0;
+  box-shadow:none;
 }
+.ap-summary-rows .ap-summary-step:first-child,
+.ap-summary-rows .ap-summary-band:first-child {border-radius:7px 7px 0 0}
+.ap-summary-rows .ap-summary-step:last-child,
+.ap-summary-rows .ap-summary-band:last-child {border-radius:0 0 7px 7px}
+.ap-summary-rows .ap-summary-step:only-child,
+.ap-summary-rows .ap-summary-band:only-child {border-radius:7px}
+.ap-summary-rows .ap-summary-step[data-ap-step-state="on"],
+.ap-steps .ap-step-row[data-ap-step-state="on"] {
+  background:var(--ap-water-row);
+}
+.ap-summary-rows .ap-summary-step[data-ap-step-state="off"],
+.ap-steps .ap-step-row[data-ap-step-state="off"] {
+  background:var(--ap-pause-row);
+}
+.ap-summary-rows .ap-summary-step[data-ap-step-state="on"] dt {color:#c4e7dc}
+.ap-summary-rows .ap-summary-step[data-ap-step-state="off"] dt {color:#c3d6e3}
+.ap-summary-rows .ap-summary-step dd {color:#edf8f4}
+
+/* Editor Cu pași: aceeași alternanță pe întreaga lățime a rândului. */
+.ap-steps {display:grid;gap:0}
+.ap-steps .ap-step-row {
+  padding:8px 8px;border-bottom:0;border-radius:0;box-shadow:none;
+}
+.ap-steps .ap-step-row:first-child {border-radius:7px 7px 0 0}
+.ap-steps .ap-step-row:last-child {border-radius:0 0 7px 7px}
+.ap-steps .ap-step-row:only-child {border-radius:7px}
+.ap-steps .ap-step-row[data-ap-step-state="on"] .ap-step-type {color:#c4e7dc}
+.ap-steps .ap-step-row[data-ap-step-state="off"] .ap-step-type {color:#c3d6e3}
+
+/* Adaptiv: toate benzile sunt durate de udare, nu pauze.
+   Albastru rece / mentă / ocru abia vizibil, ca rândurile unui tabel. */
 .ap-summary-rows .ap-summary-band[data-ap-band="cool"],
-.ap-bands label:nth-child(1) {
-  background:linear-gradient(90deg,rgba(113,175,211,.115),rgba(113,175,211,.014));
-  box-shadow:inset 2px 0 rgba(138,195,225,.46);
-}
+.ap-bands label:nth-child(1) {background:var(--ap-pause-row)}
 .ap-summary-rows .ap-summary-band[data-ap-band="mild"],
-.ap-bands label:nth-child(2) {
-  background:linear-gradient(90deg,rgba(98,202,183,.105),rgba(98,202,183,.012));
-  box-shadow:inset 2px 0 rgba(128,223,196,.46);
-}
+.ap-bands label:nth-child(2) {background:var(--ap-water-row)}
 .ap-summary-rows .ap-summary-band[data-ap-band="warm"],
-.ap-bands label:nth-child(3) {
-  background:linear-gradient(90deg,rgba(217,173,118,.105),rgba(217,173,118,.012));
-  box-shadow:inset 2px 0 rgba(230,188,136,.46);
-}
-.ap-summary-rows .ap-summary-band[data-ap-band="cool"] dt {color:#bed8e8}
-.ap-summary-rows .ap-summary-band[data-ap-band="mild"] dt {color:#c0e8dc}
-.ap-summary-rows .ap-summary-band[data-ap-band="warm"] dt {color:#e5d6bf}
-.ap-summary-rows .ap-summary-band dd {color:#eef8f4}
-.ap-bands {display:grid;gap:4px}
+.ap-bands label:nth-child(3) {background:var(--ap-temp-warm-row)}
+.ap-summary-rows .ap-summary-band dt,
+.ap-summary-rows .ap-summary-band dd {color:#e3f0eb}
+.ap-bands {display:grid;gap:0}
 .ap-bands label {
-  min-height:50px;padding:9px 10px;border-bottom:0;border-radius:9px;
+  min-height:50px;padding:9px 10px;
+  border-bottom:0;border-radius:0;box-shadow:none;
 }
+.ap-bands label:first-child {border-radius:7px 7px 0 0}
+.ap-bands label:last-child {border-radius:0 0 7px 7px}
 @media(max-width:390px) {
   .ap-summary-rows .ap-summary-band,
   .ap-summary-rows .ap-summary-step {padding-inline:9px}

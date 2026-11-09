@@ -105,6 +105,11 @@ const server=http.createServer((req,res)=>{
       assert.equal(await page.locator('#ap-steps .ap-step-row').count(),3);
       assert.deepEqual(await page.locator('#ap-steps .ap-step-row').evaluateAll(
         rows=>rows.map(row=>row.dataset.apStepState)),['on','off','on']);
+      const editorStepStripes=await page.locator('#ap-steps .ap-step-row').evaluateAll(
+        rows=>rows.map(row=>({color:getComputedStyle(row).backgroundColor,image:getComputedStyle(row).backgroundImage})));
+      assert.notEqual(editorStepStripes[0].color,editorStepStripes[1].color);
+      assert.equal(editorStepStripes[0].color,editorStepStripes[2].color);
+      assert.ok(editorStepStripes.every(row=>row.image==='none'));
       const firstMinutes=page.locator('#ap-steps input').first();
       await firstMinutes.fill('');
       await firstMinutes.pressSequentially('12');
@@ -126,11 +131,13 @@ const server=http.createServer((req,res)=>{
         rows=>rows.map(row=>row.dataset.apStepState)),['on','off','on']);
       const stepTints=await page.locator('#ap-summary-rows .ap-summary-step').evaluateAll(rows=>
         rows.map(row=>({
-          background:getComputedStyle(row).backgroundImage,
-          text:getComputedStyle(row.querySelector('dd')).color
+          background:getComputedStyle(row).backgroundColor,
+          image:getComputedStyle(row).backgroundImage,
+          shadow:getComputedStyle(row).boxShadow
         })));
       assert.notEqual(stepTints[0].background,stepTints[1].background);
-      assert.notEqual(stepTints[0].text,stepTints[1].text);
+      assert.equal(stepTints[0].background,stepTints[2].background);
+      assert.ok(stepTints.every(row=>row.image==='none'&&row.shadow==='none'));
       await page.locator('#ap-program-picker summary').click();
       assert.deepEqual(await page.locator('#ap-program-list button').allTextContents(),['Program cu pași']);
       await page.keyboard.press('Escape');
@@ -142,8 +149,9 @@ const server=http.createServer((req,res)=>{
       await page.locator('#ap-adaptive-high').fill('29');
       await page.locator('#ap-adaptive-middle').fill('7');
       const editorBands=await page.locator('.ap-bands label').evaluateAll(
-        rows=>rows.map(row=>getComputedStyle(row).backgroundImage));
-      assert.equal(new Set(editorBands).size,3);
+        rows=>rows.map(row=>({color:getComputedStyle(row).backgroundColor,image:getComputedStyle(row).backgroundImage})));
+      assert.equal(new Set(editorBands.map(row=>row.color)).size,3);
+      assert.ok(editorBands.every(row=>row.image==='none'));
       await page.locator('#ap-save').click();
       assert.deepEqual(await page.locator('#ap-summary-rows dt').allTextContents(),['Sub 18°C','De la 18°C până sub 29°C','29°C și peste']);
       assert.deepEqual(await page.locator('#ap-summary-rows dd').allTextContents(),['5 min','7 min','10 min']);
@@ -151,8 +159,9 @@ const server=http.createServer((req,res)=>{
       assert.deepEqual(await page.locator('#ap-summary-rows .ap-summary-band').evaluateAll(
         rows=>rows.map(row=>row.dataset.apBand)),['cool','mild','warm']);
       const adaptiveTints=await page.locator('#ap-summary-rows .ap-summary-band').evaluateAll(
-        rows=>rows.map(row=>getComputedStyle(row).backgroundImage));
-      assert.equal(new Set(adaptiveTints).size,3);
+        rows=>rows.map(row=>({color:getComputedStyle(row).backgroundColor,image:getComputedStyle(row).backgroundImage})));
+      assert.equal(new Set(adaptiveTints.map(row=>row.color)).size,3);
+      assert.ok(adaptiveTints.every(row=>row.image==='none'));
       await page.locator('[data-hydro-mode="auto"]').click();
       assert.equal(await page.locator('#ap-panel').isVisible(),false);
       assert.equal(await page.locator('#autoControlSection').isVisible(),true);
