@@ -5710,9 +5710,9 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
 </style>
 <link rel="stylesheet" href="./r18-schedules.css?v=2">
 <script defer src="./r18-schedules.js?v=1"></script>
-<link rel="stylesheet" href="./advanced-programs.css?v=1">
+<link rel="stylesheet" href="./advanced-programs.css?v=2">
 <script defer src="./e10-advanced-engine.js?v=1"></script>
-<script defer src="./advanced-programs.js?v=1"></script>
+<script defer src="./advanced-programs.js?v=2"></script>
 <style id="e10-site-embed-style">
 #e10-site-entry{margin:0 0 18px}
 #e10-site-open{display:flex;align-items:center;justify-content:space-between;width:100%;background:#132e32;color:#d8f3e7;font-weight:650;min-height:48px;border:1px solid #315b55;border-radius:14px;padding:10px 16px;cursor:pointer}
@@ -15817,35 +15817,59 @@ window.addEventListener("DOMContentLoaded", () => {
   <div class="r18-dialog-header"><div class="r18-dialog-heading"><strong id="ap-title">Programe avansate</strong><small id="ap-subtitle">Configurare și simulare · fără pornire reală</small></div><button class="r18-dialog-close" id="ap-close" type="button" aria-label="Închide programele avansate"></button></div>
   <div class="r18-dialog-scroll ap-scroll">
     <div class="ap-mode" role="group" aria-label="Metoda de udare"><button type="button" data-ap-mode="SMART" aria-pressed="true">Smart</button><button type="button" data-ap-mode="SEQUENCE" aria-pressed="false">Cu pași</button><button type="button" data-ap-mode="ADAPTIVE" aria-pressed="false">Adaptiv</button></div>
-    <section class="ap-section" aria-labelledby="ap-program-heading"><h2 id="ap-program-heading">Programul meu</h2>
-      <details class="ap-picker" id="ap-program-picker"><summary aria-label="Programul curent; alege alt program"><span id="ap-current-name">Program nou</span></summary><div id="ap-program-list" class="ap-program-list" role="group" aria-label="Programele salvate în acest mod"></div></details>
-      <button class="ap-new" id="ap-new" type="button" aria-expanded="false" aria-controls="ap-new-form">+ Program nou</button>
-      <div class="ap-new-form" id="ap-new-form" hidden><label class="ap-field">Numele programului<input id="ap-name" type="text" maxlength="60" autocomplete="off" placeholder="De exemplu, Udare dimineața"></label><div class="ap-actions"><button class="ap-primary" id="ap-save-new" type="button">Salvează programul</button><button class="ap-secondary" id="ap-cancel-new" type="button">Renunță</button></div></div>
-      <div class="ap-actions" id="ap-program-actions" hidden><button class="ap-secondary" id="ap-save" type="button" hidden>Salvează modificările</button><button class="ap-delete" id="ap-delete" type="button">Șterge</button></div>
-      <p id="ap-storage-status" class="ap-muted" role="status" hidden></p>
-      <label class="ap-field ap-time">Ora programului<input id="ap-time" type="time" value="07:00"></label>
+    <details class="ap-picker" id="ap-program-picker" hidden>
+      <summary><span><small>Program selectat</small><strong id="ap-current-name"></strong><span id="ap-program-meta"></span></span></summary>
+      <div id="ap-program-list" class="ap-program-list" role="group" aria-label="Programe salvate în modul curent"></div>
+    </details>
+    <button class="ap-new" id="ap-new" type="button" aria-expanded="false" aria-controls="ap-editor">+ Program nou</button>
+    <section class="ap-section ap-overview" id="ap-overview" aria-labelledby="ap-overview-label" hidden>
+      <div class="ap-section-head"><div><h2 id="ap-overview-label"></h2><p id="ap-overview-value"></p></div><button class="ap-secondary" id="ap-edit" type="button">Editează</button></div>
+      <dl class="ap-summary-bands" id="ap-summary-bands" aria-labelledby="ap-overview-label" hidden></dl>
     </section>
-    <section class="ap-section" data-ap-panel="SMART" aria-labelledby="ap-smart-heading"><h2 id="ap-smart-heading">Condiții de pornire</h2>
-      <span class="ap-label">Sera monitorizată</span><div class="ap-choice ap-scope" role="group" aria-label="Sera sau regula de combinare"><button type="button" data-ap-scope="s1" aria-pressed="true">Sera 1</button><button type="button" data-ap-scope="s2" aria-pressed="false">Sera 2</button><button type="button" data-ap-scope="either" aria-pressed="false">Oricare seră</button><button type="button" data-ap-scope="both" aria-pressed="false">Ambele sere</button></div>
-      <span class="ap-label">În funcție de</span><div class="ap-choice" role="group" aria-label="Mărimea urmărită"><button type="button" data-ap-metric="temperature" aria-pressed="true">Temperatură</button><button type="button" data-ap-metric="humidity" aria-pressed="false">Umiditatea aerului</button></div>
-      <span class="ap-label">Udă când valoarea este</span><div class="ap-choice" role="group" aria-label="Condiția de pornire"><button type="button" data-ap-rule="under" aria-pressed="false">Sub</button><button type="button" data-ap-rule="between" aria-pressed="false">Între</button><button type="button" data-ap-rule="above" aria-pressed="true">Peste</button></div>
-      <p class="ap-muted">„Între” include primul prag; „Peste” include pragul afișat.</p>
-      <div class="ap-fields"><label class="ap-field">Prag<input id="ap-smart-low" type="number" min="-40" max="85" step="0.1" value="28"></label><label class="ap-field" id="ap-smart-high-wrap" hidden>Prag superior<input id="ap-smart-high" type="number" min="-40" max="85" step="0.1" value="32"></label><label class="ap-field">Durată · min<input id="ap-smart-duration" type="number" min="1" max="120" step="1" value="10"></label></div>
-    </section>
-    <section class="ap-section" data-ap-panel="SEQUENCE" aria-labelledby="ap-steps-heading" hidden><div class="ap-section-head"><h2 id="ap-steps-heading">Pași de udare</h2><small>Maximum 16</small></div><div class="ap-steps" id="ap-steps"></div><div class="ap-actions ap-step-actions"><button class="ap-secondary" id="ap-add-on" type="button">+ Udare</button><button class="ap-secondary" id="ap-add-off" type="button">+ Pauză</button></div></section>
-    <section class="ap-section" data-ap-panel="ADAPTIVE" aria-labelledby="ap-adaptive-heading" hidden><h2 id="ap-adaptive-heading">Durata după temperatură</h2>
-      <span class="ap-label">Temperatura de referință</span><div class="ap-choice" role="group" aria-label="Sursa temperaturii"><button type="button" data-ap-reference="s1" aria-pressed="true">Sera 1</button><button type="button" data-ap-reference="s2" aria-pressed="false">Sera 2</button><button type="button" data-ap-reference="average" aria-pressed="false">Media</button></div>
-      <div class="ap-fields"><label class="ap-field">Prag inferior · °C<input id="ap-adaptive-low" type="number" min="-40" max="85" step="0.1" value="20"></label><label class="ap-field">Prag superior · °C<input id="ap-adaptive-high" type="number" min="-40" max="85" step="0.1" value="30"></label></div>
-      <div class="ap-bands"><label><span id="ap-band-low">Sub 20°C</span><span><input id="ap-adaptive-under" type="number" min="1" max="120" step="1" value="5" aria-label="Minute sub pragul inferior"> min</span></label><label><span id="ap-band-middle">De la 20°C până sub 30°C</span><span><input id="ap-adaptive-middle" type="number" min="1" max="120" step="1" value="8" aria-label="Minute între praguri"> min</span></label><label><span id="ap-band-high">De la 30°C</span><span><input id="ap-adaptive-above" type="number" min="1" max="120" step="1" value="10" aria-label="Minute de la pragul superior"> min</span></label></div>
-      <p class="ap-muted">Temperatura este evaluată la pornirea simulării; durata rămâne fixă până la final.</p><p id="ap-adaptive-result" class="ap-result" role="status"></p>
-    </section>
-    <div class="ap-climate" id="ap-climate" hidden><span class="ap-label">Date utilizate</span><p id="ap-climate-status" class="ap-muted" role="status">Datele senzorilor nu sunt disponibile.</p></div>
-    <section class="ap-section ap-preview" aria-labelledby="ap-preview-heading"><div class="ap-section-head"><h2 id="ap-preview-heading">Previzualizare</h2><span class="ap-state" id="ap-state">Pregătit</span></div>
-      <p class="ap-result" id="ap-decision" role="status">Simulare · fără comandă reală</p><p class="ap-error" id="ap-error" role="alert" hidden></p>
-      <div class="ap-timeline" id="ap-timeline" role="img" aria-label="Cronologia simulării"></div><div class="ap-clock-times"><span id="ap-start-clock">—</span><span id="ap-end-clock">—</span></div><div class="ap-legend"><span><i class="ap-on"></i>Udare</span><span><i class="ap-off"></i>Pauză</span><span><i class="ap-rest"></i>Protecție</span></div>
-      <div class="ap-stats"><div><span>Udare cerută</span><strong id="ap-requested">—</strong></div><div><span>Durata totală</span><strong id="ap-total">—</strong></div><div><span>Pompă ON</span><strong id="ap-on">—</strong></div><div><span>Pauză protecție</span><strong id="ap-rest">—</strong></div></div>
-      <label class="ap-field ap-progress-label" for="ap-progress">Timp simulat</label><input id="ap-progress" type="range" min="0" max="1" step="1" value="0" aria-label="Timpul simulat"><div class="ap-progress-times"><span id="ap-elapsed">0m 00s</span><span id="ap-remaining">Rămase —</span></div>
-      <div class="ap-actions ap-play-actions"><button class="ap-primary" id="ap-play" type="button" disabled>▶ Simulează</button><button class="ap-secondary" id="ap-restart" type="button">↺ Reia</button></div><p class="ap-muted">Simulare accelerată · 1 s = 1 min</p>
+    <div id="ap-editor" hidden>
+      <section class="ap-section" aria-labelledby="ap-editor-title">
+        <h2 id="ap-editor-title">Program nou</h2>
+        <label class="ap-field">Numele programului<input id="ap-name" type="text" maxlength="60" autocomplete="off" placeholder="De exemplu, Udare dimineața"></label>
+        <label class="ap-field ap-time">Ora programului<input id="ap-time" type="time" value="07:00"></label>
+      </section>
+      <section class="ap-section" data-ap-panel="SMART" aria-labelledby="ap-smart-heading"><h2 id="ap-smart-heading">Condiții de pornire</h2>
+        <span class="ap-label">Sera monitorizată</span><div class="ap-choice ap-scope" role="group" aria-label="Sera sau regula de combinare"><button type="button" data-ap-scope="s1" aria-pressed="true">Sera 1</button><button type="button" data-ap-scope="s2" aria-pressed="false">Sera 2</button><button type="button" data-ap-scope="either" aria-pressed="false">Oricare seră</button><button type="button" data-ap-scope="both" aria-pressed="false">Ambele sere</button></div>
+        <span class="ap-label">În funcție de</span><div class="ap-choice" role="group" aria-label="Mărimea urmărită"><button type="button" data-ap-metric="temperature" aria-pressed="true">Temperatură</button><button type="button" data-ap-metric="humidity" aria-pressed="false">Umiditatea aerului</button></div>
+        <span class="ap-label">Udă când valoarea este</span><div class="ap-choice" role="group" aria-label="Condiția de pornire"><button type="button" data-ap-rule="under" aria-pressed="false">Sub</button><button type="button" data-ap-rule="between" aria-pressed="false">Între</button><button type="button" data-ap-rule="above" aria-pressed="true">Peste</button></div>
+        <p class="ap-muted">„Între” include primul prag; „Peste” include pragul afișat.</p>
+        <div class="ap-fields"><label class="ap-field">Prag<input id="ap-smart-low" type="number" min="-40" max="85" step="0.1" value="28"></label><label class="ap-field" id="ap-smart-high-wrap" hidden>Prag superior<input id="ap-smart-high" type="number" min="-40" max="85" step="0.1" value="32"></label><label class="ap-field">Durată · min<input id="ap-smart-duration" type="number" min="1" max="120" step="1" value="10"></label></div>
+      </section>
+      <section class="ap-section" data-ap-panel="SEQUENCE" aria-labelledby="ap-steps-heading" hidden><div class="ap-section-head"><h2 id="ap-steps-heading">Pași de udare</h2><small>Maximum 16</small></div><div class="ap-steps" id="ap-steps"></div><div class="ap-actions ap-step-actions"><button class="ap-secondary" id="ap-add-on" type="button">+ Udare</button><button class="ap-secondary" id="ap-add-off" type="button">+ Pauză</button></div></section>
+      <section class="ap-section" data-ap-panel="ADAPTIVE" aria-labelledby="ap-adaptive-heading" hidden><h2 id="ap-adaptive-heading">Durata după temperatură</h2>
+        <span class="ap-label">Temperatura de referință</span><div class="ap-choice" role="group" aria-label="Sursa temperaturii"><button type="button" data-ap-reference="s1" aria-pressed="true">Sera 1</button><button type="button" data-ap-reference="s2" aria-pressed="false">Sera 2</button><button type="button" data-ap-reference="average" aria-pressed="false">Media</button></div>
+        <div class="ap-fields"><label class="ap-field">Prag inferior · °C<input id="ap-adaptive-low" type="number" min="-40" max="85" step="0.1" value="20"></label><label class="ap-field">Prag superior · °C<input id="ap-adaptive-high" type="number" min="-40" max="85" step="0.1" value="30"></label></div>
+        <div class="ap-bands"><label><span id="ap-band-low">Sub 20°C</span><span><input id="ap-adaptive-under" type="number" min="1" max="120" step="1" value="5" aria-label="Minute sub pragul inferior"> min</span></label><label><span id="ap-band-middle">De la 20°C până sub 30°C</span><span><input id="ap-adaptive-middle" type="number" min="1" max="120" step="1" value="8" aria-label="Minute între praguri"> min</span></label><label><span id="ap-band-high">De la 30°C</span><span><input id="ap-adaptive-above" type="number" min="1" max="120" step="1" value="10" aria-label="Minute de la pragul superior"> min</span></label></div>
+        <p class="ap-muted">Temperatura este evaluată la pornirea simulării. Durata rămâne fixă până la final.</p>
+      </section>
+      <div class="ap-actions">
+        <button class="ap-primary" id="ap-save" type="button">Salvează programul</button>
+        <button class="ap-secondary" id="ap-cancel" type="button">Renunță</button>
+        <button class="ap-delete" id="ap-delete" type="button" hidden>Șterge</button>
+      </div>
+    </div>
+    <p id="ap-storage-status" class="ap-muted" role="status" hidden></p>
+    <section class="ap-section ap-preview" id="ap-preview" aria-labelledby="ap-preview-heading" hidden>
+      <h2 id="ap-preview-heading">Previzualizare program</h2>
+      <div class="ap-section-head"><strong class="ap-preview-duration" id="ap-preview-duration">—</strong><span class="ap-state" id="ap-state">Pregătit</span></div>
+      <p class="ap-result" id="ap-decision" role="status"></p>
+      <p class="ap-error" id="ap-error" role="alert" hidden></p>
+      <div class="ap-timeline-track"><div class="ap-timeline" id="ap-timeline" role="img" aria-label="Cronologia simulării"></div></div>
+      <div class="ap-clock-times"><span id="ap-start-clock">—</span><span id="ap-end-clock">—</span></div>
+      <div class="ap-progress-times"><span id="ap-elapsed">0m 00s</span><span id="ap-remaining">Rămase —</span></div>
+      <div class="ap-actions ap-play-actions"><button class="ap-primary" id="ap-play" type="button" disabled>▶ Simulează</button><button class="ap-secondary" id="ap-restart" type="button">↺ Reia</button></div>
+      <details class="ap-preview-details">
+        <summary>Detalii și protecții</summary>
+        <div class="ap-legend"><span><i class="ap-on"></i>Udare</span><span><i class="ap-off"></i>Pauză</span><span><i class="ap-rest"></i>Protecție</span></div>
+        <div class="ap-stats"><div><span>Udare cerută</span><strong id="ap-requested">—</strong></div><div><span>Durata totală</span><strong id="ap-total">—</strong></div><div><span>Pompă ON</span><strong id="ap-on">—</strong></div><div><span>Pauză protecție</span><strong id="ap-rest">—</strong></div></div>
+        <label class="ap-field ap-progress-label" for="ap-progress">Derulează timpul simulat</label><input id="ap-progress" type="range" min="0" max="1" step="1" value="0">
+        <div class="ap-climate" id="ap-climate" hidden><span class="ap-label">Date utilizate</span><p id="ap-climate-status" class="ap-muted">Datele senzorilor nu sunt disponibile.</p></div>
+        <p class="ap-muted">Simulare accelerată · 1 s = 1 min</p>
+      </details>
     </section>
   </div>
 </dialog>
