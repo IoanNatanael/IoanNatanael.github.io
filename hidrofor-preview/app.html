@@ -5713,7 +5713,7 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
 <link rel="stylesheet" href="./advanced-programs.css?v=6">
 <script defer src="./e10-advanced-engine.js?v=1"></script>
 <script defer src="./advanced-programs.js?v=6"></script>
-<link rel="stylesheet" href="./hydro-hero-redesign.css?v=1">
+<link rel="stylesheet" href="./hydro-hero-redesign.css?v=2">
 </head>
   <body class="hidro-v5">
     <div class="app">
@@ -6089,19 +6089,19 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
                   <span class="hydro-state-kicker">Stare actuală</span>
                   <h2 id="hydroHeadline">Stare pompă necunoscută</h2>
                   <span class="hydro-hero-timer" hidden id="hydroHeroTimer"></span>
-                  <p class="pump-action-hint" id="pumpActionHint">Se verifică disponibilitatea comenzilor</p>
                 </div>
                 <button aria-label="Porneste hidroforul" class="hydro-hero-button off" id="hydroHeroButton" type="button">
                   <svg class="hydro-hero-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
                     <path d="M12 3v9"></path><path d="M6.5 6.8a8 8 0 1 0 11 0"></path>
                   </svg>
-                  <span class="hydro-hero-status visually-hidden" id="hydroHeroStatus">NECUNOSCUT</span>
+                  <span class="hydro-hero-status" id="hydroHeroStatus">NECUNOSCUT</span>
                 </button>
-                <span class="hydro-power-indicator" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+                <span class="hydro-power-indicator" role="status" aria-live="polite" aria-label="Stare hidrofor neconfirmată" title="Stare hidrofor neconfirmată">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
                     <path d="M12 3v9"></path><path d="M6.5 6.8a8 8 0 1 0 11 0"></path>
                   </svg>
                 </span>
+                <p class="pump-action-hint" id="pumpActionHint">Se verifică disponibilitatea comenzilor</p>
               </div>
               <div class="float-live-status tone-neutral hydro-water-line" id="hydroFloatStatus" role="status">
                 <span class="hydro-water-reading"><span class="hydro-water-dot" aria-hidden="true"></span><span id="hydroWaterLabel">Semnal indisponibil</span></span>
@@ -9472,18 +9472,28 @@ const formatHydroHeroRuntime = (value, hydroOn) => {
 };
 
 const updateHydroHeroButton = (hydroState, runtimeText) => {
-  const hydroOn = String(hydroState || "").toUpperCase() === "PORNIT";
+  // Indicatorul este un martor al releului raportat, nu o comandă și nici
+  // o presupunere bazată pe faptul că un program este activ.
+  const state = String(hydroState || "").toUpperCase();
+  const known = state === "PORNIT" || state === "OPRIT";
+  const hydroOn = state === "PORNIT";
   const button = $("hydroHeroButton");
   if (button) {
     button.className = "hydro-hero-button " + (hydroOn ? "on" : "off");
-    button.setAttribute(
-      "aria-label",
-      hydroOn ? "Opreste hidroforul" : "Porneste hidroforul",
-    );
+    button.setAttribute("aria-label", !known
+      ? "Stare hidrofor neconfirmată — pornire blocată"
+      : hydroOn ? "Oprește hidroforul" : "Pornește hidroforul");
   }
-  const known = ["PORNIT", "OPRIT"].includes(String(hydroState || "").toUpperCase());
   const hero = document.querySelector("#page-hidrofor .hydro-hero");
   if (hero) hero.dataset.pumpState = !known ? "unknown" : hydroOn ? "on" : "off";
+  const indicator = document.querySelector("#page-hidrofor .hydro-power-indicator");
+  if (indicator) {
+    const status = !known ? "Stare hidrofor neconfirmată"
+      : hydroOn ? "Hidrofor pornit" : "Hidrofor oprit";
+    const source = forceMock() ? " · simulare locală" : " · releu ESP-01S";
+    indicator.setAttribute("aria-label", status + source);
+    indicator.title = status + source;
+  }
   setText("hydroHeroStatus", !known ? "NECUNOSCUT" : hydroOn ? "PORNIT" : "OPRIT");
   const timer = $("hydroHeroTimer");
   if (timer) {
@@ -10077,7 +10087,14 @@ const renderLive = (data) => {
   setClockDisplay(d.dataOra);
   setConnectionState(true, "Live");
 
-  const hydroState = String(d.stareHidrofor || "OPRIT").toUpperCase();
+  // Folosim telemetria reală a releului ESP-01S pentru martorul Power.
+  // Un program AUTO poate fi RUNNING dar releul OPRIT în pauza de refacere.
+  // La nod offline/neconfigurat/telemetrie invalidă nu afișăm fals roșu sau verde.
+  const pumpNode = d.hidroforNode;
+  const reportedRelay = String(pumpNode?.relay || "").toUpperCase();
+  const hydroState = pumpNode?.configured === true && pumpNode?.online === true &&
+    (reportedRelay === "PORNIT" || reportedRelay === "OPRIT")
+      ? reportedRelay : "NECUNOSCUT";
   const hydroOn = hydroState === "PORNIT";
   const hydroKnown = hydroState === "PORNIT" || hydroState === "OPRIT";
   setText("hydroHeadline", !hydroKnown ? "Stare pompă neconfirmată" :
