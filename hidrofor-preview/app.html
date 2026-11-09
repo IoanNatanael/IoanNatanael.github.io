@@ -8286,6 +8286,7 @@ const chartDayBreaks = (series) => {
 };
 
 const mockManualRunKey = "hidrofor-demo-manual-started-at";
+let mockManualView = "manual";
 const mockState = {
   running: true,
   startedAt: Date.now() - 8058000,
@@ -8935,6 +8936,7 @@ const mockHistoryText = (node, windowName) =>
 
 const mockStoreManualRun = startedAt => {
   mockState.previewManualRun = startedAt !== null;
+  if (!mockState.previewManualRun) mockManualView = "manual";
   if (!forceMock()) return;
   try {
     if (startedAt === null) localStorage.removeItem(mockManualRunKey);
@@ -8961,6 +8963,7 @@ const mockRestoreManualRun = () => {
     mockState.live.stareHidrofor = "OPRIT";
     mockState.hydroStartedAt = null;
     mockState.previewManualRun = false;
+    mockManualView = "manual";
   }
 };
 
@@ -13549,11 +13552,16 @@ const currentWateringMode = () =>
   i9State?.needsFaultAck === true || normalize(uiState.controlMode).includes("auto")
     ? "auto" : "manual";
 
-const canReturnFromAdvanced = mode => !$("ap-panel").hidden && currentWateringMode() === mode;
+const mockManualRunActive = () =>
+  forceMock() && mockState.previewManualRun && mockState.live.stareHidrofor === "PORNIT";
+
+const wateringViewMode = () => mockManualRunActive() ? mockManualView : currentWateringMode();
+
+const canReturnFromAdvanced = mode => !$("ap-panel").hidden && wateringViewMode() === mode;
 
 const renderModeButtons = () => {
   const advanced = !$("ap-panel").hidden;
-  const mode = currentWateringMode();
+  const mode = wateringViewMode();
   $("autoControlSection").hidden = advanced || mode !== "auto";
   $("manualTimedSection").hidden = advanced || (forceMock() ? mode !== "manual" : mode !== "auto");
   $("ap-open").classList.toggle("active", advanced);
@@ -14415,6 +14423,13 @@ const bindEvents = () => {
   document.querySelectorAll("[data-hydro-mode]").forEach((btn) => {
     btn.addEventListener("click", () => {
       const mode = btn.dataset.hydroMode;
+      if (mockManualRunActive()) {
+        // Navigarea în DEMO nu schimbă sursa udării și nu trimite STOP.
+        mockManualView = mode;
+        if ($("ap-panel").hidden) renderModeButtons();
+        else setAdvancedWateringView(false);
+        return;
+      }
       const returnOnly = canReturnFromAdvanced(mode) ||
         (forceMock() && btn.classList.contains("active"));
       setAdvancedWateringView(false);

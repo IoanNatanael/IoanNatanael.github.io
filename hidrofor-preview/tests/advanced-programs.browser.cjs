@@ -324,6 +324,14 @@ const server=http.createServer((req,res)=>{
     await manualPage.waitForFunction(()=>uiState.live?.hidroforNode?.relay==='PORNIT');
     const startedAt=await manualPage.evaluate(()=>mockState.hydroStartedAt);
     assert.ok(startedAt);
+    const commands=await manualPage.evaluate(()=>mockState.previewCommandCounter);
+    await manualPage.locator('[data-hydro-mode="auto"]').click();
+    assert.equal(await manualPage.locator('#autoControlSection').isVisible(),true);
+    assert.equal(await manualPage.locator('#hydroHeadline').textContent(),'Pompa este pornită');
+    assert.equal(await manualPage.locator('#hydroScheduleActivity').textContent(),'Manual');
+    await manualPage.clock.fastForward(3000);
+    assert.equal(await manualPage.locator('[data-hydro-mode="auto"]').getAttribute('aria-pressed'),'true');
+    assert.equal(await manualPage.evaluate(()=>mockState.previewCommandCounter),commands);
     await manualPage.locator('[data-hydro-mode="manual"]').click();
     assert.equal(await manualPage.evaluate(()=>mockState.hydroStartedAt),startedAt);
     await manualPage.locator('.tab-btn[data-page="central"]').click();
