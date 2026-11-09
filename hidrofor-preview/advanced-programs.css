@@ -1,8 +1,18 @@
-/* Configurare și simulare locală; folosește aceeași fereastră ca programările R18. */
-.ap-dialog{width:min(540px,calc(100vw - 24px));max-width:540px}
-.ap-dialog *{box-sizing:border-box}
-.ap-dialog [hidden]{display:none!important}
-.ap-dialog .ap-scroll{padding:16px 18px 20px}
+/* Programele avansate sunt o secțiune a paginii Udare. */
+.ap-pane{min-width:0;padding:18px;border:1px solid #315057;border-radius:20px;background:linear-gradient(160deg,#162c31,#10252a)}
+.ap-pane *{box-sizing:border-box}
+.ap-pane[hidden],.ap-pane [hidden]{display:none!important}
+.ap-pane-heading{margin-bottom:14px}
+.ap-pane-heading h2{margin:0;font-size:19px}
+.ap-pane-heading p{margin:4px 0 0;color:#9ebcb7;font-size:11px}
+.hydro-grid:has(#ap-panel:not([hidden])) .hydro-hero-button,
+.hydro-grid:has(#ap-panel:not([hidden])) .pump-action-hint{display:none}
+.hydro-grid:has(#ap-panel:not([hidden])) .hydro-copy h2{font-size:17px;margin:12px 0 14px}
+.hydro-grid:has(#ap-panel:not([hidden])) .panic-stop-wrap{margin-top:12px}
+@media(min-width:700px){
+  .hydro-grid:has(#ap-panel:not([hidden])){display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+  .hydro-grid:has(#ap-panel:not([hidden])) .hydro-hero{width:100%;max-width:none;margin:0}
+}
 .ap-mode,.ap-choice{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:4px;padding:4px;border:1px solid #335158;border-radius:13px;background:#0b2127}
 .ap-mode{margin-bottom:16px}
 .ap-mode button,.ap-choice button{min-width:0;min-height:42px;padding:8px 5px;border:0;border-radius:9px;background:transparent;color:#aec8c6;font:inherit;font-size:12px;font-weight:700;line-height:1.2;cursor:pointer}
@@ -26,8 +36,8 @@
 .ap-program-list{display:grid;gap:2px;max-height:195px;overflow:auto;margin-top:6px;padding:5px;background:#10272e;border:1px solid #3b5c61;border-radius:10px}
 .ap-program-list button{min-height:42px;padding:9px 10px;border:0;border-radius:8px;background:transparent;color:#edf8f3;text-align:left;font:inherit;font-size:12px;cursor:pointer}
 .ap-program-list button:hover{background:#284550}.ap-program-list button[aria-current="true"]{background:#285d4e}.ap-program-list button[aria-current="true"]:hover{box-shadow:inset 0 0 0 2px #9bdec9}
-.ap-dialog .ap-new,.ap-dialog .ap-secondary,.ap-dialog .ap-primary,.ap-dialog .ap-delete{min-height:43px;padding:9px 12px;border-radius:10px;font:inherit;font-size:12px;font-weight:700;cursor:pointer}
-.ap-dialog .ap-new{width:100%;margin-top:10px;border:1px dashed #3f7368;background:#183a38;color:#a9efda}
+.ap-pane .ap-new,.ap-pane .ap-secondary,.ap-pane .ap-primary,.ap-pane .ap-delete{min-height:43px;padding:9px 12px;border-radius:10px;font:inherit;font-size:12px;font-weight:700;cursor:pointer}
+.ap-pane .ap-new{width:100%;margin-top:10px;border:1px dashed #3f7368;background:#183a38;color:#a9efda}
 .ap-overview{margin-top:16px}
 .ap-overview h2{margin:0;color:#9ebcb7;font-size:12px;font-weight:600}
 .ap-overview p{margin:5px 0 0;color:#eaf6f1;font-size:14px;font-weight:650}
@@ -37,9 +47,9 @@
 .ap-summary-rows dt{color:#b7d0cd}
 .ap-summary-rows dd{margin:0;color:#eaf6f1;font-weight:700;white-space:nowrap}
 .ap-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
-.ap-dialog .ap-primary{flex:1;border:0;background:#83e1c6;color:#102f29}
-.ap-dialog .ap-secondary{border:1px solid #41696a;background:#1b3c40;color:#d7eee6}
-.ap-dialog .ap-delete{border:1px solid #765356;background:transparent;color:#f0b2ae}
+.ap-pane .ap-primary{flex:1;border:0;background:#83e1c6;color:#102f29}
+.ap-pane .ap-secondary{border:1px solid #41696a;background:#1b3c40;color:#d7eee6}
+.ap-pane .ap-delete{border:1px solid #765356;background:transparent;color:#f0b2ae}
 .ap-step-actions .ap-secondary{flex:1}
 .ap-step,.ap-step-row{display:grid;grid-template-columns:26px minmax(0,1fr) 66px auto;align-items:center;gap:6px;padding:9px 0;border-bottom:1px solid #2b474c}
 .ap-step button,.ap-step-row button{min-width:32px;min-height:40px;border:1px solid #395c60;border-radius:9px;background:#1b3c40;color:#d7eee6;font:inherit;cursor:pointer}
@@ -66,7 +76,7 @@
 .ap-clock-times{display:flex;justify-content:space-between;margin-top:6px;color:#9ebcb7;font-size:10px}
 .ap-legend{display:flex;gap:12px;flex-wrap:wrap;margin:9px 0 0;color:#9dbdb8;font-size:10px}.ap-legend span{display:flex;align-items:center;gap:5px}.ap-legend i{width:8px;height:8px;border-radius:2px}
 .ap-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;margin:16px 0 0}.ap-stats>div{padding:0 8px;border-right:1px solid #2b474c}.ap-stats>div:first-child{padding-left:0}.ap-stats>div:last-child{border:0}.ap-stats span{display:block;min-height:28px;color:#9ebcb7;font-size:10px;line-height:1.35}.ap-stats strong{display:block;margin-top:5px;color:#e9f6f0;font-size:13px;font-variant-numeric:tabular-nums}
-.ap-progress-label{margin-top:15px}.ap-dialog input[type=range]{width:100%;accent-color:#83e1c6}.ap-progress-times{display:flex;justify-content:space-between;margin-top:10px;color:#9ebcb7;font-size:11px}.ap-play-actions{margin-top:12px}
-.ap-dialog button:disabled{opacity:.45;cursor:not-allowed}.ap-dialog summary:focus-visible{outline:2px solid #8be9c6;outline-offset:2px}
-@media(max-width:430px){.ap-dialog .ap-scroll{padding:13px 14px 20px}.ap-stats{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:12px}.ap-stats>div:nth-child(2){border:0}.ap-stats>div:nth-child(3){padding-left:0}.ap-step,.ap-step-row{grid-template-columns:22px minmax(0,1fr) 54px auto;gap:4px}.ap-step button,.ap-step-row button{min-width:29px}.ap-mode button,.ap-choice button{font-size:11px}}
-@media(max-width:350px){.ap-dialog .ap-scroll{padding-inline:11px}.ap-step,.ap-step-row{grid-template-columns:20px minmax(0,1fr) 48px auto}}
+.ap-progress-label{margin-top:15px}.ap-pane input[type=range]{width:100%;accent-color:#83e1c6}.ap-progress-times{display:flex;justify-content:space-between;margin-top:10px;color:#9ebcb7;font-size:11px}.ap-play-actions{margin-top:12px}
+.ap-pane button:disabled{opacity:.45;cursor:not-allowed}.ap-pane summary:focus-visible{outline:2px solid #8be9c6;outline-offset:2px}
+@media(max-width:430px){.ap-pane{padding:14px}.ap-stats{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:12px}.ap-stats>div:nth-child(2){border:0}.ap-stats>div:nth-child(3){padding-left:0}.ap-step,.ap-step-row{grid-template-columns:22px minmax(0,1fr) 54px auto;gap:4px}.ap-step button,.ap-step-row button{min-width:29px}.ap-mode button,.ap-choice button{font-size:11px}}
+@media(max-width:350px){.ap-pane{padding-inline:11px}.ap-step,.ap-step-row{grid-template-columns:20px minmax(0,1fr) 48px auto}}

@@ -279,7 +279,7 @@
     state.at=0;
     state.started=false;
     state.preview=null;
-    if(model().selected&&!model().editing)showEvaluation(evaluate());
+    if(!byId('ap-panel').hidden&&model().selected&&!model().editing)showEvaluation(evaluate());
   }
   function refreshScreen(){
     writeForm();
@@ -288,8 +288,9 @@
   }
   function focusOverview(){
     const picker=byId('ap-program-picker');
-    (picker.hidden?byId('ap-new'):picker.querySelector('summary')).focus({preventScroll:true});
-    byId('ap-dialog').querySelector('.ap-scroll').scrollTop=0;
+    const target=picker.hidden?byId('ap-new'):picker.querySelector('summary');
+    target.focus({preventScroll:true});
+    target.scrollIntoView({block:'nearest'});
   }
   function progress(){
     if(!state.preview)return;const result=state.preview.result;state.at=Math.max(0,Math.min(result.totalSeconds,state.at));
@@ -313,13 +314,14 @@
     if(!state.storageError)storageMessage('');
   }
   function init(){
-    if(!byId('ap-dialog')||!byId('ap-open'))return;
+    const panel=byId('ap-panel');
+    if(!panel)return;
     state.records=storageRead();
     showSavedOrEmpty();
-    byId('ap-open').addEventListener('click',()=>{preview();const dialog=byId('ap-dialog');if(!dialog.open)dialog.showModal();dialog.querySelector('[data-ap-mode="'+state.mode+'"]').focus();});
-    byId('ap-close').addEventListener('click',()=>byId('ap-dialog').close());
-    byId('ap-dialog').addEventListener('close',()=>{stop();byId('ap-open').focus();});
-    byId('ap-dialog').addEventListener('click',e=>{if(e.target===byId('ap-dialog'))byId('ap-dialog').close();});
+    panel.addEventListener('watering-view-change',()=>{
+      if(panel.hidden||uiState.page!=='hidrofor')stop();
+      else preview();
+    });
     document.querySelectorAll('[data-ap-mode]').forEach(button=>button.addEventListener('click',()=>{
       if(state.mode===button.dataset.apMode)return;
       state.mode=button.dataset.apMode;

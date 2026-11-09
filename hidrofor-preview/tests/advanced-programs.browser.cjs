@@ -26,15 +26,26 @@ const server=http.createServer((req,res)=>{
         const content=document.querySelector('.hydro-grid').getBoundingClientRect();
         return buttons.every(button=>button.top===buttons[0].top)&&bar.getBoundingClientRect().bottom<=content.top;
       }),true);
-      if(width===390&&process.env.HYDRO_BAR_SCREENSHOT)await page.screenshot({path:process.env.HYDRO_BAR_SCREENSHOT});
+      const manualCommands=await page.evaluate(()=>mockState.commands.length);
       await page.locator('#ap-open').click();
-      await page.keyboard.press('Escape');
+      assert.equal(await page.locator('#ap-panel').isVisible(),true);
+      assert.equal(await page.locator('#ap-open').getAttribute('aria-pressed'),'true');
+      assert.equal(await page.locator('#hydroHeadline').isVisible(),true);
+      assert.equal(await page.locator('#hydroPanicStop').isVisible(),true);
+      assert.equal(await page.locator('#hydroHeroButton').isVisible(),false);
+      if(width===390&&process.env.HYDRO_BAR_SCREENSHOT)await page.screenshot({path:process.env.HYDRO_BAR_SCREENSHOT});
+      await page.locator('[data-hydro-mode="manual"]').click();
       assert.equal(await page.locator('[data-hydro-mode="manual"]').getAttribute('aria-pressed'),'true');
+      assert.equal(await page.locator('#ap-panel').isVisible(),false);
+      assert.equal(await page.evaluate(()=>mockState.commands.length),manualCommands);
       await page.locator('[data-hydro-mode="auto"]').click();
       assert.equal(await page.locator('#r18OpenSchedules').isVisible(),true);
       await page.locator('#r18OpenSchedules').click();assert.equal(await page.locator('#r18ScheduleDialog').evaluate(e=>e.open),true);
       await page.locator('#r18CloseDialog').click();assert.equal(await page.locator('#r18ScheduleDialog').evaluate(e=>e.open),false);
-      await page.locator('#ap-open').click();assert.equal(await page.locator('#ap-dialog').evaluate(e=>e.open),true);
+      const autoCommands=await page.evaluate(()=>mockState.commands.length);
+      await page.locator('#ap-open').click();
+      assert.equal(await page.locator('#ap-panel').isVisible(),true);
+      assert.equal(await page.locator('#autoControlSection').isVisible(),false);
       for(const mode of ['SEQUENCE','ADAPTIVE','SMART']){
         await page.locator('[data-ap-mode="'+mode+'"]').click();
         assert.equal(await page.locator('#ap-new').isVisible(),true);
@@ -79,6 +90,14 @@ const server=http.createServer((req,res)=>{
       await page.locator('#ap-play').click();
       await page.waitForFunction(()=>document.querySelector('#ap-elapsed').textContent!=='0m 00s');
       assert.notEqual(await page.locator('.ap-timeline-track').evaluate(el=>el.style.getPropertyValue('--ap-progress')),'0%');
+      if(width===390){
+        await page.locator('.tab-btn[data-page="home"]').click();
+        const elapsed=await page.locator('#ap-elapsed').textContent();
+        await page.waitForTimeout(350);
+        assert.equal(await page.locator('#ap-elapsed').textContent(),elapsed);
+        await page.locator('.tab-btn[data-page="hidrofor"]').click();
+        assert.equal(await page.locator('#ap-panel').isVisible(),true);
+      }
 
       await page.locator('[data-ap-mode="SEQUENCE"]').click();
       await page.locator('#ap-new').click();
@@ -131,16 +150,17 @@ const server=http.createServer((req,res)=>{
       assert.match(await page.locator('#ap-preview-duration').textContent(),/5 min/,'active run must keep its evaluated duration');
       await page.evaluate(()=>{uiState.live.sera1.temp='35.0 C';document.querySelector('#ap-restart').click();});
       assert.match(await page.locator('#ap-preview-duration').textContent(),/10 min/);
-      assert.equal(await page.locator('#ap-dialog').evaluate(el=>el.scrollWidth<=el.clientWidth),true);
+      assert.equal(await page.locator('#ap-panel').evaluate(el=>el.scrollWidth<=el.clientWidth),true);
       if(width===390&&process.env.AP_SCREENSHOT)await page.screenshot({path:process.env.AP_SCREENSHOT});
       await page.evaluate(()=>{uiState.live.sera1.temp='n/a';document.querySelector('#ap-restart').click();});
       assert.equal(await page.locator('#ap-play').isDisabled(),true);
       assert.match(await page.locator('#ap-error').textContent(),/invalid/i);
 
-      await page.keyboard.press('Escape');
-      assert.equal(await page.locator('#ap-dialog').evaluate(el=>el.open),false);
+      await page.locator('[data-hydro-mode="auto"]').click();
+      assert.equal(await page.locator('#ap-panel').isVisible(),false);
+      assert.equal(await page.locator('#autoControlSection').isVisible(),true);
       assert.equal(await page.locator('[data-hydro-mode="auto"]').getAttribute('aria-pressed'),'true');
-      assert.equal(await page.evaluate(()=>document.activeElement.id),'ap-open');
+      assert.equal(await page.evaluate(()=>mockState.commands.length),autoCommands);
       await page.locator('#ap-open').click();
       await page.locator('[data-ap-mode="SMART"]').click();
       await page.locator('#ap-program-picker summary').click();
@@ -173,7 +193,7 @@ const server=http.createServer((req,res)=>{
       await page.locator('#ap-delete').click();
       assert.equal(await page.locator('#ap-new').isVisible(),true);
       assert.equal(await page.locator('#ap-preview').isVisible(),false);
-      assert.deepEqual(errors,[]);assert.deepEqual(writes,[]);await ctx.close();console.log('PASS '+width+'px: integrated dialog, SMART, steps, adaptive freeze, saved programs, no writes');
+      assert.deepEqual(errors,[]);assert.deepEqual(writes,[]);await ctx.close();console.log('PASS '+width+'px: inline view, SMART, steps, adaptive freeze, saved programs, no writes');
     }
     const ctx=await browser.newContext(),page=await ctx.newPage();
     await page.addInitScript(()=>localStorage.setItem('hidrofor-advanced-programs-v1','{broken'));
