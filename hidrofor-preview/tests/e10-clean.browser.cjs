@@ -36,6 +36,10 @@ const server=http.createServer((req,res)=>{
       });
       await page.goto(origin+'/e10-lab.html',{waitUntil:'domcontentloaded'});
       assert.equal(await page.locator('.mode-bar [data-mode]').count(),4);
+      assert.equal(await page.locator('body').evaluate(el=>{
+        const mode=el.querySelector('.mode-bar'),picker=el.querySelector('#programPicker');
+        return mode.closest('section')===picker.closest('section')&&mode.getBoundingClientRect().bottom<picker.getBoundingClientRect().top;
+      }),true,'the program selector must sit directly below the current mode');
       assert.equal(await page.locator('#timedEditor').isVisible(),true);
       assert.equal(await page.locator('#sequenceEditor').isVisible(),false);
       assert.match(await page.locator('#durationOn').textContent(),/10m/);

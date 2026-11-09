@@ -89,16 +89,10 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
 .step{grid-template-columns:24px minmax(0,1fr) 74px 32px!important;gap:6px!important}
 @media(max-width:410px){.step-choice button{font-size:10px;padding-left:2px;padding-right:2px}.step{grid-template-columns:22px minmax(0,1fr) 57px 29px!important;gap:4px!important}}
 .program-picker summary{list-style:none;cursor:pointer;border:1px solid #3b5b63;border-radius:11px;background:#102a32;color:var(--ink);min-height:45px;display:flex;align-items:center;justify-content:space-between;padding:10px 12px;font-weight:650}.program-picker summary::-webkit-details-marker{display:none}.program-picker summary:after{content:'⌄';font-size:18px;color:var(--accent)}#draftsPanel{padding:0;margin:0;border:0}#savedMenu{gap:2px;background:#10272e;border:1px solid #3b5b63;border-radius:11px;margin:6px 0 0;padding:5px;max-height:230px;overflow:auto}.saved-item{background:transparent;border:0;border-radius:8px;color:var(--ink)}.saved-item:hover{background:#284550}.saved-item[aria-current="true"]{background:#285d4e}.saved-item[aria-current="true"]:hover{box-shadow:inset 0 0 0 2px #9bdec9}.program-new{width:100%;margin-top:12px;text-align:center;border-style:dashed;color:var(--accent)}.program-form{margin-top:14px;padding-top:14px;border-top:1px solid var(--border)}.program-form .library-actions{margin-top:10px}.program-form .primary-btn{min-height:42px;flex:1}.program-actions .soft-btn:first-child{flex:1}.program-basics{display:block}.program-basics .control-label input{max-width:180px}.saved-notice{margin:8px 0 0;color:var(--amber);font-size:12px}
+.program-picker-section{padding-top:14px}.program-picker-section .section-head{margin-bottom:10px}.program-picker-section .section-head h2{font-size:14px}
 
 </style><script>if(window.self!==window.top)document.documentElement.classList.add('embedded');</script></head><body><main class="app" id="e10App">
   <header class="top"><div><h1>Simulare udare</h1></div><span class="sim-only">SIMULARE</span></header>
-  <section class="main-section" aria-labelledby="pickerHeading"><div class="section-head"><h2 id="pickerHeading">Programul meu</h2></div>
-    <details id="programPicker" class="program-picker"><summary id="showDrafts" aria-label="Programul curent; alege alt program"><span id="activePlanName">Udare dimineața · nesalvat</span></summary><div id="draftsPanel"><div id="savedMenu" role="group" aria-label="Programe salvate în modul curent"></div></div></details>
-    <select id="savedPlans" hidden aria-hidden="true" tabindex="-1"><option value="">Alege un program</option></select>
-    <button class="soft-btn program-new" type="button" id="newPlan" aria-expanded="false" aria-controls="newPlanForm">+ Program nou</button>
-    <div class="program-form" id="newPlanForm" hidden><label class="control-label">Numele programului<input id="planName" maxlength="60" autocomplete="off" placeholder="De exemplu, Udare dimineața"></label><p class="desc">Se salvează setările afișate mai jos.</p><p class="saved-notice" id="nameError" role="alert" hidden></p><div class="library-actions"><button class="primary-btn" type="button" id="createPlan">Salvează programul</button><button class="soft-btn" type="button" id="cancelNew">Renunță</button></div></div>
-    <div class="library-actions program-actions" id="programActions" hidden><button class="soft-btn" type="button" id="savePlan" hidden>Salvează modificările</button><button class="soft-btn button-clear" type="button" id="deletePlan">Șterge</button></div><p class="saved-notice" id="savedPlanNotice" role="status" hidden></p>
-  </section>
   <section class="main-section" aria-labelledby="methodHeading"><div class="section-head"><h2 id="methodHeading">Mod</h2></div>
     <div class="mode-bar" role="group" aria-label="Metoda de control">
       <button type="button" class="mode-btn" data-mode="FIX" aria-pressed="true">Fix</button>
@@ -106,6 +100,13 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
       <button type="button" class="mode-btn" data-mode="SEQUENCE" aria-pressed="false">Cu pași</button>
       <button type="button" class="mode-btn" data-mode="ADAPTIVE" aria-pressed="false">Adaptiv</button>
     </div><p class="mode-hint" id="modeHint">Durata aleasă de tine</p>
+    <div class="program-picker-section" aria-labelledby="pickerHeading"><div class="section-head"><h2 id="pickerHeading">Programul meu</h2></div>
+      <details id="programPicker" class="program-picker"><summary id="showDrafts" aria-label="Programul curent; alege alt program"><span id="activePlanName">Udare dimineața · nesalvat</span></summary><div id="draftsPanel"><div id="savedMenu" role="group" aria-label="Programe salvate în modul curent"></div></div></details>
+      <select id="savedPlans" hidden aria-hidden="true" tabindex="-1"><option value="">Alege un program</option></select>
+      <button class="soft-btn program-new" type="button" id="newPlan" aria-expanded="false" aria-controls="newPlanForm">+ Program nou</button>
+      <div class="program-form" id="newPlanForm" hidden><label class="control-label">Numele programului<input id="planName" maxlength="60" autocomplete="off" placeholder="De exemplu, Udare dimineața"></label><p class="desc">Se salvează setările afișate mai jos.</p><p class="saved-notice" id="nameError" role="alert" hidden></p><div class="library-actions"><button class="primary-btn" type="button" id="createPlan">Salvează programul</button><button class="soft-btn" type="button" id="cancelNew">Renunță</button></div></div>
+      <div class="library-actions program-actions" id="programActions" hidden><button class="soft-btn" type="button" id="savePlan" hidden>Salvează modificările</button><button class="soft-btn button-clear" type="button" id="deletePlan">Șterge</button></div><p class="saved-notice" id="savedPlanNotice" role="status" hidden></p>
+    </div>
     <div class="condition-wrap card" id="climatePanel" hidden>
       <div class="section-head"><h2>Valorile serelor</h2><small>Date de test</small></div>
       <div class="climate">
