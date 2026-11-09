@@ -202,11 +202,24 @@ const server=http.createServer((req,res)=>{
       assert.equal(await page.locator('#ap-new').isVisible(),true);
       assert.deepEqual(errors,[]);assert.deepEqual(writes,[]);await ctx.close();console.log('PASS '+width+'px: inline view, SMART, steps, adaptive, saved programs, no writes');
     }
-    const timedContext=await browser.newContext();
+    const timedContext=await browser.newContext({viewport:{width:390,height:850}});
     const timedPage=await timedContext.newPage();
     await timedPage.clock.install({time:new Date(2026,10,9,7,0,0)});
     await timedPage.goto(origin+'/app.html');
     await timedPage.locator('.tab-btn[data-page="hidrofor"]').click();
+    const dial=timedPage.locator('#autoTimerDial');
+    await timedPage.locator('#autoTimerInput').fill('9');
+    assert.equal(await dial.evaluate(el=>{
+      const outer=el.getBoundingClientRect();
+      const inner=el.querySelector('.timer-inner').getBoundingClientRect();
+      return [inner.left-outer.left,inner.top-outer.top,outer.right-inner.right,outer.bottom-inner.bottom]
+        .every(inset=>Math.abs(inset-5)<0.5);
+    }),true);
+    if(process.env.TIMER_SCREENSHOT){
+      await timedPage.locator('#autoTimerInput').blur();
+      await dial.evaluate(el=>el.scrollIntoView({block:'center'}));
+      await dial.locator('..').screenshot({path:process.env.TIMER_SCREENSHOT});
+    }
     await timedPage.locator('#autoTimerInput').fill('10');
     await timedPage.locator('#autoTimedStart').click();
     assert.equal(await timedPage.locator('#hydroHeadline').textContent(),'Pompa este pornită');
@@ -215,6 +228,9 @@ const server=http.createServer((req,res)=>{
     assert.equal(await timedPage.evaluate(()=>mockState.previewTimedOrigin),'manual');
     await timedPage.clock.fastForward(12000);
     assert.equal(await timedPage.evaluate(()=>mockState.previewTimedPhase),'RUNNING');
+    assert.match(await dial.evaluate(el=>getComputedStyle(el).backgroundImage),/^conic-gradient/);
+    const remainingArc=await dial.evaluate(el=>parseFloat(el.style.getPropertyValue('--remaining')));
+    assert.ok(remainingArc>0 && remainingArc<360);
     assert.ok(await timedPage.evaluate(()=>mockState.previewTimedRemainingMs)>9*60000);
     await timedPage.locator('[data-r12-water="dry"]').click();
     assert.equal(await timedPage.evaluate(()=>mockState.previewTimedPhase),'PAUSED');

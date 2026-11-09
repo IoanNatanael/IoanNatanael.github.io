@@ -861,15 +861,18 @@ svg {
   width: 150px;
   height: 150px;
   display: grid;
+  grid-template: minmax(0, 1fr) / minmax(0, 1fr);
   place-items: center;
   border-radius: 50%;
-  background: conic-gradient(var(--accent) var(--progress, 0%), #2d454a 0);
+  background: conic-gradient(var(--timer-color, var(--accent)) var(--remaining, 0deg), #2d454a 0deg);
   padding: 5px;
 }
 .timer-inner {
   border-radius: 50%;
   width: 100%;
   height: 100%;
+  min-width: 0;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -887,14 +890,19 @@ svg {
   gap: 3px;
 }
 .timer-edit input {
-  width: 78px;
-  text-align: center;
+  width: 3ch;
+  min-width: 1ch;
+  text-align: right;
   font-size: 29px;
   border: 0;
-  padding: 4px;
+  padding: 0;
   background: transparent;
   font-weight: 600;
+  font-variant-numeric: tabular-nums;
   appearance: textfield;
+}
+@supports (field-sizing: content) {
+  .timer-edit input { field-sizing: content; width: auto; max-width: 3ch; }
 }
 .timer-edit input::-webkit-inner-spin-button {
   appearance: none;
@@ -907,6 +915,9 @@ svg {
   color: var(--muted);
   font-size: 10px;
   margin-top: 2px;
+  max-width: 85%;
+  text-align: center;
+  line-height: 1.15;
 }
 .timer-spin-btn {
   font-size: 22px;
@@ -11224,7 +11235,7 @@ const renderAutoTimer = () => {
     const edit = $("autoTimerEdit");
     const label = $("autoTimerLabel");
     if (dial) {
-      const ratio = active && duration ? Math.max(0,Math.min(1,remaining/duration)) : 1;
+      const ratio = active && duration ? Math.max(0,Math.min(1,remaining/duration)) : 0;
       dial.style.setProperty("--remaining", (ratio*360).toFixed(1)+"deg");
       dial.style.setProperty("--timer-color", ["PAUSING", "PAUSED", "RESUMING"].includes(state) ? "var(--warn)" : active ? "var(--good)" : "var(--warn)");
     }
@@ -11287,7 +11298,7 @@ const renderAutoTimer = () => {
     return;
   }
 
-  dial.style.setProperty("--remaining", "360deg");
+  dial.style.setProperty("--remaining", "0deg");
   dial.style.setProperty("--timer-color", "var(--good)");
   value.hidden = true;
   if (edit) edit.hidden = false;
