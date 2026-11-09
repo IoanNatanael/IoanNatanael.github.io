@@ -62,3 +62,64 @@
 .ap-muted,.ap-pane button:disabled{opacity:.45;cursor:not-allowed}.ap-pane summary:focus-visible{outline:2px solid #8be9c6;outline-offset:2px}
 @media(max-width:430px){.ap-pane{padding:14px}.ap-step,.ap-step-row{grid-template-columns:22px minmax(0,1fr) 54px auto;gap:4px}.ap-step button,.ap-step-row button{min-width:29px}.ap-mode button,.ap-choice button{font-size:11px}}
 @media(max-width:350px){.ap-pane{padding-inline:11px}.ap-step,.ap-step-row{grid-template-columns:20px minmax(0,1fr) 48px auto}}
+
+/* Selector compact: un singur nivel de titlu, fără card imens repetat.
+   Numele programului devine rândul principal; lista apare doar la deschidere. */
+.ap-program-strip {
+  display:flex;align-items:flex-start;gap:12px;min-width:0;
+  margin:0;padding:2px 0 15px;border-bottom:1px solid #2b474c;
+}
+.ap-program-strip .ap-picker {flex:1;min-width:0}
+.ap-program-strip .ap-picker summary {
+  min-height:45px;align-items:center;gap:10px;padding:0;
+}
+.ap-program-strip .ap-picker summary>span {flex:1;min-width:0}
+.ap-program-strip #ap-current-name {
+  display:block;margin:0 0 4px;color:#edf8f3;
+  font-size:17px;line-height:1.25;font-weight:700;letter-spacing:-.2px;
+}
+.ap-program-strip #ap-program-meta {
+  color:#92b7b4;font-size:11px;line-height:1.4;
+}
+.ap-program-strip .ap-picker summary::after {
+  align-self:center;font-size:18px;color:#87dcc0;
+  transition:transform .18s ease;
+}
+.ap-program-strip .ap-picker[open] summary::after {transform:rotate(180deg)}
+.ap-pane .ap-program-strip .ap-new {
+  flex:none;width:auto;min-height:37px;margin:2px 0 0;
+  padding:8px 10px;border:1px solid rgba(127,218,190,.22);
+  border-radius:10px;background:rgba(97,201,169,.07);
+  color:#a5ead5;font-size:12px;font-weight:700;white-space:nowrap;
+}
+.ap-pane .ap-program-strip .ap-new:hover {background:rgba(97,201,169,.13)}
+.ap-program-strip .ap-program-list {
+  display:grid;gap:1px;max-height:180px;overflow:auto;
+  margin:10px 0 0;padding:5px 0 0;
+  background:transparent;border:0;border-top:1px solid #2b474c;
+  border-radius:0;
+}
+.ap-program-strip .ap-program-list button {
+  display:flex;align-items:center;gap:8px;
+  min-height:38px;padding:8px 10px;border:0;border-radius:8px;
+  background:transparent;color:#c6dfd8;font-size:13px;font-weight:500;
+}
+.ap-program-strip .ap-program-list button:hover {background:rgba(118,181,173,.09)}
+.ap-program-strip .ap-program-list button[aria-current="true"] {
+  background:transparent;color:#a4e8d3;font-weight:700;
+}
+.ap-program-strip .ap-program-list button[aria-current="true"]::after {
+  content:"✓";margin-left:auto;color:#83e1c6;font-size:13px;
+}
+.ap-program-strip .ap-program-list button[aria-current="true"]:hover {
+  background:rgba(118,181,173,.09);box-shadow:none;
+}
+.ap-pane .ap-overview {margin-top:0}
+@media(max-width:390px) {
+  .ap-program-strip {gap:8px}
+  .ap-program-strip #ap-current-name {font-size:16px}
+  .ap-pane .ap-program-strip .ap-new {padding:8px;font-size:11px}
+}
+@media(prefers-reduced-motion:reduce) {
+  .ap-program-strip .ap-picker summary::after {transition:none}
+}

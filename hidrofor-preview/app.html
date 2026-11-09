@@ -5710,7 +5710,7 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
 </style>
 <link rel="stylesheet" href="./r18-schedules.css?v=3">
 <script defer src="./r18-schedules.js?v=2"></script>
-<link rel="stylesheet" href="./advanced-programs.css?v=6">
+<link rel="stylesheet" href="./advanced-programs.css?v=compact-selector-1">
 <script defer src="./e10-advanced-engine.js?v=1"></script>
 <script defer src="./advanced-programs.js?v=6"></script>
 <link rel="stylesheet" href="./hydro-hero-redesign.css?v=3">
@@ -6263,11 +6263,13 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
                 <p>Configurare locală</p>
               </header>
               <div class="ap-mode" role="group" aria-label="Metoda de udare"><button type="button" data-ap-mode="SMART" aria-pressed="true">Smart</button><button type="button" data-ap-mode="SEQUENCE" aria-pressed="false">Cu pași</button><button type="button" data-ap-mode="ADAPTIVE" aria-pressed="false">Adaptiv</button></div>
-              <details class="ap-picker" id="ap-program-picker" hidden>
-                <summary><span><small>Program selectat</small><strong id="ap-current-name"></strong><span id="ap-program-meta"></span></span></summary>
-                <div id="ap-program-list" class="ap-program-list" role="group" aria-label="Programe salvate în modul curent"></div>
-              </details>
-              <button class="ap-new" id="ap-new" type="button" aria-expanded="false" aria-controls="ap-editor">+ Program nou</button>
+              <div class="ap-program-strip" aria-label="Programul curent și programele salvate">
+                <details class="ap-picker" id="ap-program-picker" hidden>
+                  <summary aria-label="Alege un program salvat"><span><strong id="ap-current-name"></strong><span id="ap-program-meta"></span></span></summary>
+                  <div id="ap-program-list" class="ap-program-list" role="group" aria-label="Programe salvate în modul curent"></div>
+                </details>
+                <button class="ap-new" id="ap-new" type="button" aria-expanded="false" aria-controls="ap-editor">+ Program nou</button>
+              </div>
               <section class="ap-section ap-overview" id="ap-overview" aria-labelledby="ap-overview-label" hidden>
                 <div class="ap-section-head"><div><h2 id="ap-overview-label"></h2><p id="ap-overview-value"></p></div><button class="ap-secondary" id="ap-edit" type="button">Editează</button></div>
                 <dl class="ap-summary-rows" id="ap-summary-rows" aria-labelledby="ap-overview-label"></dl>
