@@ -5710,9 +5710,9 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
 </style>
 <link rel="stylesheet" href="./r18-schedules.css?v=4">
 <script defer src="./r18-schedules.js?v=2"></script>
-<link rel="stylesheet" href="./advanced-programs.css?v=selected-title-2">
+<link rel="stylesheet" href="./advanced-programs.css?v=mobile-picker-3">
 <script defer src="./e10-advanced-engine.js?v=1"></script>
-<script defer src="./advanced-programs.js?v=selected-title-2"></script>
+<script defer src="./advanced-programs.js?v=mobile-picker-3"></script>
 <link rel="stylesheet" href="./hydro-hero-redesign.css?v=4">
 </head>
   <body class="hidro-v5">
@@ -6264,16 +6264,23 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
             </section>
             <section class="ap-pane" id="ap-panel" aria-labelledby="ap-title" hidden>
               <header class="ap-pane-heading">
-                <h2 id="ap-title">Programe avansate</h2>
-                <p id="ap-program-meta">Configurare locală</p>
+                <details class="ap-picker ap-title-picker" id="ap-program-picker">
+                  <summary aria-label="Alege programul salvat" aria-disabled="true" tabindex="-1">
+                    <span class="ap-heading-text">
+                      <h2 id="ap-title">Programe avansate</h2>
+                      <span id="ap-program-meta">Configurare locală</span>
+                    </span>
+                    <svg class="ap-heading-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>
+                  </summary>
+                  <div class="ap-program-popover">
+                    <p class="ap-dropdown-label">Programe salvate</p>
+                    <div id="ap-program-list" class="ap-program-list" role="group" aria-label="Programe salvate în modul curent"></div>
+                  </div>
+                </details>
               </header>
               <div class="ap-mode" role="group" aria-label="Metoda de udare"><button type="button" data-ap-mode="SMART" aria-pressed="true">Smart</button><button type="button" data-ap-mode="SEQUENCE" aria-pressed="false">Cu pași</button><button type="button" data-ap-mode="ADAPTIVE" aria-pressed="false">Adaptiv</button></div>
-              <div class="ap-program-strip" aria-label="Programul curent și programele salvate">
-                <details class="ap-picker" id="ap-program-picker" hidden>
-                  <summary aria-label="Schimbă programul"><span><strong id="ap-current-name">Schimbă programul</strong></span></summary>
-                  <div id="ap-program-list" class="ap-program-list" role="group" aria-label="Programe salvate în modul curent"></div>
-                </details>
-                <button class="ap-new" id="ap-new" type="button" aria-expanded="false" aria-controls="ap-editor">+ Program nou</button>
+              <div class="ap-create-row" id="ap-create-row">
+                <button class="ap-new" id="ap-new" type="button" aria-expanded="false" aria-controls="ap-editor"><span class="ap-new-glyph" aria-hidden="true">+</span><span>Program nou</span></button>
               </div>
               <section class="ap-section ap-overview" id="ap-overview" aria-labelledby="ap-overview-label" hidden>
                 <div class="ap-section-head"><div><h2 id="ap-overview-label"></h2><p id="ap-overview-value"></p></div><button class="ap-secondary" id="ap-edit" type="button">Editează</button></div>

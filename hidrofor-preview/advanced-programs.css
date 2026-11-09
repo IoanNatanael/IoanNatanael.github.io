@@ -63,86 +63,100 @@
 @media(max-width:430px){.ap-pane{padding:14px}.ap-step,.ap-step-row{grid-template-columns:22px minmax(0,1fr) 54px auto;gap:4px}.ap-step button,.ap-step-row button{min-width:29px}.ap-mode button,.ap-choice button{font-size:11px}}
 @media(max-width:350px){.ap-pane{padding-inline:11px}.ap-step,.ap-step-row{grid-template-columns:20px minmax(0,1fr) 48px auto}}
 
-/* Selector compact: un singur nivel de titlu, fără card imens repetat.
-   Numele programului devine rândul principal; lista apare doar la deschidere. */
-.ap-program-strip {
-  display:flex;align-items:flex-start;gap:12px;min-width:0;
-  margin:0;padding:2px 0 15px;border-bottom:1px solid #2b474c;
+/* Mobile-first: titlul este selectorul, iar lista plutește peste conținut. */
+.ap-pane-heading {position:relative;z-index:3;margin-bottom:15px;min-width:0}
+.ap-title-picker {position:relative;min-width:0}
+.ap-title-picker summary {
+  display:flex;align-items:center;justify-content:space-between;
+  gap:12px;min-height:46px;padding:0;border-radius:9px;
+  list-style:none;cursor:pointer;touch-action:manipulation;
 }
-.ap-program-strip .ap-picker {flex:1;min-width:0}
-.ap-program-strip .ap-picker summary {
-  min-height:45px;align-items:center;gap:10px;padding:0;
+.ap-title-picker summary::-webkit-details-marker {display:none}
+.ap-title-picker summary::after {display:none}
+.ap-title-picker summary:focus-visible {
+  outline:2px solid #83e1c6;outline-offset:5px;
 }
-.ap-program-strip .ap-picker summary>span {flex:1;min-width:0}
-.ap-program-strip #ap-current-name {
-  display:block;margin:0 0 4px;color:#edf8f3;
-  font-size:17px;line-height:1.25;font-weight:700;letter-spacing:-.2px;
-}
-.ap-program-strip #ap-program-meta {
-  color:#92b7b4;font-size:11px;line-height:1.4;
-}
-.ap-program-strip .ap-picker summary::after {
-  align-self:center;font-size:18px;color:#87dcc0;
-  transition:transform .18s ease;
-}
-.ap-program-strip .ap-picker[open] summary::after {transform:rotate(180deg)}
-.ap-pane .ap-program-strip .ap-new {
-  flex:none;width:auto;min-height:37px;margin:2px 0 0;
-  padding:8px 10px;border:1px solid rgba(127,218,190,.22);
-  border-radius:10px;background:rgba(97,201,169,.07);
-  color:#a5ead5;font-size:12px;font-weight:700;white-space:nowrap;
-}
-.ap-pane .ap-program-strip .ap-new:hover {background:rgba(97,201,169,.13)}
-.ap-program-strip .ap-program-list {
-  display:grid;gap:1px;max-height:180px;overflow:auto;
-  margin:10px 0 0;padding:5px 0 0;
-  background:transparent;border:0;border-top:1px solid #2b474c;
-  border-radius:0;
-}
-.ap-program-strip .ap-program-list button {
-  display:flex;align-items:center;gap:8px;
-  min-height:38px;padding:8px 10px;border:0;border-radius:8px;
-  background:transparent;color:#c6dfd8;font-size:13px;font-weight:500;
-}
-.ap-program-strip .ap-program-list button:hover {background:rgba(118,181,173,.09)}
-.ap-program-strip .ap-program-list button[aria-current="true"] {
-  background:transparent;color:#a4e8d3;font-weight:700;
-}
-.ap-program-strip .ap-program-list button[aria-current="true"]::after {
-  content:"✓";margin-left:auto;color:#83e1c6;font-size:13px;
-}
-.ap-program-strip .ap-program-list button[aria-current="true"]:hover {
-  background:rgba(118,181,173,.09);box-shadow:none;
-}
-.ap-pane .ap-overview {margin-top:0}
-@media(max-width:390px) {
-  .ap-program-strip {gap:8px}
-  .ap-program-strip #ap-current-name {font-size:16px}
-  .ap-pane .ap-program-strip .ap-new {padding:8px;font-size:11px}
-}
-@media(prefers-reduced-motion:reduce) {
-  .ap-program-strip .ap-picker summary::after {transition:none}
-}
-
-/* Titlul secțiunii devine numele programului selectat. */
-.ap-pane-heading {margin-bottom:15px;min-width:0}
-.ap-pane-heading #ap-title {
+.ap-title-picker .ap-heading-text {display:block;flex:1;min-width:0}
+.ap-title-picker #ap-title {
   margin:0;color:#f0faf6;font-size:clamp(20px,5.5vw,24px);
   line-height:1.22;font-weight:750;letter-spacing:-.55px;
   overflow-wrap:anywhere;
 }
-.ap-pane-heading #ap-program-meta {
+.ap-title-picker #ap-program-meta {
   display:block;margin:5px 0 0;color:#9ebcb7;
   font-size:12px;font-weight:500;line-height:1.4;
   overflow-wrap:break-word;
 }
-.ap-program-strip .ap-picker summary {min-height:37px}
-.ap-program-strip #ap-current-name {
-  margin:0;color:#b8d9d2;font-size:13px;line-height:1.35;
-  font-weight:650;letter-spacing:0;
+.ap-title-picker .ap-heading-chevron {
+  display:block;width:19px;height:19px;flex:none;
+  color:#85d9c1;transition:transform .18s ease;
 }
-.ap-program-strip .ap-picker summary:hover #ap-current-name {color:#a4e8d3}
+.ap-title-picker[open] .ap-heading-chevron {transform:rotate(180deg)}
+.ap-title-picker summary[aria-disabled="true"] {cursor:default}
+.ap-title-picker summary[aria-disabled="true"] .ap-heading-chevron {display:none}
+.ap-title-picker .ap-program-popover {
+  position:absolute;z-index:20;top:calc(100% + 8px);left:0;right:0;
+  padding:10px 7px 7px;
+  border:1px solid rgba(133,201,188,.23);border-radius:15px;
+  background:#112b30;
+  box-shadow:0 18px 34px rgba(0,0,0,.35);
+}
+.ap-title-picker .ap-dropdown-label {
+  margin:0 0 5px;padding:4px 9px;
+  color:#8baea9;font-size:11px;font-weight:600;
+  letter-spacing:.3px;
+}
+.ap-title-picker .ap-program-list {
+  display:grid;gap:2px;max-height:min(315px,48dvh);overflow-y:auto;
+  margin:0;padding:0;border:0;border-radius:0;background:transparent;
+  overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
+}
+.ap-title-picker .ap-program-list button {
+  display:flex;align-items:center;gap:10px;
+  width:100%;min-height:47px;padding:11px 12px;
+  border:0;border-radius:9px;background:transparent;
+  color:#d5e9e3;text-align:left;font:inherit;
+  font-size:13px;font-weight:550;line-height:1.3;
+  overflow-wrap:anywhere;cursor:pointer;
+}
+.ap-title-picker .ap-program-list button:hover,
+.ap-title-picker .ap-program-list button:focus-visible {
+  background:rgba(133,225,198,.09);outline:none;
+}
+.ap-title-picker .ap-program-list button[aria-current="true"] {
+  background:rgba(114,212,181,.12);color:#a7f0d8;font-weight:700;
+}
+.ap-title-picker .ap-program-list button[aria-current="true"]::after {
+  content:"✓";margin-left:auto;color:#83e1c6;font-size:14px;
+}
+.ap-title-picker .ap-program-list button[aria-current="true"]:hover {
+  background:rgba(114,212,181,.17);box-shadow:none;
+}
+/* Acțiune integrată sub Smart / Cu pași / Adaptiv, fără buton-card. */
+.ap-pane .ap-mode {margin-bottom:7px}
+.ap-create-row {display:flex;align-items:center;padding:0 0 13px}
+.ap-pane .ap-create-row .ap-new {
+  display:inline-flex;align-items:center;gap:9px;
+  width:auto;min-height:35px;margin:0;padding:5px 4px;
+  border:0;border-radius:8px;background:transparent;
+  color:#a4e7d4;font-size:13px;font-weight:650;
+  text-align:left;box-shadow:none;
+}
+.ap-pane .ap-create-row .ap-new:hover,
+.ap-pane .ap-create-row .ap-new:focus-visible {
+  background:rgba(131,225,198,.07);color:#c3ffe9;
+}
+.ap-create-row .ap-new-glyph {
+  display:grid;place-items:center;flex:none;
+  width:24px;height:24px;border:1px solid rgba(131,225,198,.26);
+  border-radius:50%;background:rgba(131,225,198,.075);
+  color:#83e1c6;font-size:18px;font-weight:400;line-height:1;
+}
+.ap-pane .ap-overview {margin-top:0}
 @media(max-width:390px) {
-  .ap-pane-heading #ap-title {font-size:20px}
-  .ap-program-strip #ap-current-name {font-size:12px}
+  .ap-title-picker #ap-title {font-size:20px}
+  .ap-title-picker .ap-program-popover {left:-3px;right:-3px}
+}
+@media(prefers-reduced-motion:reduce) {
+  .ap-title-picker .ap-heading-chevron {transition:none}
 }

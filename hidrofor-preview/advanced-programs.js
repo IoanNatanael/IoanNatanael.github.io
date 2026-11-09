@@ -87,10 +87,16 @@
     }
     const picker=byId('ap-program-picker');
     picker.open=false;
-    picker.hidden=editing||!records.length;
-    // Numele programului apare o singură dată: ca titlu al secțiunii.
-    // Selectorul de dedesubt rămâne o acțiune, nu un al doilea titlu.
-    text('ap-current-name','Schimbă programul');
+    // Titlul este chiar selectorul: un singur nume, cu lista la atingere.
+    // În lipsa programelor sau în editor, titlul rămâne vizibil, dar nu se deschide.
+    const canChoose=!editing&&records.length>0;
+    const trigger=picker.querySelector('summary');
+    trigger.setAttribute('aria-disabled',String(!canChoose));
+    trigger.tabIndex=canChoose?0:-1;
+    trigger.setAttribute('aria-label',canChoose
+      ? (selected?'Alege alt program. Program curent: '+m.name:'Alege un program salvat')
+      : 'Titlul programelor avansate');
+    byId('ap-create-row').hidden=editing;
     if(editing){
       text('ap-title',m.editing==='new'?'Program nou':m.name);
       text('ap-program-meta',m.editing==='new'
@@ -223,7 +229,8 @@
   }
   function focusOverview(){
     const picker=byId('ap-program-picker');
-    const target=picker.hidden?byId('ap-new'):picker.querySelector('summary');
+    const summary=picker.querySelector('summary');
+    const target=summary.getAttribute('aria-disabled')==='true'?byId('ap-new'):summary;
     target.focus({preventScroll:true});
     target.scrollIntoView({block:'nearest'});
   }
@@ -237,6 +244,19 @@
     if(!panel)return;
     state.records=storageRead();
     showSavedOrEmpty();
+    const picker=byId('ap-program-picker');
+    const trigger=picker.querySelector('summary');
+    trigger.addEventListener('click',event=>{
+      if(trigger.getAttribute('aria-disabled')==='true')event.preventDefault();
+    });
+    document.addEventListener('pointerdown',event=>{
+      if(picker.open&&!picker.contains(event.target))picker.open=false;
+    });
+    picker.addEventListener('keydown',event=>{
+      if(event.key==='Escape'&&picker.open){
+        event.preventDefault();picker.open=false;trigger.focus();
+      }
+    });
     document.querySelectorAll('[data-ap-mode]').forEach(button=>button.addEventListener('click',()=>{
       if(state.mode===button.dataset.apMode)return;
       state.mode=button.dataset.apMode;

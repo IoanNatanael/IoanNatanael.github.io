@@ -61,7 +61,9 @@ const server=http.createServer((req,res)=>{
       for(const mode of ['SEQUENCE','ADAPTIVE','SMART']){
         await page.locator('[data-ap-mode="'+mode+'"]').click();
         assert.equal(await page.locator('#ap-new').isVisible(),true);
-        for(const id of ['ap-program-picker','ap-overview','ap-editor'])
+        assert.equal(await page.locator('#ap-program-picker summary').isVisible(),true);
+        assert.equal(await page.locator('#ap-program-picker summary').getAttribute('aria-disabled'),'true');
+        for(const id of ['ap-overview','ap-editor'])
           assert.equal(await page.locator('#'+id).isVisible(),false);
       }
       await page.locator('#ap-new').click();
@@ -77,12 +79,27 @@ const server=http.createServer((req,res)=>{
       await page.locator('#ap-smart-high').fill('35');
       await page.locator('#ap-save').click();
       assert.equal(await page.locator('#ap-title').textContent(),'Seră dimineața');
-      assert.equal(await page.locator('#ap-current-name').textContent(),'Schimbă programul');
+      assert.equal(await page.locator('#ap-program-picker summary').getAttribute('aria-disabled'),'false');
       assert.equal(await page.locator('#ap-editor').isVisible(),false);
       assert.match(await page.locator('#ap-overview-value').textContent(),/20°C până sub 35°C/);
       assert.equal(await page.locator('#ap-summary-rows dt').textContent(),'Dacă se îndeplinește');
       assert.equal(await page.locator('#ap-summary-rows dd').textContent(),'Udă 10 min');
       assert.equal(await page.locator('#ap-preview, #ap-play, #ap-restart').count(),0);
+      assert.equal(await page.locator('#ap-new').evaluate(el=>
+        el.getBoundingClientRect().top>=document.querySelector('.ap-mode').getBoundingClientRect().bottom),true);
+      await page.locator('#ap-new').click();
+      await page.locator('#ap-name').fill('Seră seara');
+      await page.locator('#ap-save').click();
+      assert.equal(await page.locator('#ap-title').textContent(),'Seră seara');
+      await page.locator('#ap-program-picker summary').click();
+      assert.deepEqual(await page.locator('#ap-program-list button').allTextContents(),['Seră dimineața','Seră seara']);
+      assert.equal(await page.locator('#ap-program-list button[aria-current="true"]').textContent(),'Seră seara');
+      await page.keyboard.press('Escape');
+      assert.equal(await page.locator('#ap-program-picker').evaluate(el=>el.open),false);
+      await page.locator('#ap-program-picker summary').click();
+      await page.locator('#ap-program-list button').filter({hasText:'Seră dimineața'}).click();
+      assert.equal(await page.locator('#ap-title').textContent(),'Seră dimineața');
+      assert.equal(await page.locator('#ap-program-picker').evaluate(el=>el.open),false);
       await page.locator('[data-ap-mode="SEQUENCE"]').click();
       await page.locator('#ap-new').click();
       assert.equal(await page.locator('#ap-steps .ap-step-row').count(),3);
@@ -123,7 +140,7 @@ const server=http.createServer((req,res)=>{
       await page.locator('#ap-open').click();
       await page.locator('[data-ap-mode="SMART"]').click();
       await page.locator('#ap-program-picker summary').click();
-      assert.deepEqual(await page.locator('#ap-program-list button').allTextContents(),['Seră dimineața']);
+      assert.deepEqual(await page.locator('#ap-program-list button').allTextContents(),['Seră dimineața','Seră seara']);
       await page.locator('#ap-program-list button').click();
       await page.locator('#ap-edit').click();
       await page.locator('#ap-smart-low').fill('21');
@@ -142,12 +159,12 @@ const server=http.createServer((req,res)=>{
       assert.equal(await page.locator('#ap-smart-low').inputValue(),'28');
       await page.locator('#ap-cancel').click();
       assert.equal(await page.locator('#ap-title').textContent(),'Seră dimineața');
-      assert.equal(await page.locator('#ap-current-name').textContent(),'Schimbă programul');
+      assert.equal(await page.locator('#ap-program-picker summary').getAttribute('aria-disabled'),'false');
       await page.reload({waitUntil:'load'});
       await page.locator('[data-page="hidrofor"]').first().click();
       await page.locator('#ap-open').click();
       assert.equal(await page.locator('#ap-title').textContent(),'Seră dimineața');
-      assert.equal(await page.locator('#ap-current-name').textContent(),'Schimbă programul');
+      assert.equal(await page.locator('#ap-program-picker summary').getAttribute('aria-disabled'),'false');
       assert.match(await page.locator('#ap-overview-value').textContent(),/22°C până sub 35°C/);
       assert.equal(await page.locator('#ap-summary-rows dd').textContent(),'Udă 12 min');
       await page.locator('#ap-edit').click();
