@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - feature/service-center
     paths:
       - 'hidrofor-preview/**'
       - 'hidrofor-service-preview/**'
@@ -16,23 +15,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  request-main-deploy:
-    # The GitHub Pages environment may restrict deployments to main.
-    # Re-dispatch the deployment on main after service branch changes.
-    if: github.ref == 'refs/heads/feature/service-center'
-    runs-on: ubuntu-latest
-    permissions:
-      actions: write
-      contents: read
-    steps:
-      - name: Rebuild permanent preview using the main workflow
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GH_REPO: ${{ github.repository }}
-        run: gh workflow run hidrofor-preview-pages.yml --ref main
-
   deploy:
-    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     environment:
       name: github-pages
@@ -42,37 +25,38 @@ jobs:
       pages: write
       id-token: write
     steps:
-      - name: Checkout published main
+      - name: Checkout main — singura sursa publicata
         uses: actions/checkout@v4
         with:
           ref: main
           path: main-source
           persist-credentials: false
 
-      - name: Checkout current service development branch
-        uses: actions/checkout@v4
-        with:
-          ref: feature/service-center
-          path: service-source
-          persist-credentials: false
+      - name: Verificare minima a editorului avansat
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check main-source/hidrofor-preview/advanced-programs.js
+          node --check main-source/hidrofor-preview/e10-advanced-engine.js
+          node --test main-source/hidrofor-preview/tests/e10-advanced-engine.test.cjs
 
-      - name: Build static public and development previews
+      - name: Build static public and working previews from main
         shell: bash
         run: |
           set -euo pipefail
           mkdir -p site/hidrofor-preview site/hidrofor-service-preview site/hidrofor-lucru
           cp -a main-source/hidrofor-preview/. site/hidrofor-preview/
           cp -a main-source/hidrofor-service-preview/. site/hidrofor-service-preview/
-          cp -a service-source/hidrofor-preview/. site/hidrofor-lucru/
-          # The working URL opens the real app directly, without the phone-frame iframe.
-          cp service-source/hidrofor-preview/app.html site/hidrofor-lucru/index.html
-          # The optional phone mockup remains available at a separate URL.
-          cp service-source/hidrofor-preview/index.html site/hidrofor-lucru/telefon.html
+          cp -a main-source/hidrofor-preview/. site/hidrofor-lucru/
+          # Working URL: direct application, not the phone frame.
+          cp main-source/hidrofor-preview/app.html site/hidrofor-lucru/index.html
+          cp main-source/hidrofor-preview/index.html site/hidrofor-lucru/telefon.html
           touch site/.nojekyll
           test -s site/hidrofor-lucru/index.html
           test -s site/hidrofor-lucru/e10-lab.html
           test -s site/hidrofor-lucru/r18-schedules.js
-          grep -q 'e10-lab.html' site/hidrofor-lucru/app.html
+          test -s site/hidrofor-lucru/advanced-programs.js
+          grep -q 'id="ap-open"' site/hidrofor-lucru/app.html
 
       - name: Configure Pages
         uses: actions/configure-pages@v5

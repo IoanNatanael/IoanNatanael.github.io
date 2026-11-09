@@ -117,3 +117,18 @@ scurt al alertelor și opțiuni de căutare/filtrare. Comenzile hidroforului
 se consultă separat în **Hidrofor → Activitate** sau **Jurnal → Pompa**.
 
 Teste de regresie: `node --test hidrofor-preview/tests/service-simplified.test.cjs`.
+
+## Programe avansate
+
+În **Hidrofor → Automat → Programe avansate** se pot configura și simula
+SMART, Cu pași și Adaptiv. Programele sunt salvate numai în browserul curent,
+separat pentru fiecare metodă. Datele afișate în preview sunt DEMO; simularea
+nu programează ESP32 și nu pornește pompa. Laboratorul E10 rămâne separat.
+
+Regulile simulate, limitele și pașii necesari integrării ulterioare pe hardware
+sunt descrise în [ADVANCED-PROGRAMS.md](ADVANCED-PROGRAMS.md).
+
+Testele motorului se rulează cu
+`node --test hidrofor-preview/tests/e10-advanced-engine.test.cjs`; testele de
+browser sunt în `hidrofor-preview/tests/advanced-programs.browser.cjs` și
+necesită Playwright și un browser Chromium disponibil.

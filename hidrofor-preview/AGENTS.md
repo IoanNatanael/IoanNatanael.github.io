@@ -8,8 +8,9 @@ Acest fișier completează `../AGENTS.md` și se aplică doar directorului `hidr
 - `e10-lab.html`: laboratorul de configurare și simulare a programelor de udare.
 - `index.html`: când există, pagină de prezentare / încadrare în telefon; nu confunda rama telefonului cu aplicația propriu-zisă.
 - `r18-schedules.js` și `r18-schedules.css` și celelalte module existente: respectă contractele, rolurile și testele documentate în README.
-- Ramura `feature/service-center` este folosită pentru dezvoltarea interfeței. `main` și publicația aferentă nu trebuie suprascrise accidental.
-- Există un preview de dezvoltare GitHub Pages la `/hidrofor-lucru/`. Verifică workflow-ul și sursele reale înainte să modifici publicarea.
+- Pentru interfața WEB ONLY / DEMO, utilizatorul a ales `main` ca ramură de lucru și sursă publicată. Începe taskurile Codex de interfață din `main`; nu considera schimbările din ramuri de lucru publicate până când nu au ajuns în `main`.
+- Adresa publică de lucru `/hidrofor-lucru/` este construită din `main` prin GitHub Pages. După fiecare modificare de UI, confirmă commitul, succesul workflow-ului și elementul vizibil la această adresă. Nu afirma că s-a publicat dacă nu s-a verificat.
+- Păstrează modificările firmware ACTIVE și comenzile fizice complet separate; acest acord de publicare privește numai DEMO web.
 - Interfața este **WEB ONLY / DEMO**. Nu reprezintă automat firmware-ul ACTIVE de pe ESP32/ESP-01S; nu presupune că API-ul preview corespunde API-ului real.
 
 ## Standard vizual și de interacțiune — obligatoriu implicit
