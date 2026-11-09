@@ -8253,10 +8253,12 @@ const chartDayBreaks = (series) => {
   return breaks;
 };
 
+const mockManualRunKey = "hidrofor-demo-manual-started-at";
 const mockState = {
   running: true,
   startedAt: Date.now() - 8058000,
   hydroStartedAt: null,
+  previewManualRun: false,
   previewCommandCounter: 1,
   previewTimedEnd: 0,
   previewTimedDurationMs: 0,
@@ -8899,7 +8901,38 @@ const mockHistoryText = (node, windowName) =>
     )
     .join("\n");
 
-const mockHandleCommand = (nextState, source = "Website") => {
+const mockStoreManualRun = startedAt => {
+  mockState.previewManualRun = startedAt !== null;
+  if (!forceMock()) return;
+  try {
+    if (startedAt === null) localStorage.removeItem(mockManualRunKey);
+    else localStorage.setItem(mockManualRunKey, String(startedAt));
+  } catch (_) {
+    // Manual watering still works for this page when browser storage is unavailable.
+  }
+};
+
+const mockRestoreManualRun = () => {
+  if (!forceMock() || mockState.previewTimedOrigin) return;
+  let startedAt;
+  try {
+    startedAt = Number(localStorage.getItem(mockManualRunKey));
+  } catch (_) {
+    return;
+  }
+  if (Number.isSafeInteger(startedAt) && startedAt > 0 && startedAt <= Date.now()) {
+    mockState.live.stareHidrofor = "PORNIT";
+    mockState.live.modControl = "Manual";
+    mockState.hydroStartedAt = startedAt;
+    mockState.previewManualRun = true;
+  } else if (mockState.previewManualRun) {
+    mockState.live.stareHidrofor = "OPRIT";
+    mockState.hydroStartedAt = null;
+    mockState.previewManualRun = false;
+  }
+};
+
+const mockHandleCommand = (nextState, source = "Website", persistManual = false) => {
   const on = nextState === "PORNIT";
   mockInterruptSchedule();
   mockState.live.stareHidrofor = nextState;
@@ -8910,6 +8943,7 @@ const mockHandleCommand = (nextState, source = "Website") => {
   mockState.previewTimedPhase = "IDLE";
   mockState.previewTimedRemainingMs = 0;
   mockState.hydroStartedAt = on ? Date.now() : null;
+  mockStoreManualRun(on && persistManual ? mockState.hydroStartedAt : null);
   mockState.commands.unshift({
     time: mockNow(),
     source,
@@ -9016,6 +9050,7 @@ const mockResetHydroFaults = () => {
   mockState.previewCommandCounter += 1;
   mockState.live.baterie = 12.54;
   mockState.hydroStartedAt = null;
+  mockStoreManualRun(null);
   GREENHOUSES.forEach((greenhouse) => {
     mockState.remote[greenhouse.id].online = true;
     mockState.remote[greenhouse.id].status = "ONLINE";
@@ -9036,6 +9071,7 @@ const mockSimulateHydroFault = (faultId) => {
   const fault = MOCK_HYDRO_FAULTS.find((item) => item.id === faultId);
   if (!fault) return;
   fault.apply();
+  if (mockState.live.stareHidrofor === "OPRIT") mockStoreManualRun(null);
   mockState.live.dataOra = mockNow();
   mockPushCommand({
     source: "Website",
@@ -13841,7 +13877,7 @@ const i3PollConfirmation = async (action, before, generation) => {
 const i3Execute = async action => {
   if (forceMock()) {
     if (action === "panic") return i3Panic();
-    if (action === "start") mockHandleCommand("PORNIT", "Website · demo");
+    if (action === "start") mockHandleCommand("PORNIT", "Website · demo", true);
     else if (action === "stop") {
       mockState.previewSuspended = true;
       mockHandleCommand("OPRIT", "Website · demo");
@@ -14178,6 +14214,7 @@ const mockWritePath = (path, value) => {
   const key = parts[parts.length - 1];
   if (!cursor || !(key in cursor)) return;
   cursor[key] = typeof cursor[key] === "number" ? Number(value) : value;
+  if (path === "live.stareHidrofor" && value === "OPRIT") mockStoreManualRun(null);
   if (key === "online") cursor.status = cursor.online ? "ONLINE" : "OFFLINE";
 };
 
@@ -14346,7 +14383,8 @@ const bindEvents = () => {
   document.querySelectorAll("[data-hydro-mode]").forEach((btn) => {
     btn.addEventListener("click", () => {
       const mode = btn.dataset.hydroMode;
-      const returnOnly = canReturnFromAdvanced(mode);
+      const returnOnly = canReturnFromAdvanced(mode) ||
+        (forceMock() && btn.classList.contains("active"));
       setAdvancedWateringView(false);
       if (!returnOnly) setMode(mode);
     });
@@ -14598,6 +14636,15 @@ window.addEventListener("DOMContentLoaded", async () => {
   const preview =
     window.HIDROFOR_PREVIEW_ONLY === true || location.protocol === "file:";
   document.body.classList.toggle("preview-mode", preview);
+  if (forceMock()) {
+    mockRestoreManualRun();
+    window.addEventListener("storage", event => {
+      if (!forceMock() || event.storageArea !== localStorage ||
+          (event.key !== mockManualRunKey && event.key !== null)) return;
+      mockRestoreManualRun();
+      loadLive();
+    });
+  }
   renderGreenhouseLayout();
   renderLogSourceButtons();
   bindEvents();
