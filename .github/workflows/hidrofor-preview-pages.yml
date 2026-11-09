@@ -72,7 +72,7 @@ jobs:
           test -s site/hidrofor-lucru/index.html
           test -s site/hidrofor-lucru/e10-lab.html
           test -s site/hidrofor-lucru/r18-schedules.js
-          grep -q 'e10-flow-20261109' site/hidrofor-lucru/app.html
+          grep -q 'e10-lab.html' site/hidrofor-lucru/app.html
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
