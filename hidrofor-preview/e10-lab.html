@@ -1,4 +1,4 @@
-<!doctype html><html lang="ro"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="dark"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; connect-src 'none'; form-action 'none'; object-src 'none'; base-uri 'none'"><title>Hidrofor · Laborator E10 · FIX SMART ADAPTIVE</title><style>
+<!doctype html><html lang="ro"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="dark"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; connect-src 'none'; form-action 'none'; object-src 'none'; base-uri 'none'"><title>Hidrofor · Laborator E10</title><style>
 :root{color-scheme:dark;--bg:#0e2027;--surface:#142b33;--surface2:#19343d;--surface3:#10272e;--border:#2a4851;--muted:#a0bcbf;--ink:#eaf6f1;--accent:#8de4c1;--good:#86dfb5;--amber:#efca82;--bad:#f5aca8;--radius:17px}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.55 -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;-webkit-font-smoothing:antialiased}
 button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allowed;opacity:.48}button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
@@ -28,7 +28,7 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
 .main-section{border-top:1px solid var(--e10-line);padding:23px 0 27px;margin:0;background:transparent!important}
 .main-section>.card,.main-section .condition-wrap.card,.main-section .progress-card{border:0!important;box-shadow:none!important;background:transparent!important;padding:0!important;border-radius:0!important}
 .section-head{margin-bottom:16px}
-.mode-bar{grid-template-columns:repeat(4,minmax(0,1fr));background:#14262d;border:1px solid #2c4149;padding:4px;gap:3px}
+.mode-bar{grid-template-columns:repeat(3,minmax(0,1fr));background:#14262d;border:1px solid #2c4149;padding:4px;gap:3px}
 .mode-bar .mode-btn{border:0;border-radius:9px;font-size:12px;padding:10px 3px}
 .mode-bar .mode-btn[aria-pressed="true"]{background:#83e3c6;color:#0c2622;box-shadow:0 2px 8px #071a1855}
 .mode-hint{padding-bottom:7px}
@@ -56,7 +56,6 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
 #climatePanel{margin-top:13px!important;border-top:1px solid var(--e10-line)!important;padding-top:16px!important}
 #climatePanel .section-head{margin-bottom:8px}
 #climatePanel .greenhouse{background:transparent!important;border:0!important;padding:10px 0!important}
-#smartOptions,#adaptiveOptions,#adaptiveAdvanced{display:none!important}
 #sequenceEditor .steps{border-top:1px solid var(--e10-line)}
 #sequenceEditor .step{background:transparent!important;border:0!important;border-bottom:1px solid var(--e10-line)!important;border-radius:0!important}
 #sequenceEditor .add-actions{margin-top:14px}
@@ -91,21 +90,41 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
 .program-picker summary{list-style:none;cursor:pointer;border:1px solid #3b5b63;border-radius:11px;background:#102a32;color:var(--ink);min-height:45px;display:flex;align-items:center;justify-content:space-between;padding:10px 12px;font-weight:650}.program-picker summary::-webkit-details-marker{display:none}.program-picker summary:after{content:'⌄';font-size:18px;color:var(--accent)}#draftsPanel{padding:0;margin:0;border:0}#savedMenu{gap:2px;background:#10272e;border:1px solid #3b5b63;border-radius:11px;margin:6px 0 0;padding:5px;max-height:230px;overflow:auto}.saved-item{background:transparent;border:0;border-radius:8px;color:var(--ink)}.saved-item:hover{background:#284550}.saved-item[aria-current="true"]{background:#285d4e}.saved-item[aria-current="true"]:hover{box-shadow:inset 0 0 0 2px #9bdec9}.program-new{width:100%;margin-top:12px;text-align:center;border-style:dashed;color:var(--accent)}.program-form{margin-top:14px;padding-top:14px;border-top:1px solid var(--border)}.program-form .library-actions{margin-top:10px}.program-form .primary-btn{min-height:42px;flex:1}.program-actions .soft-btn:first-child{flex:1}.program-basics{display:block}.program-basics .control-label input{max-width:180px}.saved-notice{margin:8px 0 0;color:var(--amber);font-size:12px}
 .program-picker-section{padding-top:14px}.program-picker-section .section-head{margin-bottom:10px}.program-picker-section .section-head h2{font-size:14px}
 
+
+.program-picker summary{background:none;border:0;border-radius:0;padding:8px 0;min-height:62px}
+.program-picker summary strong,.program-picker summary small,#programMeta{display:block}
+.program-picker summary strong{font-size:clamp(21px,5vw,27px);overflow-wrap:anywhere}
+.program-picker summary>span{min-width:0}
+.program-picker summary small,.saved-overview small,#programMeta{font-size:12px;color:var(--muted);font-weight:500}
+.program-picker summary:after{margin-left:12px}
+.saved-overview{display:flex;align-items:center;justify-content:space-between;gap:12px;border-top:1px solid var(--border);margin-top:16px;padding-top:14px}
+.saved-overview strong{display:block;margin-top:4px;font-size:14px}
+.saved-overview button{flex-shrink:0}
+.program-basics label:first-child{margin-bottom:14px}
+.program-basics label:first-child input{max-width:none}
+.editor-actions{margin-top:16px;flex-wrap:wrap}
+.saved-preview .progress-top{align-items:center}
+.saved-preview .headline{font-size:clamp(22px,5vw,30px)}
+.preview-details{margin-top:10px}
 </style><script>if(window.self!==window.top)document.documentElement.classList.add('embedded');</script></head><body><main class="app" id="e10App">
   <header class="top"><div><h1>Simulare udare</h1></div><span class="sim-only">SIMULARE</span></header>
   <section class="main-section" aria-labelledby="methodHeading"><div class="section-head"><h2 id="methodHeading">Mod</h2></div>
     <div class="mode-bar" role="group" aria-label="Metoda de control">
-      <button type="button" class="mode-btn" data-mode="FIX" aria-pressed="true">Fix</button>
-      <button type="button" class="mode-btn" data-mode="SMART" aria-pressed="false">Smart</button>
+      <button type="button" class="mode-btn" data-mode="SMART" aria-pressed="true">Smart</button>
       <button type="button" class="mode-btn" data-mode="SEQUENCE" aria-pressed="false">Cu pași</button>
       <button type="button" class="mode-btn" data-mode="ADAPTIVE" aria-pressed="false">Adaptiv</button>
-    </div><p class="mode-hint" id="modeHint">Durata aleasă de tine</p>
-    <div class="program-picker-section" aria-labelledby="pickerHeading"><div class="section-head"><h2 id="pickerHeading">Programul meu</h2></div>
-      <details id="programPicker" class="program-picker"><summary id="showDrafts" aria-label="Programul curent; alege alt program"><span id="activePlanName">Udare dimineața · nesalvat</span></summary><div id="draftsPanel"><div id="savedMenu" role="group" aria-label="Programe salvate în modul curent"></div></div></details>
-      <select id="savedPlans" hidden aria-hidden="true" tabindex="-1"><option value="">Alege un program</option></select>
-      <button class="soft-btn program-new" type="button" id="newPlan" aria-expanded="false" aria-controls="newPlanForm">+ Program nou</button>
-      <div class="program-form" id="newPlanForm" hidden><label class="control-label">Numele programului<input id="planName" maxlength="60" autocomplete="off" placeholder="De exemplu, Udare dimineața"></label><p class="desc">Se salvează setările afișate mai jos.</p><p class="saved-notice" id="nameError" role="alert" hidden></p><div class="library-actions"><button class="primary-btn" type="button" id="createPlan">Salvează programul</button><button class="soft-btn" type="button" id="cancelNew">Renunță</button></div></div>
-      <div class="library-actions program-actions" id="programActions" hidden><button class="soft-btn" type="button" id="savePlan" hidden>Salvează modificările</button><button class="soft-btn button-clear" type="button" id="deletePlan">Șterge</button></div><p class="saved-notice" id="savedPlanNotice" role="status" hidden></p>
+    </div>
+    <div class="program-picker-section">
+      <details id="programPicker" class="program-picker" hidden>
+        <summary id="showDrafts"><span><small id="programLabel">Program selectat</small><strong id="activePlanName"></strong><span id="programMeta"></span></span></summary>
+        <div id="savedMenu" role="group" aria-label="Programe salvate în modul curent"></div>
+      </details>
+      <button class="soft-btn program-new" type="button" id="newPlan" aria-expanded="false" aria-controls="programEditor">+ Program nou</button>
+      <div class="saved-overview" id="savedOverview" hidden>
+        <div><small id="overviewLabel"></small><strong id="overviewValue"></strong></div>
+        <button class="soft-btn" type="button" id="editPlan">Editează</button>
+      </div>
+      <p class="saved-notice" id="savedPlanNotice" role="status" hidden></p>
     </div>
     <div class="condition-wrap card" id="climatePanel" hidden>
       <div class="section-head"><h2>Valorile serelor</h2><small>Date de test</small></div>
@@ -113,19 +132,17 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
         <div class="greenhouse"><h3>Sera 1</h3><div class="two"><label class="control-label">Temperatură (°C)<input id="s1t" type="number" step="0.1" min="-40" max="85" value="30"></label><label class="control-label">Umiditate aer (%)<input id="s1h" type="number" step="0.1" min="0" max="100" value="40"></label></div><div id="s1status" class="source-status">● Date de test valide</div></div>
         <div class="greenhouse"><h3>Sera 2</h3><div class="two"><label class="control-label">Temperatură (°C)<input id="s2t" type="number" step="0.1" min="-40" max="85" value="32"></label><label class="control-label">Umiditate aer (%)<input id="s2h" type="number" step="0.1" min="0" max="100" value="38"></label></div><div id="s2status" class="source-status">● Date de test valide</div></div>
       </div>
-      <div id="smartOptions" hidden><div class="rule"><label class="control-label">Temperatură minimă °C<input id="smartT" type="number" min="-40" max="85" step="0.1" value="28"></label><label class="control-label">Umiditate maximă %<input id="smartH" type="number" min="0" max="100" step="0.1" value="45"></label><label class="control-label">Câte sere?<select id="smartCombine"><option value="2">Ambele sere</option><option value="1">Cel puțin una</option></select></label></div><div class="method-note">Ambele sere trebuie să aibă date valide.</div></div>
-      <div id="adaptiveOptions" hidden><div class="method-note"><div><strong id="adaptiveScore">Ajustare după condițiile de test</strong><div id="adaptiveExplanation">Durata ON poate scădea; pauzele OFF rămân neschimbate.</div></div></div></div>
       <details class="details"><summary>Setări avansate</summary><div class="details-content">
         <div class="two"><label class="control-label">Stare Sera 1<select id="s1state"><option value="ok">Date valide</option><option value="missing">Nod indisponibil</option><option value="stale">Date expirate</option><option value="untrusted">Sursă nevalidată</option></select></label><label class="control-label">Stare Sera 2<select id="s2state"><option value="ok">Date valide</option><option value="missing">Nod indisponibil</option><option value="stale">Date expirate</option><option value="untrusted">Sursă nevalidată</option></select></label></div>
         <label class="control-label" style="margin-top:12px">Valabilitate date (secunde)<input id="maxAge" type="number" min="1" max="5400" step="1" value="120"></label>
-        <div id="adaptiveAdvanced" hidden><div class="advanced-grid" style="margin-top:12px"><fieldset><legend>Factor și temperatură</legend><label class="control-label">Factor minim (%)<input id="minFactor" type="number" min="1" max="100" value="50"></label><label class="control-label">Temperatură joasă / înaltă (°C)<span class="two"><input id="lowT" type="number" step="0.1" min="-40" max="85" value="15"><input id="highT" type="number" step="0.1" min="-40" max="85" value="35"></span></label></fieldset><fieldset><legend>Umiditate și condiții</legend><label class="control-label">Umiditate joasă / înaltă (%)<span class="two"><input id="lowH" type="number" min="0" max="100" step="0.1" value="30"><input id="highH" type="number" min="0" max="100" step="0.1" value="70"></span></label><p class="desc">Algoritmul redistribuie totalul minutelor ON fără a modifica pauzele OFF.</p></fieldset></div></div>
       </div></details>
     </div>
   </section>
   
-<section class="main-section flow-program" aria-labelledby="planHeading">
-  <div class="section-head"><h2 id="planHeading">Programul</h2><small>Configurează doar ce ai ales</small></div>
+<section class="main-section flow-program" id="programEditor" aria-labelledby="planHeading" hidden>
+  <div class="section-head"><h2 id="planHeading">Program nou</h2></div>
   <div class="fields program-basics">
+    <label class="control-label">Numele programului<input id="planName" maxlength="60" autocomplete="off" placeholder="De exemplu, Udare dimineața"></label>
     <label class="control-label">Ora de început<input id="planTime" type="time" value="07:00"></label>
   </div>
   <details class="details flow-sensors" id="sensorDetails" hidden>
@@ -155,311 +172,35 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
     </div>
     <p class="rule-feedback" id="adaptiveFeedback" role="status"></p>
   </div>
-  <div id="timedEditor" class="method-config"><div class="config-line"><div><strong>Durată fixă</strong><p>Cu pauze de protecție simulate la 4 minute ON</p></div><label class="duration-field"><input id="timedMinutes" type="number" min="1" max="120" step="1" value="10" aria-label="Durata fixă în minute"><span>min</span></label></div></div>
   <div id="sequenceEditor" class="method-config" hidden><div class="config-heading"><h3>Secvența de udare</h3><p>Fiecare pas reprezintă o udare sau o pauză.</p></div>
     <div class="steps" id="stepRows"></div><div class="add-actions"><button class="soft-btn" type="button" id="addOn">+ Udare</button><button class="soft-btn" type="button" id="addOff">+ Pauză</button><button class="soft-btn" type="button" id="resetSeq">Exemplu 10 / 20 / 30</button></div></div>
+  <p class="error" id="editorError" role="alert" hidden></p>
+  <div class="library-actions editor-actions">
+    <button class="primary-btn" type="button" id="savePlan">Salvează programul</button>
+    <button class="soft-btn" type="button" id="cancelEdit">Renunță</button>
+    <button class="soft-btn button-clear" type="button" id="deletePlan" hidden>Șterge</button>
+  </div>
 </section>
-<section class="main-section" aria-labelledby="progressHeading"><div class="section-head"><h2 id="progressHeading">Simulare</h2></div>
-    <div class="progress-card"><div class="progress-top"><div><div class="eyebrow" id="progressMode">FIX · Temporizat</div><div class="headline" id="progressTitle">Pregătit pentru simulare</div><div class="progress-sub" id="progressText">Fără acces la pompa fizică.</div></div><span class="state off" id="pumpState">POMPĂ OFF</span></div>
+<section class="main-section saved-preview" id="programPreview" aria-labelledby="progressHeading" hidden><div class="section-head"><h2 id="progressHeading">Previzualizare program</h2></div>
+    <div class="progress-card"><div class="progress-top"><div><div class="headline" id="progressTitle">Pregătit pentru simulare</div><div class="progress-sub" id="progressText">Fără acces la pompa fizică.</div></div><span class="state off" id="pumpState">POMPĂ OFF</span></div>
       <div class="error" role="alert" id="validationError" hidden></div>
       <div class="timeline-wrapper"><div id="timeline" class="timeline" aria-label="Cronologia programului"></div><div id="timelineNeedle" class="needle"></div></div><div class="line-label"><span id="startClock">07:00</span><span id="endClock">07:10</span></div>
-      <div class="legend"><span><i style="background:#79d9b0"></i>ON</span><span><i style="background:#648390"></i>OFF</span><span><i style="background:#d2b87b"></i>Pauză protecție</span></div>
-      <div class="kpis"><div class="kpi"><small>Durata totală</small><b id="durationTotal">—</b></div><div class="kpi"><small>Pompă ON</small><b id="durationOn">—</b></div><div class="kpi"><small>Pauze</small><b id="durationPause">—</b></div></div>
-      <div class="interactive"><label for="scrubber" class="control-label">Derulează timpul</label><input id="scrubber" type="range" min="0" max="1" step="1" value="0" aria-label="Timpul simulat"><div class="line-label"><span id="elapsed">0m 00s</span><span id="remaining">Rămase —</span></div></div>
+      <div class="line-label"><span id="elapsed">0m 00s</span><span id="remaining">Rămase —</span></div>
       <div class="progress-controls"><button class="primary-btn" id="playSimulation" type="button">▶ Simulează</button><button class="soft-btn" id="restartSimulation" type="button">↺ Reia</button></div>
-      <details class="details"><summary>Testează un defect</summary><div class="details-content two"><label class="control-label">Scenariu<select id="faultSelect"><option value="NONE">Funcționare normală</option><option value="LINK">Comunicație pierdută</option><option value="DRY">Lipsă apă</option><option value="BATTERY">Baterie critică</option><option value="RTC">Ceas invalid</option></select></label><label class="control-label">La minutul<input id="faultMinute" type="number" min="0" max="240" step="0.5" value="6" disabled></label></div></details>
-      <details class="details"><summary>Etapele calculate ale simulării</summary><ol class="history" id="eventList"></ol></details>
+      <details class="details preview-details"><summary>Detalii și protecții</summary>
+        <div class="interactive"><label for="scrubber" class="control-label">Derulează timpul</label><input id="scrubber" type="range" min="0" max="1" step="1" value="0" aria-label="Timpul simulat"></div>
+        <div class="legend"><span><i style="background:#79d9b0"></i>ON</span><span><i style="background:#648390"></i>OFF</span><span><i style="background:#d2b87b"></i>Pauză protecție</span></div>
+        <div class="kpis"><div class="kpi"><small>Durata totală</small><b id="durationTotal">—</b></div><div class="kpi"><small>Pompă ON</small><b id="durationOn">—</b></div><div class="kpi"><small>Pauze</small><b id="durationPause">—</b></div></div>
+        <details class="details"><summary>Testează un defect</summary><div class="details-content two"><label class="control-label">Scenariu<select id="faultSelect"><option value="NONE">Funcționare normală</option><option value="LINK">Comunicație pierdută</option><option value="DRY">Lipsă apă</option><option value="BATTERY">Baterie critică</option><option value="RTC">Ceas invalid</option></select></label><label class="control-label">La minutul<input id="faultMinute" type="number" min="0" max="240" step="0.5" value="6" disabled></label></div></details>
+        <details class="details"><summary>Etapele calculate ale simulării</summary><ol class="history" id="eventList"></ol></details>
+      </details>
     </div>
-  </section><p class="offline-note">Date de test · fără pornire reală</p>
+  </section>
 </main>
 
+<script src="./e10-advanced-engine.js"></script>
 <script>
 
-/* E10-P1: pure, deterministic OFFLINE sequence dry-run. No hardware, web or storage calls.
- * A visualization/test model of the existing 4-minute safe-segment policy, NOT
- * a replacement for HydroforAutomationEngine or a real ESP-NOW confirmation.
- */
-(function (root, factory) {
-  'use strict';
-  const api = factory();
-  if (typeof module !== 'undefined' && module.exports) module.exports = api;
-  else root.HidroforSequenceDryRun = api;
-})(typeof globalThis !== 'undefined' ? globalThis : this, function () {
-  'use strict';
-  const MAX_STEPS = 16;
-  const MAX_TOTAL_SECONDS = 4 * 60 * 60;
-  const SEGMENT_SECONDS = 4 * 60;
-  const REST_SECONDS = 30;
-  const DEFAULT_PLAN = Object.freeze({
-    version:1, name:'Udare dimineața', start:'07:00', steps:[
-      {type:'ON',minutes:10},{type:'OFF',minutes:20},{type:'ON',minutes:30}
-    ]
-  });
-  function isObject(x) { return x !== null && typeof x === 'object' && !Array.isArray(x); }
-  function normalized(input) {
-    if (!isObject(input)) throw new Error('Program invalid.');
-    if (input.version !== 1) throw new Error('Versiune de program necunoscută.');
-    const name = typeof input.name==='string' ? input.name.trim() : '';
-    if (!name || name.length > 60 || /[\x00-\x1f]/.test(name)) throw new Error('Numele trebuie să aibă 1–60 de caractere.');
-    if (typeof input.start !== 'string' || !/^([01]\d|2[0-3]):[0-5]\d$/.test(input.start)) throw new Error('Ora trebuie să fie HH:MM.');
-    if (!Array.isArray(input.steps) || input.steps.length<1 || input.steps.length>MAX_STEPS) throw new Error('Sunt permise 1–16 pași.');
-    let hasOn = false;
-    const steps = input.steps.map((x,i)=>{
-      if (!isObject(x) || (x.type!=='ON' && x.type!=='OFF') || !Number.isInteger(x.minutes) || x.minutes<1 || x.minutes>120) {
-        throw new Error('Pasul '+(i+1)+' trebuie să fie ON/OFF și 1–120 minute.');
-      }
-      if (x.type==='ON') hasOn=true;
-      if (i && x.type===input.steps[i-1].type) throw new Error('Alternați ON și OFF (pașii '+i+' și '+(i+1)+').');
-      return {type:x.type,minutes:x.minutes};
-    });
-    if (!hasOn) throw new Error('Programul trebuie să conțină cel puțin un pas ON.');
-    return {version:1,name,start:input.start,steps};
-  }
-  function build(input, options) {
-    const plan=normalized(input);
-    const segments=[];
-    let sec=0, pumpSec=0, userOffSec=0, pauseSec=0;
-    const append=(state,duration,step,detail)=>{
-      if (duration<=0) return;
-      segments.push({from:sec,to:sec+duration,state,step,detail}); sec+=duration;
-      if (state==='ON') pumpSec+=duration;
-      else if (state==='OFF') userOffSec+=duration;
-      else if (state==='REST') pauseSec+=duration;
-    };
-    plan.steps.forEach((step,i)=>{
-      if (step.type==='OFF') {append('OFF',step.minutes*60,i+1,'Pauză programată');return;}
-      let remaining=step.minutes*60;
-      while (remaining>0) {
-        const segment=Math.min(remaining,SEGMENT_SECONDS);
-        append('ON',segment,i+1,'Segment solicitat · maxim 4 min');
-        remaining-=segment;
-        if (remaining>0) append('REST',REST_SECONDS,i+1,'Pauză de protecție · 30 s');
-      }
-    });
-    if (sec>MAX_TOTAL_SECONDS) throw new Error('Execuția simulată depășește limita conservatoare de 4 ore. Reduceți duratele.');
-    // Fault injection is a VISUAL model: hardware STOP is NOT issued here.
-    const faultSec=options && options.faultAtSeconds != null ? options.faultAtSeconds : null;
-    if (faultSec !== null) {
-      if (!Number.isInteger(faultSec) || faultSec<0 || faultSec>sec) throw new Error('Momentul defectului este invalid.');
-      const labels={LINK:'Pierderea ESP-NOW',DRY:'Fără apă',BATTERY:'Baterie critică',RTC:'Ceas invalid'};
-      const faultName=options.faultType && labels[options.faultType] ? labels[options.faultType] : 'Defect';
-      const interrupted=[];
-      for (const segment of segments) {
-        if (segment.from>=faultSec) break;
-        interrupted.push(segment.to>faultSec ? {...segment,to:faultSec} : segment);
-      }
-      const finalPump=interrupted.filter(s=>s.state==='ON').reduce((a,s)=>a+s.to-s.from,0);
-      const finalOff=interrupted.filter(s=>s.state==='OFF').reduce((a,s)=>a+s.to-s.from,0);
-      const finalRest=interrupted.filter(s=>s.state==='REST').reduce((a,s)=>a+s.to-s.from,0);
-      return {plan,segments:interrupted,totalSeconds:faultSec,pumpSeconds:finalPump,
-        offSeconds:finalOff,restSeconds:finalRest,finished:false,fault:true,
-        event:{at:faultSec,message:'DEFECT SIMULAT ('+faultName+') — program întrerupt, pompă OFF (model)'}};
-    }
-    return {plan,segments,totalSeconds:sec,pumpSeconds:pumpSec,offSeconds:userOffSec,
-      restSeconds:pauseSec,finished:true,fault:false,event:null};
-  }
-  function stateAt(result, seconds) {
-    if (!result || !Number.isFinite(seconds)) throw new Error('Simulare invalidă.');
-    const t=Math.max(0,Math.min(result.totalSeconds,seconds));
-    if (result.fault && t===result.totalSeconds) return {state:'FAULT',step:null,detail:result.event.message};
-    if (t>=result.totalSeconds) return {state:'DONE',step:null,detail:'Program terminat · pompă OFF'};
-    const s=result.segments.find(s=>t>=s.from && t<s.to);
-    return s?{state:s.state,step:s.step,detail:s.detail}: {state:'DONE',step:null,detail:'Pompă OFF'};
-  }
-  function wallClock(start,seconds) {
-    const h=Number(start.slice(0,2)),m=Number(start.slice(3));
-    const mins=(h*60+m+Math.floor(seconds/60))%(24*60);
-    return String(Math.floor(mins/60)).padStart(2,'0')+':'+String(mins%60).padStart(2,'0');
-  }
-  return Object.freeze({DEFAULT_PLAN,MAX_STEPS,SEGMENT_SECONDS,REST_SECONDS,
-    normalized,build,stateAt,wallClock});
-});
-
-
-</script>
-<script>
-
-/* E10 integrated offline-only DECISION MODEL.
- * Mirrors the header-only SMART/ADAPTIVE modules, but does not control devices.
- * Treat any calculated eligibility only as a simulated advisory result.
- */
-(function(root,factory){
-  'use strict';
-  const api=factory();
-  if(typeof module==='object'&&module.exports) module.exports=api;
-  else root.HidroforE10ClimateModes=api;
-})(typeof globalThis==='object'?globalThis:this,function(){
-  'use strict';
-  const f=Math.fround;
-  const CLIMATE=['OK','BAD_MAX_AGE','SERA1_MISSING','SERA2_MISSING','SERA1_SOURCE_REJECTED',
-    'SERA2_SOURCE_REJECTED','SERA1_INVALID','SERA2_INVALID','SERA1_STALE','SERA2_STALE'];
-  const CLIMATE_TEXT=['Date climatice valide','Limită de prospețime invalidă','Sera 1 indisponibilă',
-    'Sera 2 indisponibilă','Sursa serei 1 neacceptată','Sursa serei 2 neacceptată',
-    'Valori imposibile în sera 1','Valori imposibile în sera 2','Date vechi în sera 1','Date vechi în sera 2'];
-  const statusMessage=n=>CLIMATE_TEXT[n]||'Status climatic necunoscut';
-  const valid=s=>s && Number.isFinite(s.temperatureC) && Number.isFinite(s.humidityPercent) &&
-    s.temperatureC>=-40&&s.temperatureC<=85&&s.humidityPercent>=0&&s.humidityPercent<=100;
-  function validateClimate(pair,nowMs,maxAgeMs){
-    if(!Number.isInteger(maxAgeMs)||maxAgeMs<1||maxAgeMs>5400000)return 1;
-    if(!pair?.sera1?.present||!pair.sera1.online)return 2;
-    if(!pair?.sera2?.present||!pair.sera2.online)return 3;
-    if(pair.sera1.source!==1||pair.sera1.acceptedProvenance!==true)return 4;
-    if(pair.sera2.source!==2||pair.sera2.acceptedProvenance!==true)return 5;
-    if(!valid(pair.sera1))return 6;
-    if(!valid(pair.sera2))return 7;
-    for(const [s,status] of [[pair.sera1,8],[pair.sera2,9]]){
-      if(!Number.isInteger(s.climateReceivedMs)||!Number.isInteger(nowMs)||
-         ((nowMs-s.climateReceivedMs)>>>0)>=maxAgeMs)return status;
-    }
-    return 0;
-  }
-  function validThreshold(x){return x?.temperatureConfigured===true && x?.humidityConfigured===true&&
-    Number.isFinite(x.temperatureAtLeastC)&&x.temperatureAtLeastC>=-40&&x.temperatureAtLeastC<=85&&
-    Number.isFinite(x.humidityAtMostPercent)&&x.humidityAtMostPercent>=0&&x.humidityAtMostPercent<=100;}
-  function smart(cfg,pair,nowMs){
-    if(cfg?.enabled!==true)return {reason:0,climateStatus:0,sera1Matches:false,sera2Matches:false,eligible:false};
-    if(cfg.configured!==true||![1,2].includes(cfg.combine)||!Number.isInteger(cfg.maxAgeMs)||
-       cfg.maxAgeMs<1||cfg.maxAgeMs>5400000||!validThreshold(cfg.sera1)||!validThreshold(cfg.sera2))
-      return {reason:1,climateStatus:0,sera1Matches:false,sera2Matches:false,eligible:false};
-    const climateStatus=validateClimate(pair,nowMs,cfg.maxAgeMs);
-    if(climateStatus!==0)return {reason:2,climateStatus,sera1Matches:false,sera2Matches:false,eligible:false};
-    const a=pair.sera1.temperatureC>=cfg.sera1.temperatureAtLeastC &&
-      pair.sera1.humidityPercent<=cfg.sera1.humidityAtMostPercent;
-    const b=pair.sera2.temperatureC>=cfg.sera2.temperatureAtLeastC &&
-      pair.sera2.humidityPercent<=cfg.sera2.humidityAtMostPercent;
-    const eligible=cfg.combine===1?a||b:a&&b;
-    return {reason:eligible?4:3,climateStatus,sera1Matches:a,sera2Matches:b,eligible};
-  }
-  function validProfile(p){return p?.configured===true&&p.lowTemperatureSet===true&&p.highTemperatureSet===true&&
-    p.lowHumiditySet===true&&p.highHumiditySet===true&&Number.isInteger(p.baseMinutes)&&p.baseMinutes>=1&&p.baseMinutes<=120&&
-    Number.isInteger(p.minFactorPercent)&&p.minFactorPercent>=1&&p.minFactorPercent<=100&&
-    Number.isInteger(p.maxAgeMs)&&p.maxAgeMs>=1&&p.maxAgeMs<=5400000&&
-    Number.isFinite(p.lowTemperatureC)&&Number.isFinite(p.highTemperatureC)&&
-    p.lowTemperatureC>=-40&&p.highTemperatureC<=85&&p.lowTemperatureC<p.highTemperatureC&&
-    Number.isFinite(p.lowHumidityPercent)&&Number.isFinite(p.highHumidityPercent)&&
-    p.lowHumidityPercent>=0&&p.highHumidityPercent<=100&&p.lowHumidityPercent<p.highHumidityPercent;}
-  function linearPercent(x,lo,hi){
-    if(x<=lo)return 0;
-    if(x>=hi)return 100;
-    // C++ uses float for its intermediate scaled value.
-    return Math.floor(f(f(f(x-lo)*f(100))/f(hi-lo))+0.5);
-  }
-  function adaptive(p,pair,nowMs){
-    const out={status:0,climateStatus:0,baseMinutes:p?.baseMinutes||0,adjustedMinutes:0,
-      tempTermPercent:[0,0],humidityTermPercent:[0,0],scorePercent:[0,0],selectedGreenhouse:0,factorPercent:0};
-    if(p?.enabled!==true)return out;
-    if(!validProfile(p)){out.status=1;return out;}
-    out.climateStatus=validateClimate(pair,nowMs,p.maxAgeMs);
-    if(out.climateStatus!==0){out.status=2;return out;}
-    [pair.sera1,pair.sera2].forEach((s,i)=>{
-      out.tempTermPercent[i]=linearPercent(s.temperatureC,p.lowTemperatureC,p.highTemperatureC);
-      out.humidityTermPercent[i]=100-linearPercent(s.humidityPercent,p.lowHumidityPercent,p.highHumidityPercent);
-      out.scorePercent[i]=Math.floor((out.tempTermPercent[i]+out.humidityTermPercent[i]+1)/2);
-    });
-    const k=out.scorePercent[1]>out.scorePercent[0]?1:0;
-    out.selectedGreenhouse=k+1;
-    out.factorPercent=p.minFactorPercent+Math.floor(((100-p.minFactorPercent)*out.scorePercent[k]+50)/100);
-    out.adjustedMinutes=Math.floor((p.baseMinutes*out.factorPercent+99)/100);
-    out.status=3;
-    return out;
-  }
-  function sequence(plan,profile,pair,nowMs){
-    const steps=plan?.steps;
-    const out={result:1,status:0,climateStatus:0,originalOnMinutes:0,
-      requestedOnMinutes:0,finalOnMinutes:0,originalWallSeconds:0,finalWallSeconds:0,
-      factorPercent:0,steps:null,climateDetails:null,onCount:0};
-    if(!Array.isArray(steps)||!steps.length||steps.length>16)return out;
-    let totalOn=0,onCount=0,wall=0;
-    for(let i=0;i<steps.length;i++){
-      const s=steps[i];
-      if(!s||!['ON','OFF'].includes(s.type)||!Number.isInteger(s.minutes)||s.minutes<1||s.minutes>120||
-         (i>0&&s.type===steps[i-1].type))return out;
-      wall+=s.minutes*60;
-      if(s.type==='ON'){totalOn+=s.minutes;onCount++;wall+=Math.floor((s.minutes-1)/4)*30;}
-    }
-    if(!onCount||wall>14400)return out;
-    out.originalOnMinutes=totalOn;out.onCount=onCount;out.originalWallSeconds=wall;
-    const c=adaptive(profile,pair,nowMs);
-    out.status=c.status;out.climateStatus=c.climateStatus;
-    out.climateDetails={...c,baseMinutes:0,adjustedMinutes:0};
-    if(c.status===2){out.result=3;return out;}
-    if(c.status!==3){out.result=2;return out;}
-    out.factorPercent=c.factorPercent;
-    out.requestedOnMinutes=Math.floor((totalOn*c.factorPercent+99)/100);
-    if(out.requestedOnMinutes<onCount){out.result=4;return out;}
-    const allocated=steps.map(s=>s.type==='ON'?1:0);
-    let left=out.requestedOnMinutes-onCount;
-    while(left--){
-      let best=-1;
-      for(let i=0;i<steps.length;i++){
-        if(steps[i].type!=='ON'||allocated[i]>=steps[i].minutes)continue;
-        if(best<0||steps[i].minutes*(allocated[best]+1)>steps[best].minutes*(allocated[i]+1))best=i;
-      }
-      if(best<0){out.result=5;return out;}
-      allocated[best]++;
-    }
-    const finalSteps=steps.map((s,i)=>({type:s.type,minutes:s.type==='ON'?allocated[i]:s.minutes}));
-    let finalOn=0,finalWall=0;
-    finalSteps.forEach(s=>{finalWall+=s.minutes*60;if(s.type==='ON'){
-      finalOn+=s.minutes;finalWall+=Math.floor((s.minutes-1)/4)*30;}});
-    if(finalOn!==out.requestedOnMinutes||finalWall>wall||finalWall>14400){out.result=5;return out;}
-    out.steps=finalSteps;out.finalOnMinutes=finalOn;out.finalWallSeconds=finalWall;
-    out.result=0;return out;
-  }
-  function decisionText(method,v){
-    if(method==='SMART')return ['Mod dezactivat','Configurație SMART invalidă',
-      'Climă indisponibilă: '+statusMessage(v.climateStatus),'Condiția nu este îndeplinită','Condiție îndeplinită (eligibil, NU START)'][v.reason]||'Necunoscut';
-    if(method==='ADAPTIVE')return ['Secvență ajustată','Secvență invalidă',
-      'Profil ADAPTIVE invalid/dezactivat','Climă respinsă: '+statusMessage(v.climateStatus),
-      'Total ON prea mic pentru câte un minut per pas','Eroare internă'][v.result]||'Necunoscut';
-    return 'Profil fix (simulare)';
-  }
-  function compare(plan,pair,nowMs,smartConfig,adaptiveProfile,engine){
-    const normalized=engine.normalized(plan),fixed=engine.build(normalized);
-    const totalOn=fixed.pumpSeconds/60;
-    const s=smart(smartConfig,pair,nowMs),a=sequence(normalized,adaptiveProfile,pair,nowMs);
-    const steps=(changed)=>({...normalized,steps:changed});
-    const options=[
-      {method:'FIX',eligible:true,reason:'Secvență fixă; nu verifică protecțiile hardware',plan:normalized,calculation:null},
-      {method:'SMART',eligible:s.eligible,reason:decisionText('SMART',s),plan:s.eligible?normalized:null,calculation:s},
-      {method:'ADAPTIVE',eligible:a.result===0,reason:decisionText('ADAPTIVE',a),plan:a.result===0?steps(a.steps):null,calculation:a}
-    ];
-    for(const op of options){op.result=op.plan?engine.build(op.plan):null;op.originalOnMinutes=totalOn;}
-    return {options,original:fixed,totalOn,climate:pair};
-  }
-  function recordFromOption(option,id,pair,nowMs,maxAgeMs){
-    const summary=s=>{
-      const validSource=s&&s.present&&s.online&&s.acceptedProvenance&&valid(s);
-      return {available:!!validSource,fresh:!!validSource&&((nowMs-s.climateReceivedMs)>>>0)<maxAgeMs,
-        temperatureTenths:validSource?Math.round(s.temperatureC*10):0,
-        humidityTenths:validSource?Math.round(s.humidityPercent*10):0,
-        receptionAgeMs:validSource?((nowMs-s.climateReceivedMs)>>>0):0};
-    };
-    const c=option.calculation,method=['FIX','SMART','ADAPTIVE'].indexOf(option.method);
-    const reasonSchema=method===1?1:method===2?3:0;
-    const reasonCode=method===1?(c.reason<<8)|c.climateStatus:
-      method===2?(c.result<<8)|c.climateStatus:0;
-    const d={method,kind:1,durationScope:1,eligible:option.eligible,
-      hasBaseMinutes:true,hasProposedMinutes:option.eligible,
-      baseMinutes:option.originalOnMinutes,proposedMinutes:option.eligible?option.result.pumpSeconds/60:0,
-      reasonSchema,reasonCode,uptimeMs:nowMs,hasEpoch:false,epochSeconds:0,
-      greenhouse1:summary(pair.sera1),greenhouse2:summary(pair.sera2),
-      hasAdaptiveDetails:method===2&&option.eligible,
-      factorPercent:method===2&&option.eligible?c.factorPercent:0,
-      selectedGreenhouse:method===2&&option.eligible?c.climateDetails.selectedGreenhouse:0,
-      tempTermPercent:method===2&&option.eligible?c.climateDetails.tempTermPercent:[0,0],
-      humidityTermPercent:method===2&&option.eligible?c.climateDetails.humidityTermPercent:[0,0],
-      scorePercent:method===2&&option.eligible?c.climateDetails.scorePercent:[0,0]};
-    return {id,decision:d,state:option.eligible?0:1,terminalReason:0,
-      hasRequestTime:false,hasAckTime:false,hasFinishTime:!option.eligible,
-      requestUptimeMs:0,ackUptimeMs:0,finishUptimeMs:!option.eligible?nowMs:0};
-  }
-  return Object.freeze({CLIMATE,statusMessage,validateClimate,smart,adaptive,sequence,decisionText,compare,recordFromOption});
-});
-
-
-</script>
-<script>
 /* E10 V3: one selectable control method and one program type.
    Uses the existing pure E10 DRY-RUN and SMART/ADAPTIVE engines unchanged.
    Offline-only: no network, relay, scheduler, NVS or ESP32 operations. */
@@ -469,8 +210,8 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
     if(event.key==='Escape')window.parent.postMessage({type:'hidrofor-e10-close'},location.origin);
   });
   const Engine=window.HidroforSequenceDryRun;
-  const Modes=window.HidroforE10ClimateModes;
-  if(!Engine || !Modes){
+  const Advanced=window.HidroforAdvancedPrograms;
+  if(!Engine || !Advanced){
     const el=document.getElementById('validationError');
     if(el){el.hidden=false;el.textContent='Motoarele software ale laboratorului nu s-au încărcat.';}
     return;
@@ -479,22 +220,22 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
   const savedKey='hidrofor-e10-lab-simplu-v3';
   const baseSeq=[{type:'ON',minutes:10},{type:'OFF',minutes:20},{type:'ON',minutes:30}];
   const clone=x=>JSON.parse(JSON.stringify(x));
-  const state={mode:'FIX',type:'TIMED',steps:clone(baseSeq),planName:'Udare dimineața',start:'07:00',timedMinutes:10,
-    records:[],selected:'', preview:null,planned:null,option:null,at:0,timer:null,started:false};
-  const modeSessions=Object.create(null);
-  let savedSnapshot=null;
+  const modeNames={SMART:'Smart',SEQUENCE:'Cu pași',ADAPTIVE:'Adaptiv'};
+  const state={mode:'SMART',editing:'',steps:clone(baseSeq),start:'07:00',
+    records:[],selected:'',preview:null,planned:null,option:null,at:0,timer:null,started:false};
+  const modeSessions=new Map();
   let storageReadError=false;
   const fmt=seconds=>Math.floor(seconds/60)+'m '+String(Math.round(seconds%60)).padStart(2,'0')+'s';
   const fmtClock=seconds=>Engine.wallClock(state.start,seconds);
   const el=(tag,className,text)=>{const x=document.createElement(tag);if(className)x.className=className;if(text!==undefined)x.textContent=String(text);return x;};
   function text(id,value){$(id).textContent=String(value);}
   function num(id){const s=$(id).value.trim();return s===''?NaN:Number(s);}
-  function markError(message){const box=$('validationError');box.textContent=message||'';box.hidden=!message;}
+  function markError(message){for(const id of ['validationError','editorError']){const box=$(id);box.textContent=message||'';box.hidden=!message;}}
   function stop(){if(state.timer!==null){clearInterval(state.timer);state.timer=null;}updateButton();}
   function updateButton(){text('playSimulation',state.timer!==null?'Ⅱ Pauză':state.preview&&state.at>=state.preview.totalSeconds?'↺ Simulează din nou':'▶ Simulează');$('playSimulation').disabled=!state.preview;}
   function makePlan(){
-    return Engine.normalized({version:1,name:state.planName,start:state.start,
-      steps:state.mode==='SEQUENCE'?clone(state.steps):[{type:'ON',minutes:state.mode==='SMART'?num('smartDuration'):state.mode==='ADAPTIVE'?10:state.timedMinutes}]});
+    return Engine.normalized({version:1,name:$('planName').value.trim()||'Program nou',start:state.start,
+      steps:state.mode==='SEQUENCE'?clone(state.steps):[{type:'ON',minutes:state.mode==='SMART'?num('smartDuration'):10}]});
   }
   function climateConfig(){
     const nowMs=1_000_000,maxAgeMs=num('maxAge')*1000;
@@ -504,15 +245,11 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
         temperatureC:num(prefix+'t'),humidityPercent:num(prefix+'h'),
         climateReceivedMs:nowMs-(st==='stale'?maxAgeMs+5_000:1000)};
     }
-    const thresholds=()=>({temperatureConfigured:true,humidityConfigured:true,temperatureAtLeastC:num('smartT'),humidityAtMostPercent:num('smartH')});
-    return {pair:{sera1:greenhouse('s1',1),sera2:greenhouse('s2',2)},nowMs,maxAgeMs,
-      smart:{enabled:true,configured:true,combine:num('smartCombine'),maxAgeMs,sera1:thresholds(),sera2:thresholds()},
-      adaptive:{enabled:true,configured:true,baseMinutes:20,maxAgeMs,minFactorPercent:num('minFactor'),
-        lowTemperatureSet:true,highTemperatureSet:true,lowHumiditySet:true,highHumiditySet:true,
-        lowTemperatureC:num('lowT'),highTemperatureC:num('highT'),lowHumidityPercent:num('lowH'),highHumidityPercent:num('highH')}};
+    return {pair:{sera1:greenhouse('s1',1),sera2:greenhouse('s2',2)},nowMs,maxAgeMs};
   }
 
-  const custom={metric:'temperature',rule:'above',scope:'both',ref:'average'};
+  const defaults={metric:'temperature',rule:'above',scope:'both',ref:'average'};
+  const custom={...defaults};
   const newFields=['smartLimitLow','smartLimitHigh','smartDuration','adaptiveLowBound','adaptiveHighBound','adaptiveUnderM','adaptiveBetweenM','adaptiveAboveM'];
   function refreshNewControls(){
     for(const [attr,property] of [['data-metric','metric'],['data-rule','rule'],['data-scope','scope'],['data-ref','ref']]){
@@ -526,68 +263,33 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
     text('adaptiveBandUnderText','Sub '+(Number.isFinite(low)?low:'—')+'°C');
     text('adaptiveBandBetweenText',(Number.isFinite(low)?low:'—')+'–'+(Number.isFinite(high)?high:'—')+'°C');
     text('adaptiveBandAboveText',(Number.isFinite(high)?high:'—')+'°C și peste');
-    text('activePlanName',(state.planName||'Program fără nume')+(state.selected?'':' · nesalvat'));
   }
-  function validateClimatePair(config){
-    if(!Number.isInteger(config.maxAgeMs)||config.maxAgeMs<1000||config.maxAgeMs>5400000)
-      throw new Error('Valabilitatea datelor trebuie să fie 1–5400 secunde.');
-    const result=[];
-    for(const [which,label] of [['sera1','Sera 1'],['sera2','Sera 2']]){
-      const item=config.pair[which];
-      if(!item||!item.present||!item.online||!item.acceptedProvenance)throw new Error(label+': nod indisponibil sau sursă respinsă.');
-      if(!Number.isFinite(item.climateReceivedMs)||config.nowMs-item.climateReceivedMs>config.maxAgeMs||item.climateReceivedMs>config.nowMs)throw new Error(label+': date expirate.');
-      if(!Number.isFinite(item.temperatureC)||item.temperatureC<-40||item.temperatureC>85||
-         !Number.isFinite(item.humidityPercent)||item.humidityPercent<0||item.humidityPercent>100)throw new Error(label+': temperatură ori umiditate invalidă.');
-      result.push(item);
-    }
-    return result;
+  function programConfig(plan){
+    return {mode:state.mode,plan,
+      smart:{metric:custom.metric,rule:custom.rule,scope:custom.scope,low:num('smartLimitLow'),high:num('smartLimitHigh')},
+      adaptive:{source:custom.ref,low:num('adaptiveLowBound'),high:num('adaptiveHighBound'),durations:['adaptiveUnderM','adaptiveBetweenM','adaptiveAboveM'].map(num)}};
   }
   function newChoice(plan,climate){
-    if(state.mode==='SEQUENCE'||state.mode==='FIX')return {eligible:true,method:state.mode,plan,result:Engine.build(plan)};
-    const pair=validateClimatePair(climate);
-    if(state.mode==='SMART'){
-      const low=num('smartLimitLow'),high=num('smartLimitHigh'),humidity=custom.metric==='humidity';
-      const lo=humidity?0:-40,hi=humidity?100:85;
-      if(!Number.isFinite(low)||low<lo||low>hi)throw new Error('Pragul SMART este invalid.');
-      if(custom.rule==='between'&&(!Number.isFinite(high)||high<lo||high>hi||low>=high))throw new Error('Pragurile SMART trebuie să fie în ordine crescătoare.');
-      const passes=pair.map(item=>{
-        const v=humidity?item.humidityPercent:item.temperatureC;
-        if(custom.rule==='under')return v<low;
-        if(custom.rule==='between')return v>=low&&v<high;
-        return v>=low;
-      });
-      const eligible=custom.scope==='both'?passes.every(Boolean):passes.some(Boolean);
-      text('smartFeedback',eligible?'● Condiție îndeplinită · udarea poate începe în simulare.':'● Condiție neîndeplinită · udarea este blocată.');
-      if(!eligible)return {eligible:false,method:'SMART',reason:'SMART: pragul ales nu este îndeplinit.'};
-      return {eligible:true,method:'SMART',plan,result:Engine.build(plan)};
-    }
+    if((state.mode==='SMART'||state.mode==='ADAPTIVE')&&(!Number.isInteger(climate.maxAgeMs)||climate.maxAgeMs<1000||climate.maxAgeMs>5400000))
+      throw new Error('Valabilitatea datelor trebuie să fie 1–5400 secunde.');
+    const choice=Advanced.simulate({...programConfig(plan),climate:climate.pair,nowMs:climate.nowMs,maxAgeMs:climate.maxAgeMs,
+      requireBoth:true,requireFullClimate:true});
+    if(state.mode==='SMART')text('smartFeedback',choice.eligible?'● Condiție îndeplinită · udarea poate începe în simulare.':'● '+choice.reason);
     if(state.mode==='ADAPTIVE'){
-      const lo=num('adaptiveLowBound'),hi=num('adaptiveHighBound');
-      const values=['adaptiveUnderM','adaptiveBetweenM','adaptiveAboveM'].map(num);
-      if(!Number.isFinite(lo)||!Number.isFinite(hi)||lo<-40||hi>85||lo>=hi)throw new Error('Intervalele ADAPTIVE trebuie să aibă două praguri crescătoare între -40 și 85°C.');
-      if(!values.every(v=>Number.isInteger(v)&&v>=1&&v<=120))throw new Error('Fiecare interval ADAPTIVE trebuie să aibă între 1 și 120 minute.');
-      const temp=custom.ref==='s1'?pair[0].temperatureC:custom.ref==='s2'?pair[1].temperatureC:(pair[0].temperatureC+pair[1].temperatureC)/2;
-      const selected=temp<lo?0:temp<hi?1:2;
-      for(const [i,id] of ['adaptiveBandUnder','adaptiveBandBetween','adaptiveBandAbove'].entries())$(id).classList.toggle('selected-band',i===selected);
-      const minutes=values[selected];
-      text('adaptiveFeedback','● Temperatura de referință: '+temp.toFixed(1)+'°C · interval '+(selected+1)+' · durata aleasă: '+minutes+' minute.');
-      const adapted=Engine.normalized({version:1,name:plan.name,start:plan.start,steps:[{type:'ON',minutes}]});
-      return {eligible:true,method:'ADAPTIVE',plan:adapted,result:Engine.build(adapted)};
+      for(const [i,id] of ['adaptiveBandUnder','adaptiveBandBetween','adaptiveBandAbove'].entries())$(id).classList.toggle('selected-band',choice.eligible&&i===choice.decision.band);
+      text('adaptiveFeedback',choice.eligible?'● Temperatura de referință: '+choice.decision.temperatureC.toFixed(1)+'°C · interval '+(choice.decision.band+1)+' · durata aleasă: '+choice.decision.minutes+' minute.':'● '+choice.reason);
     }
-    throw new Error('Metodă de control necunoscută.');
+    return choice;
   }
 
 
   function refreshMode(){
     document.querySelectorAll('[data-mode]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===state.mode)));
-    $('climatePanel').hidden=state.mode==='FIX'||state.mode==='SEQUENCE';
-    $('sensorDetails').hidden=state.mode==='FIX'||state.mode==='SEQUENCE';
-    $('smartOptions').hidden=true;$('adaptiveOptions').hidden=true;$('adaptiveAdvanced').hidden=true;
+    $('climatePanel').hidden=state.mode==='SEQUENCE';
+    $('sensorDetails').hidden=state.mode==='SEQUENCE';
     $('smartNew').hidden=state.mode!=='SMART';$('adaptiveNew').hidden=state.mode!=='ADAPTIVE';
-    $('timedEditor').hidden=state.mode!=='FIX';$('sequenceEditor').hidden=state.mode!=='SEQUENCE';
     $('climateSlot').append($('climatePanel'));
-    refreshType();
-    text('modeHint',({FIX:'O durată fixă aleasă de tine.',SMART:'Regulă sub prag / între praguri / peste prag.',ADAPTIVE:'Durate exacte pe intervale de temperatură, nu procente.',SEQUENCE:'Pași ON/OFF și pauze configurabile.'})[state.mode]);
+    $('sequenceEditor').hidden=state.mode!=='SEQUENCE';
     refreshNewControls();
     for(const prefix of ['s1','s2']){
       const st=$(prefix+'state').value,health=$(prefix+'status'),t=num(prefix+'t'),h=num(prefix+'h');
@@ -598,12 +300,6 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
     const displayTemp=id=>Number.isFinite(num(id))?String(num(id))+'°C':'—';
     text('sensorSummary','Sera 1 '+displayTemp('s1t')+' · Sera 2 '+displayTemp('s2t'));
   }
-  function refreshType(){
-    state.type=state.mode==='SEQUENCE'?'SEQUENCE':'TIMED';
-    $('timedEditor').hidden=state.mode!=='FIX';
-    $('sequenceEditor').hidden=state.mode!=='SEQUENCE';
-  }
-
   function renderSteps(){
     const host=$('stepRows');host.replaceChildren();
     state.steps.forEach((step,index)=>{
@@ -655,8 +351,8 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
     if(reason)markError(reason);updateButton();
   }
   function recompute(){
-    stop();state.at=0;state.started=false;markError('');updateDirty();
-    text('progressMode',(state.mode==='SEQUENCE'?'Cu pași':state.mode==='SMART'?'SMART':state.mode==='ADAPTIVE'?'ADAPTIVE':'FIX')+' · '+(state.mode==='SEQUENCE'?'Secvențial':'Temporizat'));
+    stop();state.at=0;state.started=false;markError('');
+    if(!state.selected&&!state.editing){state.preview=null;return;}
     let plan,chosen,climate;
     try{
       plan=makePlan();climate=climateConfig();
@@ -708,7 +404,7 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
     const done=cur.state==='DONE',fault=cur.state==='FAULT';
     if(!state.started){
       badge.className='state off';badge.textContent='PREGĂTIT';
-      text('progressTitle','Pregătit');
+      text('progressTitle',p.pumpSeconds/60+' min udare');
       text('progressText',`Pornire simulată la ${fmtClock(0)}`);
     }else{
       text('progressTitle',done?'Program încheiat':fault?'Program întrerupt':`Pas ${cur.step||'—'} · ${cur.state==='ON'?'Udare':cur.state==='REST'?'Pauză de protecție':'Așteptare'}`);
@@ -729,120 +425,162 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
     },250);
     updateButton();updateProgress();
   }
-  const climateFields=['s1t','s1h','s2t','s2h','s1state','s2state','smartT','smartH','smartCombine','maxAge','minFactor','lowT','highT','lowH','highH',...newFields];
-  function climateSnapshot(){return Object.fromEntries(climateFields.map(id=>[id,$(id).value]));}
-  function currentSnapshot(){return JSON.stringify({mode:state.mode,type:state.type,steps:state.steps,name:state.planName,start:state.start,timedMinutes:state.timedMinutes,custom:{...custom},climate:climateSnapshot()});}
-  function updateDirty(){$('savePlan').hidden=!state.selected||savedSnapshot===currentSnapshot();}
-  function restoreClimate(saved){
+  const climateFields=['s1t','s1h','s2t','s2h','s1state','s2state','maxAge',...newFields];
+  const readFields=()=>Object.fromEntries(climateFields.map(id=>[id,$(id).value]));
+  function restoreFields(values={}){
     for(const id of climateFields){
       const field=$(id);
-      const fallback=field.tagName==='SELECT' ? [...field.options].find(o=>o.defaultSelected)?.value ?? field.options[0].value : field.defaultValue;
-      const value=saved && typeof saved[id]==='string' && saved[id].length<=100 ? saved[id] : fallback;
-      field.value=field.tagName==='SELECT' && ![...field.options].some(o=>o.value===value) ? fallback : value;
+      const fallback=field.tagName==='SELECT' ? field.options[0].value : field.defaultValue;
+      const saved=values?.[id];
+      field.value=typeof saved==='string' && (field.tagName!=='SELECT'||[...field.options].some(option=>option.value===saved)) ? saved : fallback;
     }
   }
-  function showNewForm(open){
-    $('newPlanForm').hidden=!open;$('newPlan').hidden=open;$('newPlan').setAttribute('aria-expanded',String(open));
-    $('programActions').hidden=open||!state.selected;$('nameError').hidden=true;
-    if(open){$('programPicker').open=false;$('planName').value='';$('planName').focus();}
-  }
   function modeOf(record){
-    if(!record||typeof record.id!=='string'||!['FIX','SMART','ADAPTIVE','SEQUENCE'].includes(record.mode)||!['TIMED','SEQUENCE'].includes(record.type)||!record.plan||!Array.isArray(record.plan.steps))return null;
-    return record.type==='SEQUENCE'?'SEQUENCE':record.mode;
-  }
-  function switchMode(mode){
-    if(mode===state.mode)return;
-    modeSessions[state.mode]={selected:state.selected,name:state.planName,start:state.start,timedMinutes:state.timedMinutes,steps:state.steps.map(step=>({...step})),custom:{...custom},climate:climateSnapshot(),savedSnapshot,notice:$('savedPlanNotice').textContent,noticeHidden:$('savedPlanNotice').hidden};
-    const session=modeSessions[mode];
-    state.mode=mode;state.type=mode==='SEQUENCE'?'SEQUENCE':'TIMED';
-    state.selected=session?.selected||'';state.planName=session?.name||'Program nou';state.start=session?.start||'07:00';state.timedMinutes=session?session.timedMinutes:10;
-    state.steps=session?session.steps.map(step=>({...step})):clone(baseSeq);
-    Object.assign(custom,{metric:'temperature',rule:'above',scope:'both',ref:'average'},session?.custom||{});
-    restoreClimate(session?.climate||null);savedSnapshot=session?.savedSnapshot||null;
-    $('planTime').value=state.start;$('timedMinutes').value=String(state.timedMinutes);
-    $('savedPlanNotice').textContent=session?.notice||'';$('savedPlanNotice').hidden=session?.noticeHidden??true;
-    $('programPicker').open=false;showNewForm(false);refreshMode();renderSteps();showSaved();recompute();
+    if(!record||typeof record.id!=='string'||!record.plan||!Array.isArray(record.plan.steps))return null;
+    // Older sequence drafts used the former timed mode as their storage label.
+    if(record.type==='SEQUENCE'&&['SEQUENCE','FIX','SMART','ADAPTIVE'].includes(record.mode))return 'SEQUENCE';
+    return record.type==='TIMED'&&['SMART','ADAPTIVE'].includes(record.mode)?record.mode:null;
   }
   function safeRead(){
     try{
-      const stored=localStorage.getItem(savedKey),existing=JSON.parse(stored||'[]');
-      if(stored!==null){if(!Array.isArray(existing)){storageReadError=true;return [];}return existing;}
-      // Migrate pre-redesign E10 browser drafts without changing or deleting them.
+      const stored=localStorage.getItem(savedKey);
+      if(stored!==null){
+        const records=JSON.parse(stored);
+        if(!Array.isArray(records))throw new Error();
+        return records;
+      }
       const old=JSON.parse(localStorage.getItem('hidrofor-e10-dryrun-drafts-v1')||'[]');
       if(Array.isArray(old))return old.flatMap((item,i)=>{
-        try{const plan=Engine.normalized(item);return [{id:'legacy-'+i,mode:'FIX',type:'SEQUENCE',plan,sequence:clone(plan.steps),timedMinutes:plan.steps.find(x=>x.type==='ON')?.minutes||10}];}
+        try{return [{id:'legacy-'+i,mode:'SEQUENCE',type:'SEQUENCE',plan:Engine.normalized(item)}];}
         catch(_){return [];}
       });
     }catch(_){storageReadError=true;}
     return [];
   }
+  function notice(message){
+    text('savedPlanNotice',message);
+    $('savedPlanNotice').hidden=!message;
+  }
   function showSaved(){
-    const sel=$('savedPlans');sel.replaceChildren(new Option('Selectează un program',''));
     const matching=state.records.filter(record=>modeOf(record)===state.mode);
-    for(const record of matching)sel.append(new Option(record.plan.name,record.id));
+    const selected=matching.find(record=>record.id===state.selected);
+    const editing=Boolean(state.editing);
+    $('programPicker').hidden=!matching.length||editing;
+    $('newPlan').hidden=editing;
+    $('newPlan').setAttribute('aria-expanded',String(editing));
+    $('programEditor').hidden=!editing;
+    $('savedOverview').hidden=!selected||editing;
+    $('programPreview').hidden=!selected||editing;
+    $('deletePlan').hidden=state.editing!=='edit';
+    text('planHeading',state.editing==='edit'?'Editează programul':'Program nou');
+    text('savePlan',state.editing==='edit'?'Salvează modificările':'Salvează programul');
     const host=$('savedMenu');host.replaceChildren();
-    if(!matching.length)host.append(el('p','e10-info','Niciun program salvat în acest mod.'));
     for(const record of matching){
-      const b=el('button','saved-item');b.type='button';b.setAttribute('aria-current',String(record.id===state.selected));
-      b.append(el('strong','',record.plan.name));
-      b.addEventListener('click',()=>{sel.value=record.id;load();});host.append(b);
+      const button=el('button','saved-item');button.type='button';
+      button.setAttribute('aria-current',String(record.id===state.selected));
+      button.append(el('strong','',record.plan.name));
+      button.addEventListener('click',()=>{openSaved(record);$('showDrafts').focus();});
+      host.append(button);
     }
-    sel.value=state.selected;
-    $('programActions').hidden=!state.selected||!$('newPlanForm').hidden;
-    refreshNewControls();updateDirty();
-    if(storageReadError){$('savedPlanNotice').textContent='Programele salvate nu pot fi citite. Nu se pot salva modificări în această sesiune.';$('savedPlanNotice').hidden=false;}
+    if(selected&&!editing)renderSummary();
+    if(storageReadError)notice('Programele salvate nu pot fi citite. Salvarea locală este blocată.');
+  }
+  function renderSummary(){
+    text('activePlanName',$('planName').value);
+    const metric=custom.metric==='humidity'?'Umiditatea aerului':'Temperatură';
+    const scope=custom.scope==='one'?'Cel puțin o seră':'Ambele sere';
+    const ref={s1:'Sera 1',s2:'Sera 2',average:'Media serelor'}[custom.ref]||'Media serelor';
+    text('programMeta',[modeNames[state.mode],state.start,state.mode==='SMART'?scope+' · '+metric:state.mode==='ADAPTIVE'?ref:''].filter(Boolean).join(' · '));
+    if(state.mode==='SMART'){
+      const unit=custom.metric==='humidity'?'%':'°C',low=$('smartLimitLow').value+unit;
+      const rule={under:'sub '+low,above:'de la '+low,between:'între '+low+' și '+$('smartLimitHigh').value+unit};
+      text('overviewLabel','Condiție de pornire');text('overviewValue',metric+' '+(rule[custom.rule]||'—'));
+    }else if(state.mode==='SEQUENCE'){
+      text('overviewLabel','Secvență');text('overviewValue',state.steps.length+(state.steps.length===1?' pas':' pași')+' · udare și pauze');
+    }else{
+      text('overviewLabel','Durate după temperatură');
+      text('overviewValue',['adaptiveUnderM','adaptiveBetweenM','adaptiveAboveM'].map(id=>$(id).value).join(' / ')+' min');
+    }
+  }
+  function applyForm({name='',start='07:00',steps=baseSeq,settings=defaults,fields}={}){
+    $('planName').value=name;
+    state.start=start;$('planTime').value=start;
+    state.steps=clone(steps);
+    Object.assign(custom,defaults,settings);
+    restoreFields(fields);
+    $('sensorDetails').open=false;
+  }
+  function refreshScreen(){
+    $('programPicker').open=false;
+    refreshMode();renderSteps();showSaved();recompute();
+  }
+  function openSaved(record){
+    try{
+      const plan=Engine.normalized(record.plan);
+      const fields={...record.climate};
+      if(state.mode==='SMART'&&fields.smartDuration===undefined)fields.smartDuration=String(plan.steps.find(step=>step.type==='ON')?.minutes??10);
+      applyForm({name:plan.name,start:plan.start,steps:Array.isArray(record.sequence)?record.sequence:plan.steps,settings:record.custom,fields});
+      state.selected=record.id;state.editing='';
+      const converted=record.type==='SEQUENCE'&&!['SEQUENCE','FIX'].includes(record.mode);
+      notice(converted?'Schiță veche: deschisă în Cu pași. Verifică setările înainte de a salva.':'');
+      refreshScreen();
+      return true;
+    }catch(_){notice('Programul salvat are un format invalid.');return false;}
+  }
+  function openMode(){
+    const matching=state.records.filter(record=>modeOf(record)===state.mode);
+    const active=matching.find(record=>record.id===state.selected)||matching[0];
+    if(active&&openSaved(active))return;
+    state.selected='';state.editing='';applyForm();refreshScreen();
+  }
+  function switchMode(mode){
+    if(mode===state.mode)return;
+    modeSessions.set(state.mode,{
+      selected:state.selected,editing:state.editing,name:$('planName').value,start:state.start,
+      steps:clone(state.steps),settings:{...custom},fields:readFields()
+    });
+    state.mode=mode;notice('');
+    const session=modeSessions.get(mode);
+    state.selected=session?.selected||'';
+    if(session?.editing){
+      state.editing=session.editing;applyForm(session);refreshScreen();
+    }else openMode();
+  }
+  function editProgram(kind){
+    if(kind==='new')applyForm();
+    state.editing=kind;
+    refreshScreen();$('planName').focus();
   }
   function save(){
-    if(storageReadError){markError('Programele salvate nu pot fi citite; salvarea este oprită pentru a le proteja.');return false;}
-    let plan;try{plan=makePlan();}catch(e){markError(e.message);return false;}
-    if(state.selected&&modeOf(state.records.find(r=>r?.id===state.selected))!==state.mode){markError('Programul selectat aparține altui mod. Alege un program din modul curent.');return false;}
-    const record={id:state.selected||String(Date.now())+'-'+Math.random().toString(36).slice(2,8),
-      mode:state.mode,type:state.mode==='SEQUENCE'?'SEQUENCE':'TIMED',plan,timedMinutes:state.timedMinutes,sequence:clone(state.steps),climate:climateSnapshot(),custom:{...custom}};
-    let records=state.records.slice();
-    if(state.selected){const i=records.findIndex(x=>x.id===state.selected);if(i>=0)records[i]=record;else records.push(record);}
-    else {if(records.length>=8){markError('Sunt permise cel mult 8 schițe. Șterge una înainte să salvezi.');return false;}records.push(record);}
-    try{localStorage.setItem(savedKey,JSON.stringify(records));}catch(e){markError('Browserul nu permite salvarea locală.');return false;}
-    state.records=records;state.selected=record.id;savedSnapshot=currentSnapshot();showSaved();markError('');$('savedPlanNotice').hidden=true;
-    return true;
-  }
-  function createPlan(){
+    if(storageReadError){markError('Salvarea locală este blocată.');return;}
     const name=$('planName').value.trim();
-    if(!name||name.length>60||/[\x00-\x1f]/.test(name)){$('nameError').textContent='Scrie un nume pentru program.';$('nameError').hidden=false;$('planName').focus();return;}
-    const previousName=state.planName,previousSelected=state.selected;
-    state.planName=name;state.selected='';
-    if(save()){showNewForm(false);showSaved();recompute();$('showDrafts').focus();}
-    else{state.planName=previousName;state.selected=previousSelected;showSaved();}
-  }
-  function load(){
-    const selected=$('savedPlans').value;if(!selected){state.selected='';return;}
-    const record=state.records.find(x=>x?.id===selected);if(!record||modeOf(record)!==state.mode)return;
-    try{
-      const normalized=Engine.normalized(record.plan);
-      state.selected=record.id;state.mode=record.type==='SEQUENCE'?'SEQUENCE':record.mode;state.type=state.mode==='SEQUENCE'?'SEQUENCE':'TIMED';
-      Object.assign(custom,{metric:'temperature',rule:'above',scope:'both',ref:'average'},record.custom||{});
-      state.planName=normalized.name;state.start=normalized.start;
-      state.steps=record.sequence&&Array.isArray(record.sequence)?clone(record.sequence):clone(normalized.steps);
-      state.timedMinutes=record.timedMinutes||normalized.steps.find(s=>s.type==='ON')?.minutes||10;
-      $('planTime').value=state.start;$('timedMinutes').value=String(state.timedMinutes);
-      const hasClimate=record.climate && typeof record.climate==='object' && !Array.isArray(record.climate) && ['s1t','s1h','s2t','s2h'].every(id=>typeof record.climate[id]==='string');
-      restoreClimate(hasClimate?record.climate:null);
-      refreshNewControls();
-      const legacySequence=record.type==='SEQUENCE'&&record.mode!=='FIX'&&record.mode!=='SEQUENCE';
-      const legacyCombined=record.schema===2&&(record.mode==='SMART'||record.adaptive===true);
-      $('savedPlanNotice').textContent=legacySequence?'Schiță veche: mutată în «Cu pași». Condițiile vechi SMART/ADAPTIVE nu se aplică; verifică programul.':legacyCombined?'Schiță veche: regulile Smart sau Adaptive erau diferite. Verifică setările înainte de a salva.':hasClimate?'':'Schiță veche: valori de test implicite.';
-      $('savedPlanNotice').hidden=Boolean(hasClimate)&&!legacySequence&&!legacyCombined;
-      savedSnapshot=currentSnapshot();$('programPicker').open=false;showNewForm(false);refreshType();refreshMode();renderSteps();showSaved();recompute();
-    }catch(e){markError('Schița salvată nu mai are un format valid.');}
+    if(!name||name.length>60||/[\x00-\x1f]/.test(name)){
+      markError('Scrie un nume pentru program.');$('planName').focus();return;
+    }
+    let plan;
+    try{plan=makePlan();}catch(error){markError(error.message);return;}
+    const validation=Advanced.validateConfig(programConfig(plan));
+    if(!validation.ok){markError(validation.reason);return;}
+    const editing=state.editing==='edit';
+    const id=editing?state.selected:String(Date.now())+'-'+Math.random().toString(36).slice(2,8);
+    const record={id,mode:state.mode,type:state.mode==='SEQUENCE'?'SEQUENCE':'TIMED',
+      plan,sequence:clone(state.steps),climate:readFields(),custom:{...custom}};
+    if(!editing&&state.records.filter(modeOf).length>=8){markError('Sunt permise cel mult 8 programe.');return;}
+    const records=editing?state.records.map(row=>row?.id===id?record:row):[...state.records,record];
+    try{localStorage.setItem(savedKey,JSON.stringify(records));}
+    catch(_){markError('Browserul nu permite salvarea locală.');return;}
+    state.records=records;openSaved(record);$('showDrafts').focus();
   }
   function removeSaved(){
-    if(storageReadError){markError('Programele salvate nu pot fi citite; ștergerea este oprită pentru a le proteja.');return;}
-    if(!state.selected){markError('Selectează mai întâi o schiță.');return;}
-    const rows=state.records.filter(x=>x?.id!==state.selected);
-    try{localStorage.setItem(savedKey,JSON.stringify(rows));}catch(e){markError('Nu se poate modifica memoria locală.');return;}
-    state.records=rows;state.selected='';showSaved();markError('');$('savedPlanNotice').hidden=true;
+    if(storageReadError){markError('Ștergerea este blocată.');return;}
+    const records=state.records.filter(row=>row?.id!==state.selected);
+    try{localStorage.setItem(savedKey,JSON.stringify(records));}
+    catch(_){markError('Nu se poate modifica memoria locală.');return;}
+    state.records=records;notice('');openMode();
+    $(state.selected?'showDrafts':'newPlan').focus();
   }
   function init(){
-    state.records=safeRead();showSaved();
+    state.records=safeRead();openMode();
     document.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click',()=>switchMode(b.dataset.mode)));
 
     // Cele trei opțiuni SMART și intervalele ADAPTIVE au propria stare,
@@ -861,10 +599,9 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
       $(field).addEventListener('input',()=>{refreshNewControls();recompute();});
       $(field).addEventListener('change',()=>{refreshNewControls();recompute();});
     }
-    $('planName').addEventListener('input',()=>{$('nameError').hidden=true;});
-    $('planName').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();createPlan();}});
+    $('planName').addEventListener('input',()=>markError(''));
+    $('planName').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();save();}});
     $('planTime').addEventListener('change',()=>{state.start=$('planTime').value;recompute();});
-    $('timedMinutes').addEventListener('input',()=>{const v=$('timedMinutes').value.trim();state.timedMinutes=v===''?NaN:Number(v);recompute();});
     for(const key of climateFields){
       $(key).addEventListener('input',()=>{refreshMode();recompute();});$(key).addEventListener('change',()=>{refreshMode();recompute();});
     }
@@ -876,10 +613,13 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
     $('scrubber').addEventListener('input',()=>{stop();state.started=true;state.at=Number($('scrubber').value);updateProgress();});
     $('playSimulation').addEventListener('click',startStop);
     $('restartSimulation').addEventListener('click',()=>{stop();state.at=0;state.started=false;updateProgress();});
-    $('savePlan').addEventListener('click',save);$('newPlan').addEventListener('click',()=>showNewForm(true));
-    $('createPlan').addEventListener('click',createPlan);$('cancelNew').addEventListener('click',()=>{showNewForm(false);$('newPlan').focus();});
-    $('savedPlans').addEventListener('change',load);$('deletePlan').addEventListener('click',removeSaved);
-    refreshType();refreshMode();renderSteps();recompute();
+    $('savePlan').addEventListener('click',save);
+    $('newPlan').addEventListener('click',()=>editProgram('new'));
+    $('editPlan').addEventListener('click',()=>editProgram('edit'));
+    $('cancelEdit').addEventListener('click',()=>{
+      notice('');openMode();$(state.selected?'showDrafts':'newPlan').focus();
+    });
+    $('deletePlan').addEventListener('click',removeSaved);
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 })();
