@@ -1,4 +1,4 @@
-<!doctype html><html lang="ro"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="dark"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; connect-src 'none'; form-action 'none'; object-src 'none'; base-uri 'none'"><title>Hidrofor · Laborator E10 · FIX SMART ADAPTIVE</title><style>
+<!doctype html><html lang="ro"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="dark"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; connect-src 'none'; form-action 'none'; object-src 'none'; base-uri 'none'"><title>Hidrofor · Laborator E10 · FIX SMART ADAPTIVE</title><style>
 :root{color-scheme:dark;--bg:#0e2027;--surface:#142b33;--surface2:#19343d;--surface3:#10272e;--border:#2a4851;--muted:#a0bcbf;--ink:#eaf6f1;--accent:#8de4c1;--good:#86dfb5;--amber:#efca82;--bad:#f5aca8;--radius:17px}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.55 -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;-webkit-font-smoothing:antialiased}
 button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allowed;opacity:.48}button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
@@ -173,110 +173,7 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
   </section><p class="offline-note">Date de test · fără pornire reală</p>
 </main>
 
-<script>
-
-/* E10-P1: pure, deterministic OFFLINE sequence dry-run. No hardware, web or storage calls.
- * A visualization/test model of the existing 4-minute safe-segment policy, NOT
- * a replacement for HydroforAutomationEngine or a real ESP-NOW confirmation.
- */
-(function (root, factory) {
-  'use strict';
-  const api = factory();
-  if (typeof module !== 'undefined' && module.exports) module.exports = api;
-  else root.HidroforSequenceDryRun = api;
-})(typeof globalThis !== 'undefined' ? globalThis : this, function () {
-  'use strict';
-  const MAX_STEPS = 16;
-  const MAX_TOTAL_SECONDS = 4 * 60 * 60;
-  const SEGMENT_SECONDS = 4 * 60;
-  const REST_SECONDS = 30;
-  const DEFAULT_PLAN = Object.freeze({
-    version:1, name:'Udare dimineața', start:'07:00', steps:[
-      {type:'ON',minutes:10},{type:'OFF',minutes:20},{type:'ON',minutes:30}
-    ]
-  });
-  function isObject(x) { return x !== null && typeof x === 'object' && !Array.isArray(x); }
-  function normalized(input) {
-    if (!isObject(input)) throw new Error('Program invalid.');
-    if (input.version !== 1) throw new Error('Versiune de program necunoscută.');
-    const name = typeof input.name==='string' ? input.name.trim() : '';
-    if (!name || name.length > 60 || /[\x00-\x1f]/.test(name)) throw new Error('Numele trebuie să aibă 1–60 de caractere.');
-    if (typeof input.start !== 'string' || !/^([01]\d|2[0-3]):[0-5]\d$/.test(input.start)) throw new Error('Ora trebuie să fie HH:MM.');
-    if (!Array.isArray(input.steps) || input.steps.length<1 || input.steps.length>MAX_STEPS) throw new Error('Sunt permise 1–16 pași.');
-    let hasOn = false;
-    const steps = input.steps.map((x,i)=>{
-      if (!isObject(x) || (x.type!=='ON' && x.type!=='OFF') || !Number.isInteger(x.minutes) || x.minutes<1 || x.minutes>120) {
-        throw new Error('Pasul '+(i+1)+' trebuie să fie ON/OFF și 1–120 minute.');
-      }
-      if (x.type==='ON') hasOn=true;
-      if (i && x.type===input.steps[i-1].type) throw new Error('Alternați ON și OFF (pașii '+i+' și '+(i+1)+').');
-      return {type:x.type,minutes:x.minutes};
-    });
-    if (!hasOn) throw new Error('Programul trebuie să conțină cel puțin un pas ON.');
-    return {version:1,name,start:input.start,steps};
-  }
-  function build(input, options) {
-    const plan=normalized(input);
-    const segments=[];
-    let sec=0, pumpSec=0, userOffSec=0, pauseSec=0;
-    const append=(state,duration,step,detail)=>{
-      if (duration<=0) return;
-      segments.push({from:sec,to:sec+duration,state,step,detail}); sec+=duration;
-      if (state==='ON') pumpSec+=duration;
-      else if (state==='OFF') userOffSec+=duration;
-      else if (state==='REST') pauseSec+=duration;
-    };
-    plan.steps.forEach((step,i)=>{
-      if (step.type==='OFF') {append('OFF',step.minutes*60,i+1,'Pauză programată');return;}
-      let remaining=step.minutes*60;
-      while (remaining>0) {
-        const segment=Math.min(remaining,SEGMENT_SECONDS);
-        append('ON',segment,i+1,'Segment solicitat · maxim 4 min');
-        remaining-=segment;
-        if (remaining>0) append('REST',REST_SECONDS,i+1,'Pauză de protecție · 30 s');
-      }
-    });
-    if (sec>MAX_TOTAL_SECONDS) throw new Error('Execuția simulată depășește limita conservatoare de 4 ore. Reduceți duratele.');
-    // Fault injection is a VISUAL model: hardware STOP is NOT issued here.
-    const faultSec=options && options.faultAtSeconds != null ? options.faultAtSeconds : null;
-    if (faultSec !== null) {
-      if (!Number.isInteger(faultSec) || faultSec<0 || faultSec>sec) throw new Error('Momentul defectului este invalid.');
-      const labels={LINK:'Pierderea ESP-NOW',DRY:'Fără apă',BATTERY:'Baterie critică',RTC:'Ceas invalid'};
-      const faultName=options.faultType && labels[options.faultType] ? labels[options.faultType] : 'Defect';
-      const interrupted=[];
-      for (const segment of segments) {
-        if (segment.from>=faultSec) break;
-        interrupted.push(segment.to>faultSec ? {...segment,to:faultSec} : segment);
-      }
-      const finalPump=interrupted.filter(s=>s.state==='ON').reduce((a,s)=>a+s.to-s.from,0);
-      const finalOff=interrupted.filter(s=>s.state==='OFF').reduce((a,s)=>a+s.to-s.from,0);
-      const finalRest=interrupted.filter(s=>s.state==='REST').reduce((a,s)=>a+s.to-s.from,0);
-      return {plan,segments:interrupted,totalSeconds:faultSec,pumpSeconds:finalPump,
-        offSeconds:finalOff,restSeconds:finalRest,finished:false,fault:true,
-        event:{at:faultSec,message:'DEFECT SIMULAT ('+faultName+') — program întrerupt, pompă OFF (model)'}};
-    }
-    return {plan,segments,totalSeconds:sec,pumpSeconds:pumpSec,offSeconds:userOffSec,
-      restSeconds:pauseSec,finished:true,fault:false,event:null};
-  }
-  function stateAt(result, seconds) {
-    if (!result || !Number.isFinite(seconds)) throw new Error('Simulare invalidă.');
-    const t=Math.max(0,Math.min(result.totalSeconds,seconds));
-    if (result.fault && t===result.totalSeconds) return {state:'FAULT',step:null,detail:result.event.message};
-    if (t>=result.totalSeconds) return {state:'DONE',step:null,detail:'Program terminat · pompă OFF'};
-    const s=result.segments.find(s=>t>=s.from && t<s.to);
-    return s?{state:s.state,step:s.step,detail:s.detail}: {state:'DONE',step:null,detail:'Pompă OFF'};
-  }
-  function wallClock(start,seconds) {
-    const h=Number(start.slice(0,2)),m=Number(start.slice(3));
-    const mins=(h*60+m+Math.floor(seconds/60))%(24*60);
-    return String(Math.floor(mins/60)).padStart(2,'0')+':'+String(mins%60).padStart(2,'0');
-  }
-  return Object.freeze({DEFAULT_PLAN,MAX_STEPS,SEGMENT_SECONDS,REST_SECONDS,
-    normalized,build,stateAt,wallClock});
-});
-
-
-</script>
+<script src="./e10-advanced-engine.js"></script>
 <script>
 
 /* E10 integrated offline-only DECISION MODEL.
@@ -470,7 +367,8 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
   });
   const Engine=window.HidroforSequenceDryRun;
   const Modes=window.HidroforE10ClimateModes;
-  if(!Engine || !Modes){
+  const Advanced=window.HidroforAdvancedPrograms;
+  if(!Engine || !Modes || !Advanced){
     const el=document.getElementById('validationError');
     if(el){el.hidden=false;el.textContent='Motoarele software ale laboratorului nu s-au încărcat.';}
     return;
@@ -528,53 +426,19 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
     text('adaptiveBandAboveText',(Number.isFinite(high)?high:'—')+'°C și peste');
     text('activePlanName',(state.planName||'Program fără nume')+(state.selected?'':' · nesalvat'));
   }
-  function validateClimatePair(config){
-    if(!Number.isInteger(config.maxAgeMs)||config.maxAgeMs<1000||config.maxAgeMs>5400000)
-      throw new Error('Valabilitatea datelor trebuie să fie 1–5400 secunde.');
-    const result=[];
-    for(const [which,label] of [['sera1','Sera 1'],['sera2','Sera 2']]){
-      const item=config.pair[which];
-      if(!item||!item.present||!item.online||!item.acceptedProvenance)throw new Error(label+': nod indisponibil sau sursă respinsă.');
-      if(!Number.isFinite(item.climateReceivedMs)||config.nowMs-item.climateReceivedMs>config.maxAgeMs||item.climateReceivedMs>config.nowMs)throw new Error(label+': date expirate.');
-      if(!Number.isFinite(item.temperatureC)||item.temperatureC<-40||item.temperatureC>85||
-         !Number.isFinite(item.humidityPercent)||item.humidityPercent<0||item.humidityPercent>100)throw new Error(label+': temperatură ori umiditate invalidă.');
-      result.push(item);
-    }
-    return result;
-  }
   function newChoice(plan,climate){
-    if(state.mode==='SEQUENCE'||state.mode==='FIX')return {eligible:true,method:state.mode,plan,result:Engine.build(plan)};
-    const pair=validateClimatePair(climate);
-    if(state.mode==='SMART'){
-      const low=num('smartLimitLow'),high=num('smartLimitHigh'),humidity=custom.metric==='humidity';
-      const lo=humidity?0:-40,hi=humidity?100:85;
-      if(!Number.isFinite(low)||low<lo||low>hi)throw new Error('Pragul SMART este invalid.');
-      if(custom.rule==='between'&&(!Number.isFinite(high)||high<lo||high>hi||low>=high))throw new Error('Pragurile SMART trebuie să fie în ordine crescătoare.');
-      const passes=pair.map(item=>{
-        const v=humidity?item.humidityPercent:item.temperatureC;
-        if(custom.rule==='under')return v<low;
-        if(custom.rule==='between')return v>=low&&v<high;
-        return v>=low;
-      });
-      const eligible=custom.scope==='both'?passes.every(Boolean):passes.some(Boolean);
-      text('smartFeedback',eligible?'● Condiție îndeplinită · udarea poate începe în simulare.':'● Condiție neîndeplinită · udarea este blocată.');
-      if(!eligible)return {eligible:false,method:'SMART',reason:'SMART: pragul ales nu este îndeplinit.'};
-      return {eligible:true,method:'SMART',plan,result:Engine.build(plan)};
-    }
+    if((state.mode==='SMART'||state.mode==='ADAPTIVE')&&(!Number.isInteger(climate.maxAgeMs)||climate.maxAgeMs<1000||climate.maxAgeMs>5400000))
+      throw new Error('Valabilitatea datelor trebuie să fie 1–5400 secunde.');
+    const choice=Advanced.simulate({mode:state.mode,plan,climate:climate.pair,nowMs:climate.nowMs,maxAgeMs:climate.maxAgeMs,
+      requireBoth:true,requireFullClimate:true,
+      smart:{metric:custom.metric,rule:custom.rule,scope:custom.scope,low:num('smartLimitLow'),high:num('smartLimitHigh')},
+      adaptive:{source:custom.ref,low:num('adaptiveLowBound'),high:num('adaptiveHighBound'),durations:['adaptiveUnderM','adaptiveBetweenM','adaptiveAboveM'].map(num)}});
+    if(state.mode==='SMART')text('smartFeedback',choice.eligible?'● Condiție îndeplinită · udarea poate începe în simulare.':'● '+choice.reason);
     if(state.mode==='ADAPTIVE'){
-      const lo=num('adaptiveLowBound'),hi=num('adaptiveHighBound');
-      const values=['adaptiveUnderM','adaptiveBetweenM','adaptiveAboveM'].map(num);
-      if(!Number.isFinite(lo)||!Number.isFinite(hi)||lo<-40||hi>85||lo>=hi)throw new Error('Intervalele ADAPTIVE trebuie să aibă două praguri crescătoare între -40 și 85°C.');
-      if(!values.every(v=>Number.isInteger(v)&&v>=1&&v<=120))throw new Error('Fiecare interval ADAPTIVE trebuie să aibă între 1 și 120 minute.');
-      const temp=custom.ref==='s1'?pair[0].temperatureC:custom.ref==='s2'?pair[1].temperatureC:(pair[0].temperatureC+pair[1].temperatureC)/2;
-      const selected=temp<lo?0:temp<hi?1:2;
-      for(const [i,id] of ['adaptiveBandUnder','adaptiveBandBetween','adaptiveBandAbove'].entries())$(id).classList.toggle('selected-band',i===selected);
-      const minutes=values[selected];
-      text('adaptiveFeedback','● Temperatura de referință: '+temp.toFixed(1)+'°C · interval '+(selected+1)+' · durata aleasă: '+minutes+' minute.');
-      const adapted=Engine.normalized({version:1,name:plan.name,start:plan.start,steps:[{type:'ON',minutes}]});
-      return {eligible:true,method:'ADAPTIVE',plan:adapted,result:Engine.build(adapted)};
+      for(const [i,id] of ['adaptiveBandUnder','adaptiveBandBetween','adaptiveBandAbove'].entries())$(id).classList.toggle('selected-band',choice.eligible&&i===choice.decision.band);
+      text('adaptiveFeedback',choice.eligible?'● Temperatura de referință: '+choice.decision.temperatureC.toFixed(1)+'°C · interval '+(choice.decision.band+1)+' · durata aleasă: '+choice.decision.minutes+' minute.':'● '+choice.reason);
     }
-    throw new Error('Metodă de control necunoscută.');
+    return choice;
   }
 
 

@@ -16,7 +16,7 @@ assert(!html.includes('data-type="SEQUENCE"'),'Obsolete nested sequence selector
 
 const server=http.createServer((req,res)=>{
   const pathname=new URL(req.url,'http://localhost').pathname;
-  if(!['/e10-lab.html','/app.html','/r18-schedules.js','/r18-schedules.css'].includes(pathname)){res.writeHead(404);res.end();return;}
+  if(!['/e10-lab.html','/e10-advanced-engine.js','/app.html','/r18-schedules.js','/r18-schedules.css'].includes(pathname)){res.writeHead(404);res.end();return;}
   const local=path.join(root,pathname.slice(1));
   if(!fs.existsSync(local)){res.writeHead(404);res.end();return;}
   res.writeHead(200,{'Content-Type':local.endsWith('.css')?'text/css':local.endsWith('.js')?'text/javascript':'text/html; charset=utf-8'});
