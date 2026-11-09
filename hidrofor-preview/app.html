@@ -5723,7 +5723,7 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
 <script defer src="./r18-schedules.js?v=2"></script>
 <link rel="stylesheet" href="./advanced-programs.css?v=smart-sere-1">
 <script defer src="./e10-advanced-engine.js?v=1"></script>
-<script defer src="./advanced-programs.js?v=smart-sere-1"></script>
+<script defer src="./advanced-programs.js?v=smart-combinatii-1"></script>
 <link rel="stylesheet" href="./hydro-hero-redesign.css?v=4">
 <link rel="stylesheet" href="./manual-water-status.css?v=1">
 </head>
@@ -6330,15 +6330,26 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
                     <div class="ap-choice" role="group" aria-label="Sere monitorizate">
                       <button type="button" data-ap-scope="s1" aria-pressed="true">Sera 1</button>
                       <button type="button" data-ap-scope="s2" aria-pressed="false">Sera 2</button>
-                      <button type="button" data-ap-scope="both" aria-pressed="false">Ambele sere</button>
                     </div>
                     <span class="ap-label">În funcție de</span><div class="ap-choice" role="group" aria-label="Mărimea urmărită"><button type="button" data-ap-metric="temperature" aria-pressed="true">Temperatură</button><button type="button" data-ap-metric="humidity" aria-pressed="false">Umiditatea aerului</button></div>
-                    <span class="ap-label">Udă când valoarea este</span><div class="ap-choice" role="group" aria-label="Condiția de pornire"><button type="button" data-ap-rule="under" aria-pressed="false">Sub</button><button type="button" data-ap-rule="between" aria-pressed="false">Între</button><button type="button" data-ap-rule="above" aria-pressed="true">Peste</button></div>
-                    <p class="ap-muted">„Între” include primul prag; „Peste” include pragul afișat.</p>
-                    <div class="ap-fields">
-                      <label class="ap-field">Prag<input id="ap-smart-low" type="number" min="-40" max="85" step="0.1" value="28"></label>
-                      <label class="ap-field" id="ap-smart-high-wrap" hidden>Prag superior<input id="ap-smart-high" type="number" min="-40" max="85" step="0.1" value="32"></label>
+                    <p class="ap-muted" id="ap-smart-combined" hidden>Udarea cere îndeplinirea ambelor condiții.</p>
+                    <div id="ap-smart-temperature">
+                      <span class="ap-label">Regulă pentru temperatură</span>
+                      <div class="ap-choice" role="group" aria-label="Regulă pentru temperatură"><button type="button" data-ap-rule="under" aria-pressed="false">Sub</button><button type="button" data-ap-rule="between" aria-pressed="false">Între</button><button type="button" data-ap-rule="above" aria-pressed="true">Peste</button></div>
+                      <div class="ap-fields">
+                        <label class="ap-field">Prag (°C)<input id="ap-smart-low" type="number" min="-40" max="85" step="0.1" value="28"></label>
+                        <label class="ap-field" id="ap-smart-high-wrap" hidden>Prag superior (°C)<input id="ap-smart-high" type="number" min="-40" max="85" step="0.1" value="32"></label>
+                      </div>
                     </div>
+                    <div id="ap-smart-humidity" hidden>
+                      <span class="ap-label">Regulă pentru umiditate</span>
+                      <div class="ap-choice" role="group" aria-label="Regulă pentru umiditate"><button type="button" data-ap-humidity-rule="under" aria-pressed="false">Sub</button><button type="button" data-ap-humidity-rule="between" aria-pressed="false">Între</button><button type="button" data-ap-humidity-rule="above" aria-pressed="true">Peste</button></div>
+                      <div class="ap-fields">
+                        <label class="ap-field">Prag (%)<input id="ap-smart-humidity-low" type="number" min="0" max="100" step="0.1" value="45"></label>
+                        <label class="ap-field" id="ap-smart-humidity-high-wrap" hidden>Prag superior (%)<input id="ap-smart-humidity-high" type="number" min="0" max="100" step="0.1" value="65"></label>
+                      </div>
+                    </div>
+                    <p class="ap-muted" id="ap-smart-threshold-help">„Între” include primul prag, iar „Peste” include pragul afișat.</p>
                   </section>
                   <section class="ap-section" aria-labelledby="ap-smart-duration-heading">
                     <h2 id="ap-smart-duration-heading">Durata udării</h2>

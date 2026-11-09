@@ -7,9 +7,16 @@
   const key='hidrofor-advanced-programs-v1';
   const modes=['SMART','SEQUENCE','ADAPTIVE'];
   const seedSteps=[{type:'ON',minutes:'10'},{type:'OFF',minutes:'20'},{type:'ON',minutes:'30'}];
+  const smartMetrics={
+    temperature:{label:'Temperatură',unit:'°C',input:'ap-smart',ruleAttr:'data-ap-rule'},
+    humidity:{label:'Umiditatea aerului',unit:'%',input:'ap-smart-humidity',ruleAttr:'data-ap-humidity-rule'}
+  };
   const copy=value=>JSON.parse(JSON.stringify(value));
   const initial=()=>({selected:'',editing:'',name:'',time:'07:00',steps:copy(seedSteps),
-    smart:{scope:'s1',metric:'temperature',rule:'above',low:'28',high:'32',duration:'10'},
+    smart:{scope:'s1',metrics:['temperature'],duration:'10',rules:{
+      temperature:{rule:'above',low:'28',high:'32'},
+      humidity:{rule:'above',low:'45',high:'65'}
+    }},
     adaptive:{source:'s1',low:'20',high:'30',durations:['5','8','10']}});
   const models=Object.fromEntries(modes.map(mode=>[mode,initial()]));
   const state={mode:'SMART',records:[],storageError:false};
@@ -18,8 +25,9 @@
   const number=value=>{const s=String(value??'').trim();return s===''?NaN:Number(s);};
   const modeLabels={SMART:'Smart',SEQUENCE:'Cu pași',ADAPTIVE:'Adaptiv'};
   const sourceLabels={s1:'Sera 1',s2:'Sera 2',average:'Media serelor',both:'Ambele sere'};
-  const smartScopes=['s1','s2','both'];
-  const smartScopePrompt='Alege Sera 1, Sera 2 sau Ambele sere.';
+  const smartScopes=['','s1','s2','both'];
+  const smartScopePrompt='Selectează cel puțin o seră.';
+  const scopeBits=scope=>Math.max(0,smartScopes.indexOf(scope));
   const recordValid=x=>x&&typeof x.id==='string'&&modes.includes(x.mode)&&x.data&&typeof x.data==='object';
   function storageRead(){
     try{const raw=localStorage.getItem(key);if(raw===null)return [];const data=JSON.parse(raw);if(!Array.isArray(data))throw new Error();return data;}
@@ -50,14 +58,17 @@
     const meta=sequence?[modeLabels[state.mode]]:[modeLabels[state.mode],m.time];
     let rows;
     if(smart){
-      const {scope,metric,rule,low,high,duration}=m.smart;
-      const humidity=metric==='humidity',unit=humidity?'%':'°C';
-      const label=humidity?'Umiditatea aerului':'Temperatură';
-      const threshold={under:'sub '+low+unit,above:'de la '+low+unit,between:'de la '+low+unit+' până sub '+high+unit};
-      meta.push(sourceLabels[scope]||'Sursă de ales',label);
-      text('ap-overview-label','Condiție de pornire');
-      text('ap-overview-value',label+' '+threshold[rule]);
-      rows=[['Dacă se îndeplinește','Udă '+duration+' min']];
+      const {scope,metrics,rules,duration}=m.smart;
+      const combined=metrics.length===2;
+      meta.push(sourceLabels[scope]||'Sursă de ales',combined?'Temperatură și umiditate':smartMetrics[metrics[0]].label);
+      const conditions=metrics.map(metric=>{
+        const {label,unit}=smartMetrics[metric],{rule,low,high}=rules[metric];
+        const threshold={under:'sub '+low+unit,above:'de la '+low+unit,between:'de la '+low+unit+' până sub '+high+unit};
+        return label+' '+threshold[rule];
+      });
+      text('ap-overview-label',combined?'Condiții de pornire':'Condiție de pornire');
+      text('ap-overview-value',conditions.join(' și '));
+      rows=[[combined?'Dacă se îndeplinesc ambele':'Dacă se îndeplinește','Udă '+duration+' min']];
     }else if(state.mode==='ADAPTIVE'){
       meta.push(sourceLabels[m.adaptive.source]);
       text('ap-overview-label','Durate după temperatură');
@@ -145,7 +156,7 @@
     model().editing=kind;
     storageMessage('');
     refreshScreen();
-    if(!state.storageError&&state.mode==='SMART'&&!smartScopes.includes(model().smart.scope))
+    if(!state.storageError&&state.mode==='SMART'&&!scopeBits(model().smart.scope))
       storageMessage(smartScopePrompt);
     byId('ap-name').focus();
   }
@@ -153,44 +164,90 @@
   function writeForm(renderRows=true){
     const m=model();
     if(renderRows)put('ap-name',m.name);
-    put('ap-time',m.time);put('ap-smart-low',m.smart.low);put('ap-smart-high',m.smart.high);put('ap-smart-duration',m.smart.duration);
+    put('ap-time',m.time);put('ap-smart-duration',m.smart.duration);
     put('ap-adaptive-low',m.adaptive.low);put('ap-adaptive-high',m.adaptive.high);
     ['ap-adaptive-under','ap-adaptive-middle','ap-adaptive-above'].forEach((id,i)=>put(id,m.adaptive.durations[i]));
     document.querySelectorAll('[data-ap-mode]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.apMode===state.mode)));
     document.querySelectorAll('[data-ap-panel]').forEach(p=>p.hidden=p.dataset.apPanel!==state.mode);
-    for(const [attr,value] of [['scope',m.smart.scope],['metric',m.smart.metric],['rule',m.smart.rule],['reference',m.adaptive.source]])
-      document.querySelectorAll('[data-ap-'+attr+']').forEach(b=>b.setAttribute('aria-pressed',String(b.getAttribute('data-ap-'+attr)===value)));
-    byId('ap-smart-high-wrap').hidden=m.smart.rule!=='between';
-    const humidity=m.smart.metric==='humidity';
-    for(const id of ['ap-smart-low','ap-smart-high']){byId(id).min=humidity?'0':'-40';byId(id).max=humidity?'100':'85';}
+    document.querySelectorAll('[data-ap-scope]').forEach(button=>{
+      button.setAttribute('aria-pressed',String(Boolean(scopeBits(m.smart.scope)&scopeBits(button.dataset.apScope))));
+    });
+    document.querySelectorAll('[data-ap-metric]').forEach(button=>{
+      button.setAttribute('aria-pressed',String(m.smart.metrics.includes(button.dataset.apMetric)));
+    });
+    document.querySelectorAll('[data-ap-reference]').forEach(button=>{
+      button.setAttribute('aria-pressed',String(button.dataset.apReference===m.adaptive.source));
+    });
+    for(const [metric,{input,ruleAttr}] of Object.entries(smartMetrics)){
+      const rule=m.smart.rules[metric];
+      byId('ap-smart-'+metric).hidden=!m.smart.metrics.includes(metric);
+      put(input+'-low',rule.low);
+      put(input+'-high',rule.high);
+      byId(input+'-high-wrap').hidden=rule.rule!=='between';
+      document.querySelectorAll('['+ruleAttr+']').forEach(button=>{
+        button.setAttribute('aria-pressed',String(button.getAttribute(ruleAttr)===rule.rule));
+      });
+    }
+    byId('ap-smart-combined').hidden=m.smart.metrics.length!==2;
+    byId('ap-smart-threshold-help').hidden=m.smart.metrics.length===0;
     const labels=adaptiveLabels(m.adaptive);
     ['ap-band-low','ap-band-middle','ap-band-high'].forEach((id,index)=>text(id,labels[index]));
     if(renderRows)renderSteps();
   }
   function readForm(){
     const m=model();m.time=byId('ap-time').value;
-    m.smart.low=byId('ap-smart-low').value;m.smart.high=byId('ap-smart-high').value;m.smart.duration=byId('ap-smart-duration').value;
+    m.smart.duration=byId('ap-smart-duration').value;
+    for(const [metric,{input}] of Object.entries(smartMetrics)){
+      m.smart.rules[metric].low=byId(input+'-low').value;
+      m.smart.rules[metric].high=byId(input+'-high').value;
+    }
     m.adaptive.low=byId('ap-adaptive-low').value;m.adaptive.high=byId('ap-adaptive-high').value;
     m.adaptive.durations=['ap-adaptive-under','ap-adaptive-middle','ap-adaptive-above'].map(id=>byId(id).value);
   }
-  function inputFor(m,mode){
+  function inputFor(m,mode,metric='temperature'){
     const steps=mode==='SEQUENCE'?m.steps.map(x=>({type:x.type,minutes:number(x.minutes)})):[{type:'ON',minutes:mode==='SMART'?number(m.smart.duration):10}];
+    const {rule,low,high}=m.smart.rules[metric];
     return {mode,plan:{version:1,name:m.name,start:m.time,steps},
       // Permit reading older drafts until the user explicitly chooses a new scope.
-      smart:{scope:m.smart.scope==='either'?'one':m.smart.scope,metric:m.smart.metric,rule:m.smart.rule,low:number(m.smart.low),high:number(m.smart.high)},
+      smart:{scope:m.smart.scope==='either'?'one':m.smart.scope,metric,rule,low:number(low),high:number(high)},
       adaptive:{source:m.adaptive.source,low:number(m.adaptive.low),high:number(m.adaptive.high),durations:m.adaptive.durations.map(number)}};
+  }
+  function validateProgram(m,mode){
+    if(mode!=='SMART')return engine.validateConfig(inputFor(m,mode));
+    const metrics=m.smart.metrics;
+    if(!Array.isArray(metrics)||!metrics.length||metrics.some(metric=>!Object.hasOwn(smartMetrics,metric))||
+        new Set(metrics).size!==metrics.length)
+      return {ok:false,reason:'Selectează temperatura, umiditatea sau ambele.'};
+    for(const metric of metrics){
+      const check=engine.validateConfig(inputFor(m,mode,metric));
+      if(!check.ok)return {...check,reason:smartMetrics[metric].label+' · '+check.reason};
+    }
+    return {ok:true};
+  }
+  function restoreSmart(defaults,stored){
+    const rules={...defaults.rules};
+    if(Object.hasOwn(stored,'metrics')){
+      for(const metric of Object.keys(smartMetrics))rules[metric]={...rules[metric],...stored.rules?.[metric]};
+      return {...defaults,scope:stored.scope,duration:stored.duration,metrics:stored.metrics,rules};
+    }
+    const metric=stored.metric??'temperature';
+    if(Object.hasOwn(smartMetrics,metric)){
+      const {rule=rules[metric].rule,low=rules[metric].low,high=rules[metric].high}=stored;
+      rules[metric]={rule,low,high};
+    }
+    return {...defaults,scope:stored.scope??defaults.scope,duration:stored.duration??defaults.duration,metrics:[metric],rules};
   }
   function save(){
     const m=model();
     if(!m.editing)return;
-    if(state.mode==='SMART'&&!smartScopes.includes(m.smart.scope)){
+    if(state.mode==='SMART'&&!scopeBits(m.smart.scope)){
       storageMessage(smartScopePrompt);
       document.querySelector('[data-ap-scope]').focus();
       return;
     }
     const asNew=m.editing==='new',name=byId('ap-name').value.trim();
     if(!name||name.length>60||/[\x00-\x1f]/.test(name)){storageMessage('Scrie un nume pentru program.');byId('ap-name').focus();return;}
-    const draft={...m,name},check=engine.validateConfig(inputFor(draft,state.mode));
+    const draft={...m,name},check=validateProgram(draft,state.mode);
     if(!check.ok){storageMessage(check.reason);return;}
     const existing=asNew?null:state.records.find(x=>recordValid(x)&&x.id===m.selected&&x.mode===state.mode);
     if(!asNew&&!existing){storageMessage('Alege un program din modul curent.');return;}
@@ -211,8 +268,10 @@
       storageMessage('Acest program nu poate fi deschis; datele rămân păstrate.');return false;
     }
     const defaults=initial();
-    const candidate={...defaults,name:d.name,time:d.time,steps:copy(d.steps),smart:{...defaults.smart,...d.smart},adaptive:{...defaults.adaptive,...d.adaptive},selected:id};
-    const valid=engine.validateConfig(inputFor(candidate,state.mode));
+    const candidate={...defaults,name:d.name,time:d.time,steps:copy(d.steps),
+      smart:state.mode==='SMART'?restoreSmart(defaults.smart,d.smart):defaults.smart,
+      adaptive:{...defaults.adaptive,...d.adaptive},selected:id};
+    const valid=validateProgram(candidate,state.mode);
     if(!valid.ok){storageMessage('Program invalid; datele rămân păstrate. '+valid.reason);return false;}
     models[state.mode]=candidate;
     storageMessage('');
@@ -297,9 +356,31 @@
       if(model().editing)refreshScreen();
       else showSavedOrEmpty();
     }));
-    for(const [attr,obj,prop] of [['scope','smart','scope'],['metric','smart','metric'],['rule','smart','rule'],['reference','adaptive','source']])
-      document.querySelectorAll('[data-ap-'+attr+']').forEach(b=>b.addEventListener('click',()=>{model()[obj][prop]=b.getAttribute('data-ap-'+attr);changed();}));
-    for(const id of ['ap-time','ap-smart-low','ap-smart-high','ap-smart-duration','ap-adaptive-low','ap-adaptive-high','ap-adaptive-under','ap-adaptive-middle','ap-adaptive-above'])
+    document.querySelectorAll('[data-ap-scope]').forEach(button=>button.addEventListener('click',()=>{
+      const smart=model().smart;
+      smart.scope=smartScopes[scopeBits(smart.scope)^scopeBits(button.dataset.apScope)];
+      changed();
+    }));
+    document.querySelectorAll('[data-ap-metric]').forEach(button=>button.addEventListener('click',()=>{
+      const smart=model().smart,metric=button.dataset.apMetric;
+      const selected=new Set(smart.metrics);
+      if(selected.has(metric))selected.delete(metric);
+      else selected.add(metric);
+      smart.metrics=Object.keys(smartMetrics).filter(key=>selected.has(key));
+      changed();
+    }));
+    document.querySelectorAll('[data-ap-reference]').forEach(button=>button.addEventListener('click',()=>{
+      model().adaptive.source=button.dataset.apReference;
+      changed();
+    }));
+    for(const [metric,{input,ruleAttr}] of Object.entries(smartMetrics)){
+      document.querySelectorAll('['+ruleAttr+']').forEach(button=>button.addEventListener('click',()=>{
+        model().smart.rules[metric].rule=button.getAttribute(ruleAttr);
+        changed();
+      }));
+      for(const suffix of ['-low','-high'])byId(input+suffix).addEventListener('input',changed);
+    }
+    for(const id of ['ap-time','ap-smart-duration','ap-adaptive-low','ap-adaptive-high','ap-adaptive-under','ap-adaptive-middle','ap-adaptive-above'])
       byId(id).addEventListener('input',changed);
     byId('ap-new').addEventListener('click',()=>editProgram('new'));
     byId('ap-edit').addEventListener('click',()=>editProgram('edit'));
