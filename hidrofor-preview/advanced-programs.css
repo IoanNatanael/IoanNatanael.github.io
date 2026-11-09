@@ -39,10 +39,10 @@
 .ap-overview h2{margin:0;color:#9ebcb7;font-size:12px;font-weight:600}
 .ap-overview p{margin:5px 0 0;color:#eaf6f1;font-size:14px;font-weight:650}
 .ap-overview button{flex-shrink:0}
-.ap-summary-bands{display:grid;gap:8px;margin:10px 0 0;font-size:14px}
-.ap-summary-bands div{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:baseline}
-.ap-summary-bands dt{color:#b7d0cd}
-.ap-summary-bands dd{margin:0;color:#eaf6f1;font-weight:700;white-space:nowrap}
+.ap-summary-rows{display:grid;gap:8px;margin:10px 0 0;font-size:14px}
+.ap-summary-rows div{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:baseline}
+.ap-summary-rows dt{color:#b7d0cd}
+.ap-summary-rows dd{margin:0;color:#eaf6f1;font-weight:700;white-space:nowrap}
 .ap-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
 .ap-dialog .ap-primary{flex:1;border:0;background:#83e1c6;color:#102f29}
 .ap-dialog .ap-secondary{border:1px solid #41696a;background:#1b3c40;color:#d7eee6}

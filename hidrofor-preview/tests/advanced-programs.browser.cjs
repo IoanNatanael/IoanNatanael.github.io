@@ -84,6 +84,8 @@ const server=http.createServer((req,res)=>{
       assert.equal(await page.locator('#ap-storage-status').isVisible(),true);
       await page.locator('#ap-steps button[aria-label="Mută mai jos pasul 1"]').click();
       await page.locator('#ap-save').click();
+      assert.deepEqual(await page.locator('#ap-summary-rows dt').allTextContents(),['1. Udare','2. Pauză','3. Udare']);
+      assert.deepEqual(await page.locator('#ap-summary-rows dd').allTextContents(),['10 min','20 min','30 min']);
       assert.equal(await page.locator('#ap-preview').isVisible(),true);
       assert.equal(await page.locator('#ap-requested').textContent(),'40m 00s');
       assert.equal(await page.locator('#ap-total').textContent(),'64m 30s');
@@ -102,8 +104,8 @@ const server=http.createServer((req,res)=>{
       await page.locator('#ap-adaptive-high').fill('29');
       await page.locator('#ap-adaptive-middle').fill('7');
       await page.locator('#ap-save').click();
-      assert.deepEqual(await page.locator('#ap-summary-bands dt').allTextContents(),['Sub 18°C','De la 18°C până sub 29°C','29°C și peste']);
-      assert.deepEqual(await page.locator('#ap-summary-bands dd').allTextContents(),['5 min','7 min','10 min']);
+      assert.deepEqual(await page.locator('#ap-summary-rows dt').allTextContents(),['Sub 18°C','De la 18°C până sub 29°C','29°C și peste']);
+      assert.deepEqual(await page.locator('#ap-summary-rows dd').allTextContents(),['5 min','7 min','10 min']);
       await page.evaluate(()=>{
         uiState.live.sera1.temp='15.0 C';
         document.querySelector('#ap-restart').click();

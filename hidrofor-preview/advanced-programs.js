@@ -41,13 +41,14 @@
     return ['Sub '+lower,'De la '+lower+' până sub '+upper,upper+' și peste'];
   }
   function renderSummary(m){
-    const adaptive=state.mode==='ADAPTIVE';
-    const bands=byId('ap-summary-bands');
-    bands.hidden=!adaptive;
-    byId('ap-overview-value').hidden=adaptive;
+    const smart=state.mode==='SMART';
+    const summaryRows=byId('ap-summary-rows');
+    summaryRows.hidden=smart;
+    byId('ap-overview-value').hidden=!smart;
     text('ap-current-name',m.name);
     const meta=[modeLabels[state.mode],m.time];
-    if(state.mode==='SMART'){
+    let rows=[];
+    if(smart){
       const {scope,metric,rule,low,high}=m.smart;
       const humidity=metric==='humidity',unit=humidity?'%':'°C';
       const label=humidity?'Umiditatea aerului':'Temperatură';
@@ -55,22 +56,26 @@
       meta.push(sourceLabels[scope],label);
       text('ap-overview-label','Condiție de pornire');
       text('ap-overview-value',label+' '+threshold[rule]);
-    }else if(adaptive){
+    }else if(state.mode==='ADAPTIVE'){
       meta.push(sourceLabels[m.adaptive.source]);
       text('ap-overview-label','Durate după temperatură');
       const labels=adaptiveLabels(m.adaptive);
-      bands.replaceChildren(...m.adaptive.durations.map((duration,index)=>{
-        const row=document.createElement('div'),label=document.createElement('dt'),value=document.createElement('dd');
-        label.textContent=labels[index];
-        value.textContent=duration+' min';
-        row.append(label,value);
-        return row;
-      }));
+      rows=m.adaptive.durations.map((duration,index)=>[labels[index],duration]);
     }else{
-      const steps=m.steps.length;
       text('ap-overview-label','Secvență');
-      text('ap-overview-value',steps+(steps===1?' pas':' pași')+' · '+m.steps.filter(step=>step.type==='ON').reduce((total,step)=>total+Number(step.minutes),0)+' min udare');
+      rows=m.steps.map((step,index)=>[
+        (index+1)+'. '+(step.type==='ON'?'Udare':'Pauză'),step.minutes
+      ]);
     }
+    summaryRows.replaceChildren(...rows.map(([name,duration])=>{
+      const row=document.createElement('div');
+      const label=document.createElement('dt');
+      const value=document.createElement('dd');
+      label.textContent=name;
+      value.textContent=duration+' min';
+      row.append(label,value);
+      return row;
+    }));
     text('ap-program-meta',meta.join(' · '));
   }
   function showPrograms(){
