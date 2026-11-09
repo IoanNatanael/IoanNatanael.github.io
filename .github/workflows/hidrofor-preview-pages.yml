@@ -1,34 +1,87 @@
-name: Hidrofor V13 Preview Pages
+name: Hidrofor Preview Pages
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
+      - feature/service-center
     paths:
       - 'hidrofor-preview/**'
+      - 'hidrofor-service-preview/**'
       - '.github/workflows/hidrofor-preview-pages.yml'
   workflow_dispatch:
 
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
 concurrency:
-  group: pages
-  cancel-in-progress: true
+  group: hidrofor-preview-pages
+  cancel-in-progress: false
 
 jobs:
+  request-main-deploy:
+    # The GitHub Pages environment may restrict deployments to main.
+    # Re-dispatch the deployment on main after service branch changes.
+    if: github.ref == 'refs/heads/feature/service-center'
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      contents: read
+    steps:
+      - name: Rebuild permanent preview using the main workflow
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: gh workflow run hidrofor-preview-pages.yml --ref main
+
   deploy:
     if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
+      - name: Checkout published main
+        uses: actions/checkout@v4
         with:
-          path: '.'
-      - id: deployment
+          ref: main
+          path: main-source
+          persist-credentials: false
+
+      - name: Checkout current service development branch
+        uses: actions/checkout@v4
+        with:
+          ref: feature/service-center
+          path: service-source
+          persist-credentials: false
+
+      - name: Build static public and development previews
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p site/hidrofor-preview site/hidrofor-service-preview site/hidrofor-lucru
+          cp -a main-source/hidrofor-preview/. site/hidrofor-preview/
+          cp -a main-source/hidrofor-service-preview/. site/hidrofor-service-preview/
+          cp -a service-source/hidrofor-preview/. site/hidrofor-lucru/
+          # The working URL opens the real app directly, without the phone-frame iframe.
+          cp service-source/hidrofor-preview/app.html site/hidrofor-lucru/index.html
+          # The optional phone mockup remains available at a separate URL.
+          cp service-source/hidrofor-preview/index.html site/hidrofor-lucru/telefon.html
+          touch site/.nojekyll
+          test -s site/hidrofor-lucru/index.html
+          test -s site/hidrofor-lucru/e10-lab.html
+          test -s site/hidrofor-lucru/r18-schedules.js
+          grep -q 'e10-lab.html' site/hidrofor-lucru/app.html
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload site
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+      - name: Deploy GitHub Pages
+        id: deployment
         uses: actions/deploy-pages@v4
