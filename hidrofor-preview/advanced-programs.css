@@ -160,3 +160,29 @@
 @media(prefers-reduced-motion:reduce) {
   .ap-title-picker .ap-heading-chevron {transition:none}
 }
+
+/* Secvență: ON verde-mint, pauză albastru-cenușiu.
+   Nuanțe fade, fără carduri grele și fără a sugera stare live a pompei. */
+.ap-summary-rows--steps {gap:3px;margin-top:12px}
+.ap-summary-rows .ap-summary-step {
+  min-height:38px;align-items:center;
+  padding:8px 11px 8px 13px;border-radius:9px;
+}
+.ap-summary-rows .ap-summary-step[data-ap-step-state="on"] {
+  background:linear-gradient(90deg,
+    rgba(109,218,176,.13) 0%,
+    rgba(109,218,176,.065) 52%,
+    rgba(109,218,176,.012) 100%);
+  box-shadow:inset 2px 0 rgba(126,224,190,.54);
+}
+.ap-summary-rows .ap-summary-step[data-ap-step-state="off"] {
+  background:linear-gradient(90deg,
+    rgba(112,163,206,.115) 0%,
+    rgba(112,163,206,.052) 52%,
+    rgba(112,163,206,.008) 100%);
+  box-shadow:inset 2px 0 rgba(141,186,224,.50);
+}
+.ap-summary-rows .ap-summary-step[data-ap-step-state="on"] dt {color:#c2e9db}
+.ap-summary-rows .ap-summary-step[data-ap-step-state="on"] dd {color:#b7f1d9}
+.ap-summary-rows .ap-summary-step[data-ap-step-state="off"] dt {color:#b8d0e1}
+.ap-summary-rows .ap-summary-step[data-ap-step-state="off"] dd {color:#c5ddec}

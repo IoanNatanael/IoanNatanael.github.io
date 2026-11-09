@@ -120,6 +120,15 @@ const server=http.createServer((req,res)=>{
       await page.locator('#ap-save').click();
       assert.deepEqual(await page.locator('#ap-summary-rows dt').allTextContents(),['1. Udare','2. Pauză','3. Udare']);
       assert.deepEqual(await page.locator('#ap-summary-rows dd').allTextContents(),['10 min','20 min','30 min']);
+      assert.deepEqual(await page.locator('#ap-summary-rows .ap-summary-step').evaluateAll(
+        rows=>rows.map(row=>row.dataset.apStepState)),['on','off','on']);
+      const stepTints=await page.locator('#ap-summary-rows .ap-summary-step').evaluateAll(rows=>
+        rows.map(row=>({
+          background:getComputedStyle(row).backgroundImage,
+          text:getComputedStyle(row.querySelector('dd')).color
+        })));
+      assert.notEqual(stepTints[0].background,stepTints[1].background);
+      assert.notEqual(stepTints[0].text,stepTints[1].text);
       await page.locator('#ap-program-picker summary').click();
       assert.deepEqual(await page.locator('#ap-program-list button').allTextContents(),['Program cu pași']);
       await page.keyboard.press('Escape');
@@ -133,6 +142,7 @@ const server=http.createServer((req,res)=>{
       await page.locator('#ap-save').click();
       assert.deepEqual(await page.locator('#ap-summary-rows dt').allTextContents(),['Sub 18°C','De la 18°C până sub 29°C','29°C și peste']);
       assert.deepEqual(await page.locator('#ap-summary-rows dd').allTextContents(),['5 min','7 min','10 min']);
+      assert.equal(await page.locator('#ap-summary-rows .ap-summary-step').count(),0);
       await page.locator('[data-hydro-mode="auto"]').click();
       assert.equal(await page.locator('#ap-panel').isVisible(),false);
       assert.equal(await page.locator('#autoControlSection').isVisible(),true);

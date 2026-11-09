@@ -61,11 +61,16 @@
     }else{
       text('ap-overview-label','Secvență');
       rows=m.steps.map((step,index)=>[
-        (index+1)+'. '+(step.type==='ON'?'Udare':'Pauză'),step.minutes+' min'
+        (index+1)+'. '+(step.type==='ON'?'Udare':'Pauză'),step.minutes+' min',step.type
       ]);
     }
-    summaryRows.replaceChildren(...rows.map(([name,detail])=>{
+    summaryRows.classList.toggle('ap-summary-rows--steps',state.mode==='SEQUENCE');
+    summaryRows.replaceChildren(...rows.map(([name,detail,stepType])=>{
       const row=document.createElement('div');
+      if(state.mode==='SEQUENCE'){
+        row.className='ap-summary-step';
+        row.dataset.apStepState=stepType==='ON'?'on':'off';
+      }
       const label=document.createElement('dt');
       const value=document.createElement('dd');
       label.textContent=name;
