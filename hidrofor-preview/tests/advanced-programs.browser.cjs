@@ -103,6 +103,8 @@ const server=http.createServer((req,res)=>{
       await page.locator('[data-ap-mode="SEQUENCE"]').click();
       await page.locator('#ap-new').click();
       assert.equal(await page.locator('#ap-steps .ap-step-row').count(),3);
+      assert.deepEqual(await page.locator('#ap-steps .ap-step-row').evaluateAll(
+        rows=>rows.map(row=>row.dataset.apStepState)),['on','off','on']);
       const firstMinutes=page.locator('#ap-steps input').first();
       await firstMinutes.fill('');
       await firstMinutes.pressSequentially('12');
@@ -139,10 +141,18 @@ const server=http.createServer((req,res)=>{
       await page.locator('#ap-adaptive-low').fill('18');
       await page.locator('#ap-adaptive-high').fill('29');
       await page.locator('#ap-adaptive-middle').fill('7');
+      const editorBands=await page.locator('.ap-bands label').evaluateAll(
+        rows=>rows.map(row=>getComputedStyle(row).backgroundImage));
+      assert.equal(new Set(editorBands).size,3);
       await page.locator('#ap-save').click();
       assert.deepEqual(await page.locator('#ap-summary-rows dt').allTextContents(),['Sub 18°C','De la 18°C până sub 29°C','29°C și peste']);
       assert.deepEqual(await page.locator('#ap-summary-rows dd').allTextContents(),['5 min','7 min','10 min']);
       assert.equal(await page.locator('#ap-summary-rows .ap-summary-step').count(),0);
+      assert.deepEqual(await page.locator('#ap-summary-rows .ap-summary-band').evaluateAll(
+        rows=>rows.map(row=>row.dataset.apBand)),['cool','mild','warm']);
+      const adaptiveTints=await page.locator('#ap-summary-rows .ap-summary-band').evaluateAll(
+        rows=>rows.map(row=>getComputedStyle(row).backgroundImage));
+      assert.equal(new Set(adaptiveTints).size,3);
       await page.locator('[data-hydro-mode="auto"]').click();
       assert.equal(await page.locator('#ap-panel').isVisible(),false);
       assert.equal(await page.locator('#autoControlSection').isVisible(),true);

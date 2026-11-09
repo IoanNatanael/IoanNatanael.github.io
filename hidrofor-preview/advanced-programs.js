@@ -65,11 +65,17 @@
       ]);
     }
     summaryRows.classList.toggle('ap-summary-rows--steps',state.mode==='SEQUENCE');
-    summaryRows.replaceChildren(...rows.map(([name,detail,stepType])=>{
+    summaryRows.classList.toggle('ap-summary-rows--adaptive',state.mode==='ADAPTIVE');
+    summaryRows.replaceChildren(...rows.map(([name,detail,stepType],index)=>{
       const row=document.createElement('div');
       if(state.mode==='SEQUENCE'){
         row.className='ap-summary-step';
         row.dataset.apStepState=stepType==='ON'?'on':'off';
+      }else if(state.mode==='ADAPTIVE'){
+        // Adaptiv are trei durate de UDARE, nu etape de pauză.
+        // Culorile disting benzile de temperatură, fără a sugera starea releului.
+        row.className='ap-summary-band';
+        row.dataset.apBand=['cool','mild','warm'][index];
       }
       const label=document.createElement('dt');
       const value=document.createElement('dd');
@@ -213,6 +219,7 @@
     const host=byId('ap-steps');host.replaceChildren();const m=model();
     m.steps.forEach((step,i)=>{
       const row=document.createElement('div');row.className='ap-step-row';
+      row.dataset.apStepState=step.type==='ON'?'on':'off';
       const index=document.createElement('span');index.textContent=String(i+1);
       const type=document.createElement('button');type.type='button';type.className='ap-step-type';type.textContent=step.type==='ON'?'Udare':'Pauză';type.setAttribute('aria-label','Schimbă tipul pasului '+(i+1));
       type.addEventListener('click',()=>{step.type=step.type==='ON'?'OFF':'ON';renderSteps();changed();});
