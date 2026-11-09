@@ -49,7 +49,7 @@ const server=http.createServer((req,res)=>{
       for(const mode of ['SEQUENCE','ADAPTIVE','SMART']){
         await page.locator('[data-ap-mode="'+mode+'"]').click();
         assert.equal(await page.locator('#ap-new').isVisible(),true);
-        for(const id of ['ap-program-picker','ap-overview','ap-editor','ap-preview'])
+        for(const id of ['ap-program-picker','ap-overview','ap-editor'])
           assert.equal(await page.locator('#'+id).isVisible(),false);
       }
       await page.locator('#ap-new').click();
@@ -69,36 +69,7 @@ const server=http.createServer((req,res)=>{
       assert.match(await page.locator('#ap-overview-value').textContent(),/20°C până sub 35°C/);
       assert.equal(await page.locator('#ap-summary-rows dt').textContent(),'Dacă se îndeplinește');
       assert.equal(await page.locator('#ap-summary-rows dd').textContent(),'Udă 10 min');
-      assert.match(await page.locator('#ap-climate-status').textContent(),/DEMO/);
-      if(width===390){
-        await page.evaluate(()=>{
-          const original=uiState.live.sera1.lastSeen;
-          uiState.live.sera1.lastSeen='31.12.2099 23:59:59';
-          document.querySelector('#ap-restart').click();
-          uiState.live.sera1.lastSeen=original;
-        });
-        assert.equal(await page.locator('#ap-play').isDisabled(),true);
-        await page.evaluate(()=>{
-          window.HIDROFOR_PREVIEW_ONLY=false;
-          document.querySelector('#ap-restart').click();
-          window.HIDROFOR_PREVIEW_ONLY=true;
-        });
-        assert.equal(await page.locator('#ap-play').isDisabled(),true);
-        assert.match(await page.locator('#ap-climate-status').textContent(),/Proveniența/);
-        await page.locator('#ap-restart').click();
-      }
-      await page.locator('#ap-play').click();
-      await page.waitForFunction(()=>document.querySelector('#ap-elapsed').textContent!=='0m 00s');
-      assert.notEqual(await page.locator('.ap-timeline-track').evaluate(el=>el.style.getPropertyValue('--ap-progress')),'0%');
-      if(width===390){
-        await page.locator('.tab-btn[data-page="home"]').click();
-        const elapsed=await page.locator('#ap-elapsed').textContent();
-        await page.waitForTimeout(350);
-        assert.equal(await page.locator('#ap-elapsed').textContent(),elapsed);
-        await page.locator('.tab-btn[data-page="hidrofor"]').click();
-        assert.equal(await page.locator('#ap-panel').isVisible(),true);
-      }
-
+      assert.equal(await page.locator('#ap-preview, #ap-play, #ap-restart').count(),0);
       await page.locator('[data-ap-mode="SEQUENCE"]').click();
       await page.locator('#ap-new').click();
       assert.equal(await page.locator('#ap-steps .ap-step-row').count(),3);
@@ -119,14 +90,6 @@ const server=http.createServer((req,res)=>{
       await page.locator('#ap-save').click();
       assert.deepEqual(await page.locator('#ap-summary-rows dt').allTextContents(),['1. Udare','2. Pauză','3. Udare']);
       assert.deepEqual(await page.locator('#ap-summary-rows dd').allTextContents(),['10 min','20 min','30 min']);
-      assert.equal(await page.locator('#ap-preview').isVisible(),true);
-      assert.equal(await page.locator('#ap-requested').textContent(),'40m 00s');
-      assert.equal(await page.locator('#ap-total').textContent(),'64m 30s');
-      assert.equal(await page.locator('#ap-rest').textContent(),'4m 30s');
-      assert.equal(await page.locator('#ap-start-clock').textContent(),'07:00');
-      assert.equal(await page.locator('#ap-end-clock').textContent(),'08:04:30');
-      await page.locator('#ap-play').click();
-      await page.waitForFunction(()=>document.querySelector('#ap-elapsed').textContent!=='0m 00s');
       await page.locator('#ap-program-picker summary').click();
       assert.deepEqual(await page.locator('#ap-program-list button').allTextContents(),['Program cu pași']);
 
@@ -139,23 +102,6 @@ const server=http.createServer((req,res)=>{
       await page.locator('#ap-save').click();
       assert.deepEqual(await page.locator('#ap-summary-rows dt').allTextContents(),['Sub 18°C','De la 18°C până sub 29°C','29°C și peste']);
       assert.deepEqual(await page.locator('#ap-summary-rows dd').allTextContents(),['5 min','7 min','10 min']);
-      await page.evaluate(()=>{
-        uiState.live.sera1.temp='15.0 C';
-        document.querySelector('#ap-restart').click();
-        document.querySelector('#ap-play').click();
-      });
-      assert.match(await page.locator('#ap-preview-duration').textContent(),/5 min/);
-      await page.evaluate(()=>{uiState.live.sera1.temp='35.0 C';});
-      await page.waitForFunction(()=>document.querySelector('#ap-elapsed').textContent!=='0m 00s');
-      assert.match(await page.locator('#ap-preview-duration').textContent(),/5 min/,'active run must keep its evaluated duration');
-      await page.evaluate(()=>{uiState.live.sera1.temp='35.0 C';document.querySelector('#ap-restart').click();});
-      assert.match(await page.locator('#ap-preview-duration').textContent(),/10 min/);
-      assert.equal(await page.locator('#ap-panel').evaluate(el=>el.scrollWidth<=el.clientWidth),true);
-      if(width===390&&process.env.AP_SCREENSHOT)await page.screenshot({path:process.env.AP_SCREENSHOT});
-      await page.evaluate(()=>{uiState.live.sera1.temp='n/a';document.querySelector('#ap-restart').click();});
-      assert.equal(await page.locator('#ap-play').isDisabled(),true);
-      assert.match(await page.locator('#ap-error').textContent(),/invalid/i);
-
       await page.locator('[data-hydro-mode="auto"]').click();
       assert.equal(await page.locator('#ap-panel').isVisible(),false);
       assert.equal(await page.locator('#autoControlSection').isVisible(),true);
@@ -192,8 +138,7 @@ const server=http.createServer((req,res)=>{
       await page.locator('#ap-edit').click();
       await page.locator('#ap-delete').click();
       assert.equal(await page.locator('#ap-new').isVisible(),true);
-      assert.equal(await page.locator('#ap-preview').isVisible(),false);
-      assert.deepEqual(errors,[]);assert.deepEqual(writes,[]);await ctx.close();console.log('PASS '+width+'px: inline view, SMART, steps, adaptive freeze, saved programs, no writes');
+      assert.deepEqual(errors,[]);assert.deepEqual(writes,[]);await ctx.close();console.log('PASS '+width+'px: inline view, SMART, steps, adaptive, saved programs, no writes');
     }
     const ctx=await browser.newContext(),page=await ctx.newPage();
     await page.addInitScript(()=>localStorage.setItem('hidrofor-advanced-programs-v1','{broken'));

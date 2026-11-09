@@ -1,15 +1,13 @@
-# Programe avansate — interfață și simulare
+# Programe avansate — configurare locală
 
-Această funcționalitate este **WEB DEMO**. SMART, CU PAȘI și ADAPTIV sunt
-configurații și simulări în browser. Nici salvarea, nici simularea lor nu
-înregistrează un program pe ESP32, nu armează sistemul și nu trimite comenzi
-START/STOP către releu. Deschiderea ferestrei nu dovedește că o instalație este
-conectată sau pregătită să ude.
+În **WEB DEMO**, SMART, CU PAȘI și ADAPTIV se configurează și se salvează în
+browser. Execuția, armarea și comenzile către releu necesită integrarea
+ulterioară cu ESP32.
 
 Interfața publicată în acest repository setează `HIDROFOR_PREVIEW_ONLY` și
 folosește date și răspunsuri simulate. Datele afișate ca DEMO nu sunt citiri
-hardware. Laboratorul E10 se poate rula local pentru teste și scenarii de
-defect; previzualizarea din Programe avansate este tot o simulare.
+hardware. Simularea și scenariile de defect sunt disponibile în laboratorul
+E10 pentru teste locale.
 
 ## Programe locale și programări existente
 
@@ -34,11 +32,10 @@ introduse de utilizator. Condițiile folosesc convenția E10 existentă:
 - Între X și Y: valoarea este cel puțin X și strict mai mică decât Y.
 - Peste X: valoarea este cel puțin X.
 
-Se poate alege sera relevantă sau o regulă pentru cele două sere. În cazul
-combinării, lipsa ori invaliditatea datelor necesare trebuie să blocheze
-simularea, inclusiv când condiția poate fi îndeplinită de una singură. Ora și
-durata introduse sunt folosite pentru cronologia demonstrativă; nu creează un
-declanșator în fundal pe ESP32.
+Se poate alege sera relevantă sau o regulă pentru cele două sere. Ora și
+durata sunt parametri ai schiței locale. La evaluarea în laboratorul E10,
+lipsa ori invaliditatea datelor necesare blochează simularea, inclusiv când
+condiția ar putea fi îndeplinită de o singură seră.
 
 Temperatura și umiditatea aerului nu măsoară umiditatea solului și nu stabilesc
 singure necesarul de apă al plantelor. Pragurile din exemple sunt pentru
@@ -48,8 +45,8 @@ singure necesarul de apă al plantelor. Pragurile din exemple sunt pentru
 
 Un program cu pași conține segmente de udare ON și pauză OFF. Modelul E10
 validează 1–16 pași alternanți, cu cel puțin un ON și durate întregi de 1–120
-minute pe pas. Cronologia distinge minutele de udare cerute, pauzele programate
-și pauzele de protecție introduse de model.
+minute pe pas. Cronologia din laboratorul E10 distinge minutele de udare
+cerute, pauzele programate și pauzele de protecție introduse de model.
 
 Pentru vizualizare, modelul împarte fiecare pas ON în segmente de maximum
 4 minute și inserează câte 30 de secunde de pauză între segmentele aceluiași
@@ -77,8 +74,8 @@ folosește modelul procentual vechi. De exemplu:
 - de la 20°C până sub 30°C → 8 min;
 - de la 30°C în sus → 10 min.
 
-Temperatura utilizată și intervalul rezultat trebuie afișate ca date pentru
-simulare. Pentru o rulare simulată, temperatura este evaluată la pornire și
+În laboratorul E10, temperatura utilizată și intervalul rezultat sunt date
+pentru simulare. Temperatura este evaluată la pornirea unei rulări și
 durata aleasă rămâne fixă până la finalul acelei simulări; actualizarea
 ulterioară a unei citiri nu modifică retroactiv o simulare deja pornită.
 Politica de reevaluare și de oprire pentru o udare fizică nu este stabilită

@@ -1,10 +1,9 @@
-/* Program editor and dry-run preview only. No transport, scheduler or relay calls. */
+/* Local program editor. No transport, scheduler or relay calls. */
 (() => {
   'use strict';
   const byId=id=>document.getElementById(id);
   const engine=window.HidroforAdvancedPrograms;
-  const seq=window.HidroforSequenceDryRun;
-  if(!engine||!seq)return;
+  if(!engine)return;
   const key='hidrofor-advanced-programs-v1';
   const modes=['SMART','SEQUENCE','ADAPTIVE'];
   const seedSteps=[{type:'ON',minutes:'10'},{type:'OFF',minutes:'20'},{type:'ON',minutes:'30'}];
@@ -13,11 +12,10 @@
     smart:{scope:'s1',metric:'temperature',rule:'above',low:'28',high:'32',duration:'10'},
     adaptive:{source:'s1',low:'20',high:'30',durations:['5','8','10']}});
   const models=Object.fromEntries(modes.map(mode=>[mode,initial()]));
-  const state={mode:'SMART',records:[],storageError:false,timer:null,at:0,started:false,preview:null};
+  const state={mode:'SMART',records:[],storageError:false};
   const model=()=>models[state.mode];
   const text=(id,value)=>{byId(id).textContent=String(value);};
   const number=value=>{const s=String(value??'').trim();return s===''?NaN:Number(s);};
-  const fmt=seconds=>Math.floor(seconds/60)+'m '+String(Math.floor(seconds%60)).padStart(2,'0')+'s';
   const modeLabels={SMART:'Smart',SEQUENCE:'Cu pași',ADAPTIVE:'Adaptiv'};
   const sourceLabels={s1:'Sera 1',s2:'Sera 2',average:'Media serelor',either:'Oricare seră',both:'Ambele sere'};
   const recordValid=x=>x&&typeof x.id==='string'&&modes.includes(x.mode)&&x.data&&typeof x.data==='object';
@@ -31,7 +29,6 @@
     catch(_){storageMessage('Browserul nu permite salvarea locală.');return false;}
   }
   function storageMessage(message){const node=byId('ap-storage-status');node.textContent=message||'';node.hidden=!message;}
-  function error(message){const box=byId('ap-error');box.textContent=message||'';box.hidden=!message;}
   function programsForMode(){
     return state.records.filter(record=>recordValid(record)&&record.mode===state.mode);
   }
@@ -96,7 +93,6 @@
     byId('ap-new').setAttribute('aria-expanded',String(editing));
     byId('ap-editor').hidden=!editing;
     byId('ap-overview').hidden=!selected;
-    byId('ap-preview').hidden=!selected;
     byId('ap-delete').hidden=m.editing!=='edit';
     text('ap-editor-title',m.editing==='edit'?'Editează programul':'Program nou');
     text('ap-save',m.editing==='edit'?'Salvează modificările':'Salvează programul');
@@ -126,7 +122,6 @@
     for(const id of ['ap-smart-low','ap-smart-high']){byId(id).min=humidity?'0':'-40';byId(id).max=humidity?'100':'85';}
     const labels=adaptiveLabels(m.adaptive);
     ['ap-band-low','ap-band-middle','ap-band-high'].forEach((id,index)=>text(id,labels[index]));
-    byId('ap-climate').hidden=state.mode==='SEQUENCE';
     if(renderRows)renderSteps();
   }
   function readForm(){
@@ -211,102 +206,15 @@
     });
     byId('ap-add-on').disabled=byId('ap-add-off').disabled=m.steps.length>=16;
   }
-  function parseClock(raw){
-    const x=String(raw||'').trim().match(/^(\d{2})[.\- ](\d{2})[.\- ](\d{4})\s+(\d{2}):(\d{2})(?::(\d{2}))?$/);if(!x)return NaN;
-    const [,ds,ms,ys,hs,mins,ss='00']=x,d=Number(ds),m=Number(ms),y=Number(ys),h=Number(hs),min=Number(mins),sec=Number(ss);
-    const t=new Date(y,m-1,d,h,min,sec);return t.getFullYear()===y&&t.getMonth()===m-1&&t.getDate()===d&&t.getHours()===h&&t.getMinutes()===min&&t.getSeconds()===sec?t.getTime():NaN;
-  }
-  function climate(){
-    const unavailable={climate:{},nowMs:0,maxAgeMs:16*60*1000,status:'Date indisponibile.'};
-    if(typeof forceMock!=='function'||!forceMock())return {...unavailable,status:'Proveniența datelor reale nu este confirmată; simularea condiționată este blocată.'};
-    if(typeof uiState==='undefined'||!uiState.connected||typeof i3Fresh!=='function'||!i3Fresh()||!uiState.live)
-      return {...unavailable,status:'Date DEMO indisponibile sau expirate.'};
-    const live=uiState.live,nowMs=parseClock(live.dataOra),maxAgeMs=16*60*1000;
-    if(!Number.isFinite(nowMs))return {...unavailable,status:'Data DEMO lipsește sau este invalidă.'};
-    const pieces=[];const pair={};
-    for(const [id,source] of [['sera1',1],['sera2',2]]){
-      const g=live[id],seen=parseClock(g?.lastSeen),age=nowMs-seen;
-      const online=!!g&&(g.online===true||(g.online==null&&String(g.status||'').toUpperCase()==='ONLINE'));
-      const t=typeof v13CalValue==='function'?v13CalValue(g?.temp,'temp'):null,h=typeof v13CalValue==='function'?v13CalValue(g?.hum,'hum'):null;
-      pair[id]={present:!!g,online,source,acceptedProvenance:true,climateReceivedMs:seen,temperatureC:t,humidityPercent:h};
-      const timing=online&&Number.isFinite(seen)&&age>=0&&age<maxAgeMs;
-      const needTemperature=state.mode==='ADAPTIVE'||model().smart.metric==='temperature';
-      const temperatureValid=Number.isFinite(t)&&t>=-40&&t<=85,humidityValid=Number.isFinite(h)&&h>=0&&h<=100;
-      const valid=timing&&(needTemperature?temperatureValid:humidityValid);
-      pieces.push('Sera '+source+': '+(valid?((temperatureValid?t+'°C':'temperatură indisponibilă')+' · '+(humidityValid?h+'%':'umiditate indisponibilă')+' · '+Math.floor(age/1000)+' s'):(!online?'indisponibilă':'date invalide sau expirate')));
-    }
-    return {climate:pair,nowMs,maxAgeMs,status:'Date DEMO · '+pieces.join(' | ')};
-  }
-  function evaluate(){const data=climate();text('ap-climate-status',data.status);return engine.simulate({...inputFor(model(),state.mode),...data});}
-  function stop(){if(state.timer!==null){clearInterval(state.timer);state.timer=null;}text('ap-play','▶ Simulează');}
-  function decisionText(value){
-    const d=value.decision;
-    if(!d)return value.reason;
-    if(d.mode==='SMART')return (value.eligible?'Condiție îndeplinită · ':'Condiție neîndeplinită · ')+d.checks.map(c=>'Sera '+c.greenhouse+': '+c.value+(d.metric==='temperature'?'°C':'%')+(c.matches?' ✓':' ✕')).join(' · ');
-    if(d.mode==='ADAPTIVE')return sourceLabels[d.source]+' · '+d.temperatureC+'°C';
-    return '';
-  }
-  function showEvaluation(value){
-    state.preview=value.eligible?value:null;
-    const timeline=byId('ap-timeline');timeline.replaceChildren();
-    const decision=value.decision?decisionText(value):'';
-    text('ap-decision',decision);
-    byId('ap-decision').hidden=!decision;
-    if(!value.eligible){
-      text('ap-state','Blocat');
-      error(value.decision?'':value.reason);
-      for(const id of ['ap-preview-duration','ap-requested','ap-total','ap-on','ap-rest','ap-start-clock','ap-end-clock'])text(id,'—');
-      byId('ap-progress').disabled=true;
-      byId('ap-play').disabled=true;
-      text('ap-elapsed','0m 00s');
-      text('ap-remaining','Rămase —');
-      timeline.setAttribute('aria-label','Cronologia este indisponibilă');
-      timeline.parentElement.style.setProperty('--ap-progress','0%');
-      return;
-    }
-    error('');
-    for(const segment of value.result.segments){const bar=document.createElement('span');bar.className='ap-segment '+segment.state.toLowerCase();bar.style.width=((segment.to-segment.from)/value.result.totalSeconds*100)+'%';bar.title='Pas '+segment.step+' · '+segment.state+' · '+fmt(segment.to-segment.from);timeline.append(bar);}
-    const requested=value.plan.steps.filter(s=>s.type==='ON').reduce((sum,s)=>sum+s.minutes*60,0);
-    text('ap-preview-duration',requested/60+' min udare');
-    const endClock=seq.wallClock(value.plan.start,value.result.totalSeconds)+(value.result.totalSeconds%60?':'+String(value.result.totalSeconds%60).padStart(2,'0'):'');
-    text('ap-start-clock',seq.wallClock(value.plan.start,0));text('ap-end-clock',endClock);
-    timeline.setAttribute('aria-label','Cronologia simulării, '+seq.wallClock(value.plan.start,0)+'–'+endClock+', '+fmt(requested)+' udare și '+fmt(value.result.restSeconds)+' pauze de protecție.');
-    text('ap-requested',fmt(requested));text('ap-total',fmt(value.result.totalSeconds));text('ap-on',fmt(value.result.pumpSeconds));text('ap-rest',fmt(value.result.restSeconds));
-    byId('ap-progress').max=String(value.result.totalSeconds);byId('ap-progress').disabled=false;byId('ap-play').disabled=false;progress();
-  }
-  function preview(){
-    stop();
-    state.at=0;
-    state.started=false;
-    state.preview=null;
-    if(!byId('ap-panel').hidden&&model().selected&&!model().editing)showEvaluation(evaluate());
-  }
   function refreshScreen(){
     writeForm();
     showPrograms();
-    preview();
   }
   function focusOverview(){
     const picker=byId('ap-program-picker');
     const target=picker.hidden?byId('ap-new'):picker.querySelector('summary');
     target.focus({preventScroll:true});
     target.scrollIntoView({block:'nearest'});
-  }
-  function progress(){
-    if(!state.preview)return;const result=state.preview.result;state.at=Math.max(0,Math.min(result.totalSeconds,state.at));
-    const s=seq.stateAt(result,state.at),label=!state.started?'Pregătit':s.state==='ON'?'POMPĂ ON':s.state==='OFF'?'PAUZĂ':s.state==='REST'?'PAUZĂ PROTECȚIE':'Finalizat';
-    text('ap-state',label);text('ap-elapsed',fmt(state.at));text('ap-remaining','Rămase '+fmt(result.totalSeconds-state.at));byId('ap-progress').value=String(state.at);
-    byId('ap-timeline').parentElement.style.setProperty('--ap-progress',state.at/result.totalSeconds*100+'%');
-    if(state.at>=result.totalSeconds)stop();
-  }
-  function play(){
-    if(state.timer!==null){stop();return;}
-    if(!state.started||!state.preview||state.at>=state.preview.result.totalSeconds){
-      state.at=0;showEvaluation(evaluate());if(!state.preview)return;state.started=true;
-    }
-    // Freeze the evaluated plan and climate for this run; resuming does not re-evaluate.
-    state.timer=setInterval(()=>{state.at=Math.min(state.preview.result.totalSeconds,state.at+15);progress();},250);
-    text('ap-play','Ⅱ Pauză');progress();
   }
   function changed(){
     readForm();
@@ -318,10 +226,6 @@
     if(!panel)return;
     state.records=storageRead();
     showSavedOrEmpty();
-    panel.addEventListener('watering-view-change',()=>{
-      if(panel.hidden||uiState.page!=='hidrofor')stop();
-      else preview();
-    });
     document.querySelectorAll('[data-ap-mode]').forEach(button=>button.addEventListener('click',()=>{
       if(state.mode===button.dataset.apMode)return;
       state.mode=button.dataset.apMode;
@@ -345,8 +249,6 @@
     byId('ap-save').addEventListener('click',save);
     byId('ap-delete').addEventListener('click',remove);
     for(const [id,type] of [['ap-add-on','ON'],['ap-add-off','OFF']])byId(id).addEventListener('click',()=>{if(model().steps.length<16){model().steps.push({type,minutes:type==='ON'?'10':'5'});renderSteps();changed();}});
-    byId('ap-play').addEventListener('click',play);byId('ap-restart').addEventListener('click',preview);
-    byId('ap-progress').addEventListener('input',()=>{stop();if(!state.preview)return;state.started=true;state.at=Number(byId('ap-progress').value);progress();});
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 })();

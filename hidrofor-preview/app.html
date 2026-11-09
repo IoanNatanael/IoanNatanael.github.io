@@ -5710,9 +5710,9 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
 </style>
 <link rel="stylesheet" href="./r18-schedules.css?v=2">
 <script defer src="./r18-schedules.js?v=1"></script>
-<link rel="stylesheet" href="./advanced-programs.css?v=5">
+<link rel="stylesheet" href="./advanced-programs.css?v=6">
 <script defer src="./e10-advanced-engine.js?v=1"></script>
-<script defer src="./advanced-programs.js?v=5"></script>
+<script defer src="./advanced-programs.js?v=6"></script>
 </head>
   <body class="hidro-v5">
     <div class="app">
@@ -6287,7 +6287,7 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
             <section class="ap-pane" id="ap-panel" aria-labelledby="ap-title" hidden>
               <header class="ap-pane-heading">
                 <h2 id="ap-title">Programe avansate</h2>
-                <p>Configurare și simulare · fără pornire reală</p>
+                <p>Configurare locală</p>
               </header>
               <div class="ap-mode" role="group" aria-label="Metoda de udare"><button type="button" data-ap-mode="SMART" aria-pressed="true">Smart</button><button type="button" data-ap-mode="SEQUENCE" aria-pressed="false">Cu pași</button><button type="button" data-ap-mode="ADAPTIVE" aria-pressed="false">Adaptiv</button></div>
               <details class="ap-picker" id="ap-program-picker" hidden>
@@ -6317,7 +6317,6 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
                   <span class="ap-label">Temperatura de referință</span><div class="ap-choice" role="group" aria-label="Sursa temperaturii"><button type="button" data-ap-reference="s1" aria-pressed="true">Sera 1</button><button type="button" data-ap-reference="s2" aria-pressed="false">Sera 2</button><button type="button" data-ap-reference="average" aria-pressed="false">Media</button></div>
                   <div class="ap-fields"><label class="ap-field">Prag inferior · °C<input id="ap-adaptive-low" type="number" min="-40" max="85" step="0.1" value="20"></label><label class="ap-field">Prag superior · °C<input id="ap-adaptive-high" type="number" min="-40" max="85" step="0.1" value="30"></label></div>
                   <div class="ap-bands"><label><span id="ap-band-low">Sub 20°C</span><span><input id="ap-adaptive-under" type="number" min="1" max="120" step="1" value="5" aria-label="Minute sub pragul inferior"> min</span></label><label><span id="ap-band-middle">De la 20°C până sub 30°C</span><span><input id="ap-adaptive-middle" type="number" min="1" max="120" step="1" value="8" aria-label="Minute între praguri"> min</span></label><label><span id="ap-band-high">De la 30°C</span><span><input id="ap-adaptive-above" type="number" min="1" max="120" step="1" value="10" aria-label="Minute de la pragul superior"> min</span></label></div>
-                  <p class="ap-muted">Temperatura este evaluată la pornirea simulării. Durata rămâne fixă până la final.</p>
                 </section>
                 <div class="ap-actions">
                   <button class="ap-primary" id="ap-save" type="button">Salvează programul</button>
@@ -6326,24 +6325,6 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
                 </div>
               </div>
               <p id="ap-storage-status" class="ap-muted" role="status" hidden></p>
-              <section class="ap-section ap-preview" id="ap-preview" aria-labelledby="ap-preview-heading" hidden>
-                <h2 id="ap-preview-heading">Previzualizare program</h2>
-                <div class="ap-section-head"><strong class="ap-preview-duration" id="ap-preview-duration">—</strong><span class="ap-state" id="ap-state">Pregătit</span></div>
-                <p class="ap-result" id="ap-decision" role="status"></p>
-                <p class="ap-error" id="ap-error" role="alert" hidden></p>
-                <div class="ap-timeline-track"><div class="ap-timeline" id="ap-timeline" role="img" aria-label="Cronologia simulării"></div></div>
-                <div class="ap-clock-times"><span id="ap-start-clock">—</span><span id="ap-end-clock">—</span></div>
-                <div class="ap-progress-times"><span id="ap-elapsed">0m 00s</span><span id="ap-remaining">Rămase —</span></div>
-                <div class="ap-actions ap-play-actions"><button class="ap-primary" id="ap-play" type="button" disabled>▶ Simulează</button><button class="ap-secondary" id="ap-restart" type="button">↺ Reia</button></div>
-                <details class="ap-preview-details">
-                  <summary>Detalii și protecții</summary>
-                  <div class="ap-legend"><span><i class="ap-on"></i>Udare</span><span><i class="ap-off"></i>Pauză</span><span><i class="ap-rest"></i>Protecție</span></div>
-                  <div class="ap-stats"><div><span>Udare cerută</span><strong id="ap-requested">—</strong></div><div><span>Durata totală</span><strong id="ap-total">—</strong></div><div><span>Pompă ON</span><strong id="ap-on">—</strong></div><div><span>Pauză protecție</span><strong id="ap-rest">—</strong></div></div>
-                  <label class="ap-field ap-progress-label" for="ap-progress">Derulează timpul simulat</label><input id="ap-progress" type="range" min="0" max="1" step="1" value="0">
-                  <div class="ap-climate" id="ap-climate" hidden><span class="ap-label">Date utilizate</span><p id="ap-climate-status" class="ap-muted">Datele senzorilor nu sunt disponibile.</p></div>
-                  <p class="ap-muted">Simulare accelerată · 1 s = 1 min</p>
-                </details>
-              </section>
             </section>
             <section
               id="wellControlSection"
@@ -13287,8 +13268,6 @@ const setPage = (pageName) => {
     if (active) btn.setAttribute("aria-current", "page");
     else btn.removeAttribute("aria-current");
   });
-  const advancedPanel = $("ap-panel");
-  if (!advancedPanel.hidden) advancedPanel.dispatchEvent(new Event("watering-view-change"));
   window.scrollTo({ top: 0, behavior: "instant" });
   loadPageData(pageName);
   requestAnimationFrame(() => {
@@ -13382,7 +13361,6 @@ const setAdvancedWateringView = active => {
   panel.hidden = !active;
   renderModeButtons();
   i3SyncControls();
-  panel.dispatchEvent(new Event("watering-view-change"));
 };
 
 const setMode = async (modeName) => {
