@@ -122,6 +122,7 @@ const server=http.createServer((req,res)=>{
       assert.deepEqual(await page.locator('#ap-summary-rows dd').allTextContents(),['10 min','20 min','30 min']);
       await page.locator('#ap-program-picker summary').click();
       assert.deepEqual(await page.locator('#ap-program-list button').allTextContents(),['Program cu pași']);
+      await page.keyboard.press('Escape');
 
       await page.locator('[data-ap-mode="ADAPTIVE"]').click();
       await page.locator('#ap-new').click();
@@ -141,7 +142,7 @@ const server=http.createServer((req,res)=>{
       await page.locator('[data-ap-mode="SMART"]').click();
       await page.locator('#ap-program-picker summary').click();
       assert.deepEqual(await page.locator('#ap-program-list button').allTextContents(),['Seră dimineața','Seră seara']);
-      await page.locator('#ap-program-list button').click();
+      await page.locator('#ap-program-list button').filter({hasText:'Seră dimineața'}).click();
       await page.locator('#ap-edit').click();
       await page.locator('#ap-smart-low').fill('21');
       await page.locator('[data-ap-mode="ADAPTIVE"]').click();
@@ -174,16 +175,32 @@ const server=http.createServer((req,res)=>{
     }
     const timedContext=await browser.newContext();
     const timedPage=await timedContext.newPage();
-    await timedPage.clock.install({time:new Date(2026,10,9,7,29,10)});
+    await timedPage.clock.install({time:new Date(2026,10,9,7,0,0)});
     await timedPage.goto(origin+'/app.html');
     await timedPage.locator('.tab-btn[data-page="hidrofor"]').click();
+    await timedPage.locator('#autoTimerInput').fill('10');
     await timedPage.locator('#autoTimedStart').click();
     assert.equal(await timedPage.locator('[data-hydro-mode="manual"]').getAttribute('aria-pressed'),'true');
     assert.equal(await timedPage.evaluate(()=>mockState.previewTimedOrigin),'manual');
-    await timedPage.clock.fastForward(6000);
+    await timedPage.clock.fastForward(12000);
+    assert.equal(await timedPage.evaluate(()=>mockState.previewTimedPhase),'RUNNING');
+    assert.ok(await timedPage.evaluate(()=>mockState.previewTimedRemainingMs)>9*60000);
+    await timedPage.locator('[data-r12-water="dry"]').click();
+    assert.equal(await timedPage.evaluate(()=>mockState.previewTimedPhase),'PAUSED');
+    const remaining=await timedPage.evaluate(()=>mockState.previewTimedRemainingMs);
+    await timedPage.locator('[data-r12-water="wet"]').click();
+    await timedPage.clock.fastForward(15000);
+    assert.equal(await timedPage.evaluate(()=>mockState.previewTimedPhase),'PAUSED');
+    assert.equal(await timedPage.evaluate(()=>mockState.previewTimedRemainingMs),remaining);
+    await timedPage.clock.fastForward(10*60000);
+    assert.equal(await timedPage.evaluate(()=>mockState.previewTimedPhase),'RUNNING');
+    await timedPage.clock.fastForward(9*60000);
+    assert.equal(await timedPage.evaluate(()=>mockState.previewTimedPhase),'RUNNING');
+    await timedPage.clock.fastForward(60000);
     assert.equal(await timedPage.evaluate(()=>mockState.previewTimedPhase),'DONE');
     await timedPage.locator('[data-hydro-mode="auto"]').click();
-    await timedPage.clock.fastForward(46000);
+    await timedPage.clock.setSystemTime(new Date(2026,10,9,7,29,40));
+    await timedPage.clock.fastForward(23000);
     assert.equal(await timedPage.evaluate(()=>mockState.previewTimedOrigin),'schedule');
     assert.equal(await timedPage.evaluate(()=>mockState.live.stareHidrofor),'PORNIT');
     const indicator=timedPage.locator('.hydro-power-indicator');

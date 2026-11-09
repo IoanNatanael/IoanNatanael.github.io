@@ -6171,7 +6171,7 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
                       <div class="r12-refill-input"><input id="autoRefillMinutes" type="number" min="1" max="120" step="1" value="10" inputmode="numeric" aria-label="Pauză pentru refacerea apei în minute"><span>min</span></div>
                     </div>
 <div class="r12-demo-water" id="r12DemoWater">
-                      <div class="r12-demo-title"><strong>Test plutitor · DEMO</strong><small>1 min = 1 sec</small></div>
+                      <div class="r12-demo-title"><strong>Test plutitor · DEMO</strong></div>
                       <div class="r12-demo-buttons" role="group" aria-label="Simulare nivel apă">
                         <button type="button" data-r12-water="wet" aria-pressed="true">Apă prezentă</button>
                         <button type="button" data-r12-water="dry" aria-pressed="false">Fără apă</button>
@@ -8819,7 +8819,7 @@ const mockLivePayload = () => {
       durationMs: mockState.previewTimedDurationMs,
       remainingMs: Math.max(0, mockState.previewTimedRemainingMs),
       refillWaitMs: mockState.previewTimedPhase === "PAUSED" ?
-        Math.max(0, mockState.previewResumeAt - Date.now()) * 60000 / 1000 : 0,
+        Math.max(0, mockState.previewResumeAt - Date.now()) : 0,
       leaseLink: "DEMO"
     } : { phase: mockState.previewTimedPhase === "DONE" ? "DONE" : "IDLE", active: false,
       remainingMs: 0, durationMs: 0 },
@@ -9133,7 +9133,7 @@ const r12MockTimedTick = () => {
   mockState.previewTimedLastTick = now;
   if (mockState.previewTimedPhase === "RUNNING" && mockState.previewWater !== "wet") {
     mockState.previewTimedPhase = "PAUSED";
-    mockState.previewResumeAt = now + mockState.previewRefillMin * 1000; // DEMO accelerat
+    mockState.previewResumeAt = now + mockState.previewRefillMin * 60000;
     mockState.live.stareHidrofor = "OPRIT";
     mockState.hydroStartedAt = null;
   } else if (mockState.previewTimedPhase === "PAUSED" &&
@@ -9142,8 +9142,7 @@ const r12MockTimedTick = () => {
     mockState.live.stareHidrofor = "PORNIT";
     mockState.hydroStartedAt = now;
   } else if (mockState.previewTimedPhase === "RUNNING") {
-    const speed = mockState.previewTimedOrigin === "schedule" ? 1 : 60;
-    mockState.previewTimedRemainingMs = Math.max(0, mockState.previewTimedRemainingMs - delta * speed);
+    mockState.previewTimedRemainingMs = Math.max(0, mockState.previewTimedRemainingMs - delta);
     if (mockState.previewTimedRemainingMs <= 0) {
       const scheduled = mockState.previewTimedOrigin === "schedule";
       if (scheduled) mockState.previewScheduleActivity.phase = "done";
