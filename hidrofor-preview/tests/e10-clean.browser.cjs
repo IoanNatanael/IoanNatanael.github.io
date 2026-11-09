@@ -133,7 +133,16 @@ const server=http.createServer((req,res)=>{
     await page.locator('#editPlan').click();
     await page.locator('#smartDuration').fill('13');
     await page.locator('[data-mode="ADAPTIVE"]').click();await create('Adaptiv A');await names(['Adaptiv A']);
+    await page.locator('#editPlan').click();
+    await page.locator('#adaptiveLowBound').fill('18');
+    await page.locator('#adaptiveHighBound').fill('29');
+    await page.locator('#adaptiveBetweenM').fill('7');
+    await page.locator('#savePlan').click();
+    assert.deepEqual(await page.locator('#adaptiveSummary dt').allTextContents(),['Sub 18°C','De la 18°C până sub 29°C','29°C și peste']);
+    assert.deepEqual(await page.locator('#adaptiveSummary dd').allTextContents(),['5 min','7 min','10 min']);
+    if(process.env.E10_ADAPTIVE_SCREENSHOT)await page.screenshot({path:process.env.E10_ADAPTIVE_SCREENSHOT,fullPage:true});
     await page.locator('[data-mode="SMART"]').click();
+    assert.equal(await page.locator('#adaptiveSummary').isVisible(),false);
     assert.equal(await page.locator('#smartDuration').inputValue(),'13');
     await page.locator('#cancelEdit').click();
     assert.match(await page.locator('#progressTitle').textContent(),/10 min/);
