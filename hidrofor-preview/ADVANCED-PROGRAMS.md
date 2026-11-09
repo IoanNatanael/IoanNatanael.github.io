@@ -32,10 +32,10 @@ introduse de utilizator. Condițiile folosesc convenția E10 existentă:
 - Între X și Y: valoarea este cel puțin X și strict mai mică decât Y.
 - Peste X: valoarea este cel puțin X.
 
-Se poate alege sera relevantă sau o regulă pentru cele două sere. Ora și
-durata sunt parametri ai schiței locale. La evaluarea în laboratorul E10,
-lipsa ori invaliditatea datelor necesare blochează simularea, inclusiv când
-condiția ar putea fi îndeplinită de o singură seră.
+În editorul Smart se poate alege Sera 1, Sera 2 sau Ambele sere. Cu Ambele
+sere, fiecare trebuie să îndeplinească regula. Schițele mai vechi cu
+„Oricare seră” necesită alegerea unei surse înainte de resalvare. Ora și
+durata sunt parametri ai schiței locale.
 
 Temperatura și umiditatea aerului nu măsoară umiditatea solului și nu stabilesc
 singure necesarul de apă al plantelor. Pragurile din exemple sunt pentru

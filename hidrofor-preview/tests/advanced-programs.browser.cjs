@@ -356,6 +356,32 @@ const server=http.createServer((req,res)=>{
     await manualContext.close();
     console.log('PASS manual watering persists across navigation and reload and stops across tabs');
 
+    const legacyContext=await browser.newContext({viewport:{width:390,height:850}});
+    const legacyPage=await legacyContext.newPage();
+    await legacyPage.addInitScript(()=>localStorage.setItem('hidrofor-advanced-programs-v1',JSON.stringify([{
+      id:'old-smart',mode:'SMART',version:1,data:{
+        name:'Smart vechi',time:'07:00',steps:[],
+        smart:{scope:'either',metric:'temperature',rule:'above',low:'28',high:'32',duration:'10'},
+        adaptive:{durations:['5','8','10']}
+      }
+    }])));
+    await legacyPage.goto(origin+'/app.html');
+    await legacyPage.locator('.tab-btn[data-page="hidrofor"]').click();
+    await legacyPage.locator('#ap-open').click();
+    assert.match(await legacyPage.locator('#ap-program-meta').textContent(),/Sursă de ales/);
+    await legacyPage.locator('#ap-edit').click();
+    assert.deepEqual(await legacyPage.locator('[data-ap-scope]').allTextContents(),['Sera 1','Sera 2','Ambele sere']);
+    assert.equal(await legacyPage.locator('[data-ap-scope][aria-pressed="true"]').count(),0);
+    await legacyPage.locator('#ap-save').click();
+    assert.equal(await legacyPage.locator('#ap-editor').isVisible(),true);
+    const savedScope=()=>legacyPage.evaluate(()=>JSON.parse(localStorage.getItem('hidrofor-advanced-programs-v1'))[0].data.smart.scope);
+    assert.equal(await savedScope(),'either');
+    await legacyPage.locator('[data-ap-scope="both"]').click();
+    await legacyPage.locator('#ap-save').click();
+    assert.equal(await savedScope(),'both');
+    await legacyContext.close();
+    console.log('PASS older SMART drafts require explicit greenhouse selection');
+
     const ctx=await browser.newContext(),page=await ctx.newPage();
     await page.addInitScript(()=>localStorage.setItem('hidrofor-advanced-programs-v1','{broken'));
     await page.goto(origin+'/app.html',{waitUntil:'load'});await page.locator('[data-page="hidrofor"]').first().click();await page.locator('[data-hydro-mode="auto"]').click();await page.locator('#ap-open').click();

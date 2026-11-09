@@ -5721,9 +5721,9 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
 </style>
 <link rel="stylesheet" href="./r18-schedules.css?v=4">
 <script defer src="./r18-schedules.js?v=2"></script>
-<link rel="stylesheet" href="./advanced-programs.css?v=sequence-clock-1">
+<link rel="stylesheet" href="./advanced-programs.css?v=smart-sere-1">
 <script defer src="./e10-advanced-engine.js?v=1"></script>
-<script defer src="./advanced-programs.js?v=sequence-clock-1"></script>
+<script defer src="./advanced-programs.js?v=smart-sere-1"></script>
 <link rel="stylesheet" href="./hydro-hero-redesign.css?v=4">
 <link rel="stylesheet" href="./manual-water-status.css?v=1">
 </head>
@@ -6326,7 +6326,12 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
                 <div data-ap-panel="SMART">
                   <section class="ap-section" aria-labelledby="ap-smart-heading">
                     <h2 id="ap-smart-heading">Condiții de pornire</h2>
-                    <span class="ap-label">Sera monitorizată</span><div class="ap-choice ap-scope" role="group" aria-label="Sera sau regula de combinare"><button type="button" data-ap-scope="s1" aria-pressed="true">Sera 1</button><button type="button" data-ap-scope="s2" aria-pressed="false">Sera 2</button><button type="button" data-ap-scope="either" aria-pressed="false">Oricare seră</button><button type="button" data-ap-scope="both" aria-pressed="false">Ambele sere</button></div>
+                    <span class="ap-label">Sere monitorizate</span>
+                    <div class="ap-choice" role="group" aria-label="Sere monitorizate">
+                      <button type="button" data-ap-scope="s1" aria-pressed="true">Sera 1</button>
+                      <button type="button" data-ap-scope="s2" aria-pressed="false">Sera 2</button>
+                      <button type="button" data-ap-scope="both" aria-pressed="false">Ambele sere</button>
+                    </div>
                     <span class="ap-label">În funcție de</span><div class="ap-choice" role="group" aria-label="Mărimea urmărită"><button type="button" data-ap-metric="temperature" aria-pressed="true">Temperatură</button><button type="button" data-ap-metric="humidity" aria-pressed="false">Umiditatea aerului</button></div>
                     <span class="ap-label">Udă când valoarea este</span><div class="ap-choice" role="group" aria-label="Condiția de pornire"><button type="button" data-ap-rule="under" aria-pressed="false">Sub</button><button type="button" data-ap-rule="between" aria-pressed="false">Între</button><button type="button" data-ap-rule="above" aria-pressed="true">Peste</button></div>
                     <p class="ap-muted">„Între” include primul prag; „Peste” include pragul afișat.</p>

@@ -17,7 +17,9 @@
   const text=(id,value)=>{byId(id).textContent=String(value);};
   const number=value=>{const s=String(value??'').trim();return s===''?NaN:Number(s);};
   const modeLabels={SMART:'Smart',SEQUENCE:'Cu pași',ADAPTIVE:'Adaptiv'};
-  const sourceLabels={s1:'Sera 1',s2:'Sera 2',average:'Media serelor',either:'Oricare seră',both:'Ambele sere'};
+  const sourceLabels={s1:'Sera 1',s2:'Sera 2',average:'Media serelor',both:'Ambele sere'};
+  const smartScopes=['s1','s2','both'];
+  const smartScopePrompt='Alege Sera 1, Sera 2 sau Ambele sere.';
   const recordValid=x=>x&&typeof x.id==='string'&&modes.includes(x.mode)&&x.data&&typeof x.data==='object';
   function storageRead(){
     try{const raw=localStorage.getItem(key);if(raw===null)return [];const data=JSON.parse(raw);if(!Array.isArray(data))throw new Error();return data;}
@@ -52,7 +54,7 @@
       const humidity=metric==='humidity',unit=humidity?'%':'°C';
       const label=humidity?'Umiditatea aerului':'Temperatură';
       const threshold={under:'sub '+low+unit,above:'de la '+low+unit,between:'de la '+low+unit+' până sub '+high+unit};
-      meta.push(sourceLabels[scope],label);
+      meta.push(sourceLabels[scope]||'Sursă de ales',label);
       text('ap-overview-label','Condiție de pornire');
       text('ap-overview-value',label+' '+threshold[rule]);
       rows=[['Dacă se îndeplinește','Udă '+duration+' min']];
@@ -143,6 +145,8 @@
     model().editing=kind;
     storageMessage('');
     refreshScreen();
+    if(!state.storageError&&state.mode==='SMART'&&!smartScopes.includes(model().smart.scope))
+      storageMessage(smartScopePrompt);
     byId('ap-name').focus();
   }
   const put=(id,value)=>{byId(id).value=String(value);};
@@ -172,12 +176,18 @@
   function inputFor(m,mode){
     const steps=mode==='SEQUENCE'?m.steps.map(x=>({type:x.type,minutes:number(x.minutes)})):[{type:'ON',minutes:mode==='SMART'?number(m.smart.duration):10}];
     return {mode,plan:{version:1,name:m.name,start:m.time,steps},
+      // Permit reading older drafts until the user explicitly chooses a new scope.
       smart:{scope:m.smart.scope==='either'?'one':m.smart.scope,metric:m.smart.metric,rule:m.smart.rule,low:number(m.smart.low),high:number(m.smart.high)},
       adaptive:{source:m.adaptive.source,low:number(m.adaptive.low),high:number(m.adaptive.high),durations:m.adaptive.durations.map(number)}};
   }
   function save(){
     const m=model();
     if(!m.editing)return;
+    if(state.mode==='SMART'&&!smartScopes.includes(m.smart.scope)){
+      storageMessage(smartScopePrompt);
+      document.querySelector('[data-ap-scope]').focus();
+      return;
+    }
     const asNew=m.editing==='new',name=byId('ap-name').value.trim();
     if(!name||name.length>60||/[\x00-\x1f]/.test(name)){storageMessage('Scrie un nume pentru program.');byId('ap-name').focus();return;}
     const draft={...m,name},check=engine.validateConfig(inputFor(draft,state.mode));
