@@ -150,7 +150,10 @@
   display:grid;place-items:center;flex:none;
   width:24px;height:24px;border:1px solid rgba(131,225,198,.26);
   border-radius:50%;background:rgba(131,225,198,.075);
-  color:#83e1c6;font-size:18px;font-weight:400;line-height:1;
+  color:#83e1c6;line-height:1;
+}
+.ap-create-row .ap-new-glyph svg {
+  display:block;width:14px;height:14px;flex:none;
 }
 .ap-pane .ap-overview {margin-top:0}
 @media(max-width:390px) {
@@ -165,9 +168,9 @@
    Culori foarte discrete: Udare = mentă, Pauză = albastru-cenușiu.
    Sunt culori ale TIPULUI DE PAS, nu indicatoare de stare live. */
 .ap-pane {
-  --ap-water-row:rgba(120,216,181,.095);
-  --ap-pause-row:rgba(123,167,205,.12);
-  --ap-temp-warm-row:rgba(215,177,127,.09);
+  --ap-water-row:rgba(120,216,181,.155);
+  --ap-pause-row:rgba(123,167,205,.18);
+  --ap-temp-warm-row:rgba(215,177,127,.145);
 }
 .ap-summary-rows--steps,
 .ap-summary-rows--adaptive {gap:0;margin-top:12px}
