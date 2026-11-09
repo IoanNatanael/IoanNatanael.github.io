@@ -1,11 +1,4 @@
 /* Configurare și simulare locală; folosește aceeași fereastră ca programările R18. */
-#page-hidrofor .ap-entry-wrap{margin:18px 0 2px;padding-top:13px;border-top:1px solid #2b484c}
-#page-hidrofor .ap-entry{display:flex;align-items:center;justify-content:space-between;gap:14px;width:100%;min-height:50px;padding:4px 1px;border:0;background:transparent;color:#d9f4eb;text-align:left;cursor:pointer;font:inherit}
-#page-hidrofor .ap-entry>span:first-child{display:grid;gap:3px}
-#page-hidrofor .ap-entry strong{font-size:13px;font-weight:700}
-#page-hidrofor .ap-entry small{font-size:11px;color:#9ebebb}
-#page-hidrofor .ap-entry>span:last-child{color:#91e6c9;font-size:20px}
-#page-hidrofor .ap-entry:focus-visible{outline:2px solid #8be9c6;outline-offset:3px}
 .ap-dialog{width:min(540px,calc(100vw - 24px));max-width:540px}
 .ap-dialog *{box-sizing:border-box}
 .ap-dialog [hidden]{display:none!important}

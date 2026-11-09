@@ -5539,7 +5539,6 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
   border-color: rgba(77,142,122,.45); background: rgba(28,65,56,.42);
 }
 #page-hidrofor #pumpActionHint {margin: 13px 0 16px; text-align: center;}
-#page-hidrofor #hydroModeSegmented {margin-top: 0;}
 @media(max-width:380px) {
   #page-hidrofor .hydro-hero-button {margin-bottom: 25px;}
   #page-hidrofor .hydro-hero-top .hydro-copy h2 {margin: 13px 0 15px;}
@@ -5606,9 +5605,10 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
 #page-hidrofor #autoTimerContext {display:none!important;} /* stare afișată în panoul unic */
 </style>
 <style id="v13-r13-unified-ui">
-/* V13-R14 WEB ONLY — single AUTO workflow and 2 equal mode buttons */
-#page-hidrofor #hydroModeSegmented {display:grid!important; grid-template-columns:repeat(2,minmax(0,1fr))!important; width:min(100%,420px)!important; max-width:420px!important; margin:10px auto 0!important; gap:6px!important; border:1px solid #35535a; border-radius:18px; background:#0b2127; padding:6px; box-sizing:border-box;}
-#page-hidrofor #hydroModeSegmented button {width:100%;min-width:0; margin:0; border-radius:13px; min-height:48px; font-weight:750; font-size:14px; color:#b1c6ca; border:0;}
+/* Bara de control a paginii Udare și fluxul Automat. */
+#page-hidrofor #hydroModeSegmented {display:grid!important; grid-template-columns:repeat(3,minmax(0,1fr))!important; width:min(100%,460px)!important; max-width:460px!important; margin:0 0 16px!important; gap:6px!important; border:1px solid #35535a; border-radius:18px; background:#0b2127; padding:6px; box-sizing:border-box;}
+#page-hidrofor #hydroModeSegmented button {width:100%;min-width:0; margin:0; border-radius:13px; min-height:48px; font-weight:750; font-size:clamp(12px,3.5vw,14px); line-height:1.2; padding:8px 5px; color:#b1c6ca; border:0;}
+#page-hidrofor #hydroModeSegmented button:not(.active):not(:disabled):hover {background:#18363d; color:#e3f6f1;}
 #page-hidrofor #hydroModeSegmented button.active {color:#0b2d29;background:#83e1c6; box-shadow:0 3px 10px #0003;}
 #page-hidrofor #hydroModeSegmented button:focus-visible,.r13-start-tabs button:focus-visible{outline:2px solid #9cead3;outline-offset:2px;}
 #page-hidrofor #autoControlSection .auto-card {max-width:100%;box-sizing:border-box;}
@@ -5710,7 +5710,7 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
 </style>
 <link rel="stylesheet" href="./r18-schedules.css?v=2">
 <script defer src="./r18-schedules.js?v=1"></script>
-<link rel="stylesheet" href="./advanced-programs.css?v=3">
+<link rel="stylesheet" href="./advanced-programs.css?v=4">
 <script defer src="./e10-advanced-engine.js?v=1"></script>
 <script defer src="./advanced-programs.js?v=4"></script>
 <style id="e10-site-embed-style">
@@ -6082,10 +6082,10 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
               ><span class="led"></span><span>Se incarca</span></span
             >
           </div>
-          <div class="ap-entry-wrap" aria-label="Configurare programe avansate">
-            <button class="ap-entry" id="ap-open" type="button" aria-haspopup="dialog" aria-controls="ap-dialog">
-              <span><strong>Programe avansate</strong><small>Smart · Cu pași · Adaptiv · DEMO</small></span><span aria-hidden="true">→</span>
-            </button>
+          <div aria-label="Controale udare" class="segmented-control" id="hydroModeSegmented" role="group">
+            <button aria-pressed="true" class="active" data-hydro-mode="manual" type="button">Manual</button>
+            <button aria-pressed="false" data-hydro-mode="auto" type="button">Automată</button>
+            <button id="ap-open" type="button" aria-haspopup="dialog" aria-controls="ap-dialog">Programe avansate</button>
           </div>
           <section id="e10-site-entry" aria-label="Laborator secvențe de udare">
   <button id="e10-site-open" type="button" aria-haspopup="dialog" aria-controls="e10-site-modal"><span>Laborator de test</span><span aria-hidden="true">→</span></button>
@@ -6140,28 +6140,6 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
                 <p class="pump-action-hint" id="pumpActionHint">
                   Apasă pentru a porni
                 </p>
-                <div
-                  aria-label="Mod control hidrofor"
-                  class="segmented-control"
-                  id="hydroModeSegmented"
-                  role="group"
-                >
-                  <button
-                    aria-pressed="true"
-                    class="active"
-                    data-hydro-mode="manual"
-                    type="button"
-                  >
-                    Manual
-                  </button>
-                  <button
-                    aria-pressed="false"
-                    data-hydro-mode="auto"
-                    type="button"
-                  >
-                    Automată
-                  </button>
-                </div>
               </div>
               <div class="panic-stop-wrap">
                 <button

@@ -18,7 +18,19 @@ const server=http.createServer((req,res)=>{
       const ctx=await browser.newContext({viewport:{width,height:850}}),page=await ctx.newPage(),errors=[],writes=[];
       page.on('pageerror',e=>errors.push(e.message));page.on('request',r=>{if(r.method()!=='GET')writes.push(r.url());});
       await page.goto(origin+'/app.html',{waitUntil:'load'});
-      await page.locator('[data-page="hidrofor"]').first().click();await page.locator('[data-hydro-mode="auto"]').click();
+      await page.locator('[data-page="hidrofor"]').first().click();
+      const modeBar=page.locator('#hydroModeSegmented');
+      assert.deepEqual(await modeBar.getByRole('button').allTextContents(),['Manual','Automată','Programe avansate']);
+      assert.equal(await modeBar.evaluate(bar=>{
+        const buttons=[...bar.querySelectorAll('button')].map(button=>button.getBoundingClientRect());
+        const content=document.querySelector('.hydro-grid').getBoundingClientRect();
+        return buttons.every(button=>button.top===buttons[0].top)&&bar.getBoundingClientRect().bottom<=content.top;
+      }),true);
+      if(width===390&&process.env.HYDRO_BAR_SCREENSHOT)await page.screenshot({path:process.env.HYDRO_BAR_SCREENSHOT});
+      await page.locator('#ap-open').click();
+      await page.keyboard.press('Escape');
+      assert.equal(await page.locator('[data-hydro-mode="manual"]').getAttribute('aria-pressed'),'true');
+      await page.locator('[data-hydro-mode="auto"]').click();
       assert.equal(await page.locator('#r18OpenSchedules').isVisible(),true);
       await page.locator('#r18OpenSchedules').click();assert.equal(await page.locator('#r18ScheduleDialog').evaluate(e=>e.open),true);
       await page.locator('#r18CloseDialog').click();assert.equal(await page.locator('#r18ScheduleDialog').evaluate(e=>e.open),false);
@@ -127,6 +139,7 @@ const server=http.createServer((req,res)=>{
 
       await page.keyboard.press('Escape');
       assert.equal(await page.locator('#ap-dialog').evaluate(el=>el.open),false);
+      assert.equal(await page.locator('[data-hydro-mode="auto"]').getAttribute('aria-pressed'),'true');
       assert.equal(await page.evaluate(()=>document.activeElement.id),'ap-open');
       await page.locator('#ap-open').click();
       await page.locator('[data-ap-mode="SMART"]').click();
