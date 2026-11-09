@@ -7451,13 +7451,14 @@ const AUTO_FIRMWARE_REFRESH_MS = 8 * 60 * 1000;
 const AUTO_FIRMWARE_REFRESH_RETRY_MS = 30 * 1000;
 const AUTO_MIN_REFRESH_REMAINING_MS = 75 * 1000;
 const AUTO_STORE_KEYS = {
+  selectedMinutes: "hidrofor.manualTimed.selectedMinutes.v1",
   presets: "hidrofor.presets.v1",
   schedules: "hidrofor.schedules.v1",
   log: "hidrofor.localLog.v1",
 };
 
 const autoState = {
-  selectedMinutes: 4,
+  selectedMinutes: 5,
   presets: [],
   schedules: [],
   log: [],
@@ -11397,6 +11398,7 @@ const renderAutoTimer = () => {
 const setAutoSelectedMinutes = (value) => {
   const next = clampAutoMinutes(value);
   autoState.selectedMinutes = next;
+  safeWrite(AUTO_STORE_KEYS.selectedMinutes, next);
   const minuteInput = $("autoTimerInput");
   const scheduleInput = $("autoScheduleMinutes");
   if (minuteInput) minuteInput.value = next;
@@ -11902,6 +11904,10 @@ const bindAutoEvents = () => {
 };
 
 const initAutoModule = () => {
+  const savedMinutes = safeRead(AUTO_STORE_KEYS.selectedMinutes, null);
+  if (Number.isInteger(savedMinutes) && savedMinutes >= AUTO_MIN_MINUTES && savedMinutes <= AUTO_MAX_MINUTES) {
+    autoState.selectedMinutes = savedMinutes;
+  }
   autoState.presets = normalizeAutoPresets(
     safeReadArray(AUTO_STORE_KEYS.presets, AUTO_DEFAULT_PRESETS),
   );
