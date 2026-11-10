@@ -4940,7 +4940,6 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
 .r4-flow-status:before {content:"";width:7px;height:7px;border-radius:50%;background:currentColor;flex-shrink:0;}
 .r4-flow-status.is-discharge {color:#f0ce9e;}
 .r4-flow-status.is-neutral {color:#aebfc0;}
-.r4-flow-info {margin:12px 0 3px;color:#a1b5b6;font-size:10px;line-height:1.55;max-width:630px;}
 .r4-demo-estimate {margin-top:18px;background:#10252a;border:1px solid #30504b;border-radius:17px;padding:15px;display:grid;grid-template-columns:80px minmax(0,1fr);gap:13px;align-items:center;}
 .r4-soc-ring {--r4-soc:0%;width:76px;height:76px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(#83dabb var(--r4-soc),#314d4d 0%);padding:6px;}
 .r4-soc-inner {width:100%;height:100%;background:#132a2e;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-direction:column;line-height:1.1;}
@@ -5166,11 +5165,6 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
 #page-central .r4-forecast-text>span{font-size:9px}
 #page-central .r4-forecast-text>strong{font-size:19px}
 #page-central .r4-forecast-text>small{font-size:10px}
-#page-central .r5-explain{border-top:1px solid #304847;margin-top:14px;color:var(--muted)}
-#page-central .r5-explain>summary{font-size:11px;min-height:37px;padding:12px 0 0}
-#page-central .r5-explain>summary::after{content:'+';float:right;color:var(--accent)}
-#page-central .r5-explain[open]>summary::after{content:'−'}
-#page-central .r5-explain p{font-size:11px;line-height:1.65;margin:8px 0 4px}
 #page-central .r5-climate-mini{border:1px solid #2b4446;border-radius:16px;background:rgba(9,29,34,.64);padding:11px 13px 12px;margin:13px 0 0}
 #page-central .r5-climate-top{display:flex;align-items:center;flex-wrap:wrap;gap:6px 9px;margin-bottom:10px;min-height:20px}
 #page-central .r5-climate-caption{font-size:10px;letter-spacing:.09em;font-weight:700;color:#a6c3c1;margin-right:auto}
@@ -6592,7 +6586,6 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
 </div>
 </div>
 <div aria-live="polite" class="r4-flow-status is-neutral" id="r4EnergyStatus" role="status">Se așteaptă valorile bateriei…</div>
-<details class="r5-explain"><summary>Ce reprezintă fluxurile?</summary><p class="r4-flow-info">Fluxurile arată <b>direcții, nu proporții</b>. PV este măsurat înainte de regulator; bateria indică fluxul net. INA219 0x45 și consumul afișat sunt <b>simulate în această previzualizare</b>.</p></details>
 
 
 </section>
