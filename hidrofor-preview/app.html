@@ -8303,6 +8303,7 @@ const chartDayBreaks = (series) => {
 };
 
 const mockManualRunKey = "hidrofor-demo-manual-started-at";
+const mockTimedRunKey = "hidrofor-demo-manual-timed-v1";
 let mockManualView = "manual";
 const mockState = {
   running: true,
@@ -8951,6 +8952,97 @@ const mockHistoryText = (node, windowName) =>
     )
     .join("\n");
 
+// WEB ONLY: păstrăm sesiunea temporizată, nu executăm nicio comandă fizică.
+const mockStoreTimedRun = () => {
+  if (!forceMock()) return;
+  try {
+    if (mockState.previewTimedOrigin !== "manual" ||
+        !["RUNNING", "PAUSED", "RESUMING"].includes(mockState.previewTimedPhase)) {
+      localStorage.removeItem(mockTimedRunKey);
+      return;
+    }
+    localStorage.setItem(mockTimedRunKey, JSON.stringify({
+      version: 1, origin: "manual",
+      phase: mockState.previewTimedPhase,
+      savedAt: Date.now(),
+      durationMs: mockState.previewTimedDurationMs,
+      remainingMs: mockState.previewTimedRemainingMs,
+      refillMin: mockState.previewRefillMin,
+      resumeAt: mockState.previewResumeAt,
+      water: mockState.previewWater,
+      hydroStartedAt: mockState.hydroStartedAt,
+    }));
+  } catch (_) {
+    // Dacă stocarea este indisponibilă, DEMO funcționează până la închiderea paginii.
+  }
+};
+
+const mockRestoreTimedRun = () => {
+  if (!forceMock()) return;
+  let saved;
+  try {
+    const raw = localStorage.getItem(mockTimedRunKey);
+    saved = raw === null ? null : JSON.parse(raw);
+  } catch (_) {
+    return; // Nu deducem starea pompei dintr-o citire eșuată.
+  }
+  const now = Date.now();
+  const valid = saved && saved.version === 1 && saved.origin === "manual" &&
+    ["RUNNING", "PAUSED"].includes(saved.phase) &&
+    Number.isSafeInteger(saved.savedAt) && saved.savedAt > 0 && saved.savedAt <= now &&
+    Number.isFinite(saved.durationMs) && saved.durationMs >= 60000 && saved.durationMs <= 7200000 &&
+    Number.isFinite(saved.remainingMs) && saved.remainingMs > 0 &&
+    saved.remainingMs <= saved.durationMs &&
+    Number.isFinite(saved.refillMin) && saved.refillMin >= 1 && saved.refillMin <= 120 &&
+    ["wet", "dry", "unknown"].includes(saved.water) &&
+    (saved.phase !== "PAUSED" ||
+      (Number.isSafeInteger(saved.resumeAt) && saved.resumeAt > 0));
+  if (!valid) {
+    if (saved !== null) {
+      try { localStorage.removeItem(mockTimedRunKey); } catch (_) {}
+    }
+    // Inclusiv când STOP este apăsat într-o altă filă.
+    if (mockState.previewTimedOrigin === "manual") {
+      mockState.previewTimedOrigin = "";
+      mockState.previewTimedPhase = "IDLE";
+      mockState.previewTimedRemainingMs = 0;
+      mockState.previewTimedLastTick = 0;
+      mockState.live.stareHidrofor = "OPRIT";
+      mockState.hydroStartedAt = null;
+    }
+    return;
+  }
+  if (mockState.previewTimedOrigin === "schedule") return;
+  const remaining = saved.phase === "RUNNING"
+    ? Math.max(0, saved.remainingMs - (now - saved.savedAt))
+    : saved.remainingMs;
+  if (remaining <= 0) {
+    mockState.previewTimedOrigin = "";
+    mockState.previewTimedPhase = "DONE";
+    mockState.previewTimedRemainingMs = 0;
+    mockState.live.stareHidrofor = "OPRIT";
+    mockState.live.modControl = "Manual";
+    mockState.hydroStartedAt = null;
+    try { localStorage.removeItem(mockTimedRunKey); } catch (_) {}
+    return;
+  }
+  mockState.previewTimedOrigin = "manual";
+  mockState.previewTimedPhase = saved.phase;
+  mockState.previewTimedDurationMs = saved.durationMs;
+  mockState.previewTimedRemainingMs = remaining;
+  mockState.previewTimedLastTick = now;
+  mockState.previewRefillMin = saved.refillMin;
+  mockState.previewResumeAt = saved.phase === "PAUSED" ? saved.resumeAt : 0;
+  mockState.previewWater = saved.water;
+  mockState.live.stareHidrofor = saved.phase === "RUNNING" ? "PORNIT" : "OPRIT";
+  mockState.live.modControl = "Manual";
+  mockState.hydroStartedAt = saved.phase === "RUNNING" &&
+    Number.isSafeInteger(saved.hydroStartedAt) &&
+    saved.hydroStartedAt > 0 && saved.hydroStartedAt <= now
+      ? saved.hydroStartedAt : saved.phase === "RUNNING" ? now : null;
+  mockState.previewManualRun = false;
+};
+
 const mockStoreManualRun = startedAt => {
   mockState.previewManualRun = startedAt !== null;
   if (!mockState.previewManualRun) mockManualView = "manual";
@@ -8995,6 +9087,7 @@ const mockHandleCommand = (nextState, source = "Website", persistManual = false)
   mockState.previewTimedPhase = "IDLE";
   mockState.previewTimedRemainingMs = 0;
   mockState.hydroStartedAt = on ? Date.now() : null;
+  mockStoreTimedRun(); // STOP / START manual anulează orice sesiune temporizată salvată.
   mockStoreManualRun(on && persistManual ? mockState.hydroStartedAt : null);
   mockState.commands.unshift({
     time: mockNow(),
@@ -9098,7 +9191,9 @@ const mockResetHydroFaults = () => {
   mockState.live.stareHidrofor = "OPRIT";
   mockState.previewTimedEnd = 0;
   mockState.previewTimedPhase = "IDLE";
+  mockState.previewTimedOrigin = "";
   mockState.previewTimedRemainingMs = 0;
+  mockStoreTimedRun();
   mockState.previewCommandCounter += 1;
   mockState.live.baterie = 12.54;
   mockState.hydroStartedAt = null;
@@ -9176,6 +9271,7 @@ const mockStartTimed = (minutes, refillMinutes, origin) => {
   mockState.previewRefillMin = refillMinutes;
   mockState.previewTimedPhase = "RUNNING";
   if (origin === "schedule") mockState.live.modControl = "Automat";
+  mockStoreTimedRun();
 };
 
 const mockInterruptSchedule = () => {
@@ -9280,11 +9376,13 @@ const r12MockTimedTick = () => {
     mockState.previewResumeAt = now + mockState.previewRefillMin * 60000;
     mockState.live.stareHidrofor = "OPRIT";
     mockState.hydroStartedAt = null;
+    mockStoreTimedRun(); // Păstrează timpul rămas; pauza nu consumă minute.
   } else if (mockState.previewTimedPhase === "PAUSED" &&
              mockState.previewWater === "wet" && now >= mockState.previewResumeAt) {
     mockState.previewTimedPhase = "RUNNING";
     mockState.live.stareHidrofor = "PORNIT";
     mockState.hydroStartedAt = now;
+    mockStoreTimedRun(); // Reancorăm timpul la reluarea după pauză.
   } else if (mockState.previewTimedPhase === "RUNNING") {
     mockState.previewTimedRemainingMs = Math.max(0, mockState.previewTimedRemainingMs - delta);
     if (mockState.previewTimedRemainingMs <= 0) {
@@ -14706,10 +14804,13 @@ window.addEventListener("DOMContentLoaded", async () => {
     window.HIDROFOR_PREVIEW_ONLY === true || location.protocol === "file:";
   document.body.classList.toggle("preview-mode", preview);
   if (forceMock()) {
+    mockRestoreTimedRun();
     mockRestoreManualRun();
     window.addEventListener("storage", event => {
       if (!forceMock() || event.storageArea !== localStorage ||
-          (event.key !== mockManualRunKey && event.key !== null)) return;
+          (event.key !== mockManualRunKey && event.key !== mockTimedRunKey &&
+           event.key !== null)) return;
+      mockRestoreTimedRun();
       mockRestoreManualRun();
       loadLive();
     });
@@ -15768,6 +15869,7 @@ window.addEventListener("DOMContentLoaded", () => {
         // Nu se scurtcircuitează pauza începută când apa a lipsit.
       }
       mockTick();
+      mockStoreTimedRun(); // Păstrează și simularea nivelului apei în timpul pauzei.
       await loadLive();
       if(typeof renderHome==='function') renderHome();
       window.r12RenderUnified();
