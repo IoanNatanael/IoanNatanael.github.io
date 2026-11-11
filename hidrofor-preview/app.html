@@ -77,6 +77,9 @@ button {
 }
 button:disabled {
   opacity: 0.48;
+  cursor: not-allowed;
+}
+button:disabled[aria-busy="true"] {
   cursor: wait;
 }
 button:active {
@@ -2458,10 +2461,6 @@ details.accordion > summary ~ *,
   border: 1px solid var(--line);
   border-radius: 12px;
 }
-.ota-shortcuts {
-  display: flex;
-  gap: 10px;
-}
 .action-link {
   display: flex;
   align-items: center;
@@ -2476,11 +2475,7 @@ details.accordion > summary ~ *,
 .action-link[aria-disabled="true"] {
   opacity: 0.5;
 }
-.demo-ota-note {
-  font-size: 11px;
-  color: var(--muted);
-  margin-bottom: 15px;
-}
+.firmware-ota-link {display:inline-flex;font-size:inherit;font-weight:600;padding:10px 14px;}
 .storage-box {
   white-space: pre-wrap;
   overflow-wrap: anywhere;
@@ -4564,8 +4559,7 @@ body.hidro-read-only .read-only-notice strong { color: var(--warn); }
 body.hidro-read-only #autoControlSection,
 body.hidro-read-only #wellControlSection,
 body.hidro-read-only .mock-tools,
-body.hidro-read-only .well-simulator,
-body.hidro-read-only .system-ota .ota-shortcuts { display: none !important; }
+body.hidro-read-only .well-simulator { display: none !important; }
 body.hidro-read-only #hydroHeroButton { cursor: default; opacity: 1; }
 body.hidro-read-only #hydroHeroButton:disabled { opacity: 1; }
 body.hidro-read-only #hydroPanicStop:disabled,
@@ -4581,8 +4575,7 @@ body.hidro-i3-real .read-only-notice {
 }
 body.hidro-i3-real .read-only-notice strong {color:var(--warn);flex:0 0 94px;font-size:.79rem;line-height:1.3}
 body.hidro-i3-real .mock-tools,
-body.hidro-i3-real .well-simulator,
-body.hidro-i3-real .system-ota .ota-shortcuts {display:none !important}
+body.hidro-i3-real .well-simulator {display:none !important}
 body.hidro-i3-real #hydroHeroButton:disabled {cursor:not-allowed;opacity:.63;animation:none}
 body.hidro-i3-real #hydroPanicStop {opacity:1;cursor:pointer}
 body.hidro-i3-real #hydroPanicStop:disabled {opacity:.7;cursor:wait}
@@ -4614,7 +4607,6 @@ body.hidro-i3-real #homeStop { touch-action:manipulation; }
 #autoScheduleWaterWait{width:100%;box-sizing:border-box;min-height:40px}
 
 /* Text editorial: păstrăm pe ecran valorile, acțiunile și avertismentele utile. */
-#page-sistem .sv2-description:empty { display: none; }
 #page-sistem .sv2-display-head small { display: none; } /* repeta sursa/categoria din selector */
 #page-sistem .sv2-toolbar-head { margin-bottom: 8px; }
 #page-sistem .sv2-help-details { margin-top: 2px; border-top: 1px solid var(--line); padding: 7px 2px 0; }
@@ -4646,14 +4638,13 @@ body.sv2-ready #page-sistem .page-head .page-title > span {font-size:11px;}
 #page-sistem .sv2-display-head small {font-size:9px;letter-spacing:.11em;font-weight:650;color:#81a8ab}
 #page-sistem .sv2-display-head strong {font-size:14px;line-height:1.3}
 #page-sistem .sv2-live-label {flex:none;font-size:9px;color:var(--accent);border:1px solid #39665d;border-radius:30px;padding:4px 8px;}
-#page-sistem .sv2-description {margin:10px 14px;color:var(--muted);font-size:11px;line-height:1.5}
 #page-sistem #sv2ControlStage,#page-sistem #sv2DiagnosticStage {min-width:0;padding:0 12px 12px}
 #page-sistem .sv2-display .sv2-module[hidden],#page-sistem .sv2-display #sv2Readout[hidden] {display:none!important;}
 #page-sistem .sv2-display .sv2-module {margin:0!important;border:0!important;background:transparent!important;padding:0!important;box-shadow:none!important}
 #page-sistem .sv2-display .sv2-module > summary {display:none!important}
 #page-sistem .sv2-display .sv2-module > .card {margin:0!important;}
 #page-sistem #sv2ControlStage .service-test-body {padding:0 0 4px;}
-#page-sistem #sv2ControlStage .r13-rtc-inside {padding:0 0 4px;}
+#page-sistem #sv2ControlStage .r13-rtc-inside {padding:12px 0 4px;}
 #page-sistem #sv2DiagnosticStage .logs-layout {margin:0;}
 #page-sistem #sv2DiagnosticStage .system-log-card {padding:0!important;}
 #page-sistem #sv2DiagnosticStage .system-grid {margin:0;}
@@ -5661,10 +5652,11 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
 .r13-schedule-actions button {min-height:41px;font-size:12px;}
 .r13-safety-note {font-size:11px;color:#aabcbf;line-height:1.6;margin:12px 0 0;}
 .r13-rtc-maintenance {margin-top:13px!important;}
-.r13-rtc-inside {padding:12px 12px 16px;}
+.r13-rtc-inside {display:grid;gap:12px;padding:12px 12px 16px;}
 .r13-rtc-inside p {font-size:12px;line-height:1.5;color:#bccfd0;margin:0 0 12px;}
-.r13-rtc-warning {border-radius:10px;padding:11px 13px;background:#50371e55;border:1px solid #93734566;color:#e6cba1;font-size:12px;line-height:1.55;margin-bottom:13px;}
-.r13-rtc-inside button {min-height:43px;}
+.r13-rtc-warning {display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-radius:10px;background:#50371e55;border:1px solid #93734566;color:#e6cba1;font-size:12px;line-height:1.55;}
+.r13-rtc-warning-icon {display:inline-grid;place-items:center;flex:0 0 20px;height:20px;border:1px solid currentColor;border-radius:50%;font-weight:800;}
+.r13-rtc-inside button {min-height:44px;justify-self:start;}
 .r13-rtc-inside small {display:block;margin-top:9px;color:#9eb7b9;line-height:1.5;}
 @media(max-width:430px) { .r13-card-head{padding:17px 15px 14px;}.r13-unified-body{padding:15px 13px 17px;}#r13SchedulePane .schedule-form{gap:11px;}#r13SchedulePane .schedule-form>div:has(#autoScheduleWaterWait){grid-column:1 / -1;}.r13-card-head h3{font-size:19px;}.r13-control-label{font-size:12px;} }
 @media(max-width:350px) {#r13SchedulePane .schedule-form {grid-template-columns:1fr;}.r13-auto-indicator{font-size:10px;padding:5px 7px;} .r13-control-label span{font-size:10px;} }
@@ -6666,7 +6658,6 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
             <div class="sv2-tool-chips" id="sv2ControlChoices" role="group" aria-label="Alege operația de mentenanță"></div>
             <div class="sv2-display">
               <div class="sv2-display-head"><div><small>OPERAȚIE SELECTATĂ</small><strong id="sv2ControlTitle">Test hidrofor</strong></div><span class="sv2-live-label">DEMO</span></div>
-              <p class="sv2-description" id="sv2ControlDescription"></p>
               <div id="sv2ControlStage"></div>
             </div>
           </div>
@@ -6699,48 +6690,24 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
           <details class="reveal-panel r13-rtc-maintenance">
             <summary>Ceas central · RTC</summary>
             <div class="r13-rtc-inside">
-              
-              <div class="r13-rtc-warning">Atenție: în ACTIVE, sincronizarea RTC suspendă programările. După verificarea orei, acestea se reactivează separat.</div>
               <button class="btn-secondary" id="i9ScheduleSync" type="button">Sincronizează ora RTC</button>
-              
+              <div class="r13-rtc-warning">
+                <span class="r13-rtc-warning-icon" aria-hidden="true">!</span>
+                <div><strong>Atenție</strong><br>Sincronizarea RTC suspendă programările. După verificarea orei, acestea se reactivează separat.</div>
+              </div>
             </div>
           </details>
-<details class="reveal-panel system-ota">
+          <details class="reveal-panel system-ota">
             <summary>Actualizări firmware</summary>
             <section class="card">
-              <p class="demo-ota-note">
-                Actualizările sunt disponibile din interfața dispozitivului.
-                Aici vezi doar conceptul.
-              </p>
-              <div class="section-title-row">
-                <div class="section-title">
-                  <h3>Actualizari firmware</h3>
-                  <span
-                    >Deschide pagina OTA pentru nodul central sau pentru nodul
-                    hidrofor.</span
-                  >
-                </div>
-              </div>
-              <div aria-label="Scurtaturi OTA" class="btn-group ota-shortcuts">
-                <a
-                  class="action-link action-link-primary"
-                  href="/ota"
-                  aria-disabled="true"
-                  >Update ESP32 central</a
-                >
-                <a
-                  class="action-link action-link-soft"
-                  href="/hidrofor-ota"
-                  aria-disabled="true"
-                  >Update ESP hidrofor</a
-                >
-              </div>
+              <p>Conectează-te la Wi-Fi-ul centralei pentru a deschide pagina de actualizare.</p>
+              <a class="action-link firmware-ota-link" href="http://192.168.4.1/ota" target="_blank" rel="noopener">Deschide pagina firmware</a>
             </section>
           </details>
           <details class="reveal-panel service-log-maintenance">
             <summary>Gestionare jurnale</summary>
             <section class="card service-admin-card">
-              <p>Ștergerea jurnalelor necesită autentificare.</p>
+              <p>Ștergerile din previzualizare se aplică jurnalelor simulate.</p>
 <details class="manage-logs">
                     <summary>Gestionare jurnal</summary>
                     <div
@@ -6766,35 +6733,12 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
                         data-clear="all"
                         type="button"
                       >
-                        Sterge loguri
+                        Șterge toate jurnalele
                       </button>
                     </div>
                   </details>
             </section>
           </details>
-<details class="accordion mock-tools" hidden="" id="mockTools">
-                <summary>
-                  <span>Simulator local</span>
-                  <span aria-hidden="true" class="arrow"></span>
-                </summary>
-                <div class="accordion-body">
-                  <div class="section-title-row">
-                    <div class="section-title">
-                      <h3>Date simulate</h3>
-                      <span>Disponibil cand pagina ruleaza fara ESP32.</span>
-                    </div>
-                    <div class="btn-group">
-                      <button class="btn-soft" id="mockRandomize" type="button">
-                        Valori noi
-                      </button>
-                      <button class="btn-soft" id="mockToggleRun" type="button">
-                        Pauza simulare
-                      </button>
-                    </div>
-                  </div>
-                  <div class="mock-grid" id="mockGrid"></div>
-                </div>
-              </details>
           </section>
           <section class="service-section-panel" data-service-panel="diagnostic"
                    id="service-diagnostic" aria-label="Date și diagnostic" hidden>
@@ -6830,7 +6774,6 @@ body.hidro-i3-real .r3-preview-notice strong {flex:none;font-size:10px;letter-sp
             <div id="sv2Topics" class="sv2-topics" role="group" aria-label="Tipul de date"></div>
             <div class="sv2-display">
               <div class="sv2-display-head"><div><small id="sv2Breadcrumb">HIDROFOR / STARE</small><strong id="sv2DisplayTitle">Stare hidrofor</strong></div><span class="sv2-live-label" id="sv2LiveTag">DEMO</span></div>
-              <p class="sv2-description" id="sv2DisplayDescription"></p>
               <div id="sv2DiagnosticStage"><div class="sv2-readings" id="sv2Readout" aria-live="polite"></div></div>
             </div>
           </div>
@@ -8173,8 +8116,6 @@ const setApiMode = (label) => {
   uiState.apiMode = label;
   setText("apiModePill", label);
   setText("centralApiMode", label);
-  const mockTools = $("mockTools");
-  if (mockTools) mockTools.hidden = !label.toLowerCase().includes("simulare");
 };
 
 const mockNow = () => {
@@ -13383,19 +13324,18 @@ const loadPageData = async (pageName = uiState.page) => {
 // Service Console V1: UI-only navigation, existing functions keep their IDs/endpoints.
 // Modulele sunt mutate în același DOM, niciodată clonate sau executate de două ori.
 const sv2Models = {
-  hidrofor:{label:'Hidrofor',topics:[['stare','Stare',null,''],['activitate','Activitate','#hydroHistoryDetails','']]},
-  central:{label:'Centrală',topics:[['citiri','Citiri',null,''],['sistem','Sistem','#centralTechServiceDetails',''],['istoric','Istoric','#centralHourlyServiceDetails','']]},
-  sera1:{label:'Seră 1',topics:[['citiri','Citiri',null,''],['semnal','Semnal','#greenhouseDiagnostics','']]},
-  sera2:{label:'Seră 2',topics:[['citiri','Citiri',null,''],['semnal','Semnal','#greenhouseDiagnostics','']]},
-  eeprom:{label:'EEPROM',topics:[['stare','Stare','.system-metrics',''],['detalii','Diagnostic','.system-eeprom',''],['export','Export','#serviceExportDetails','']]},
-  jurnal:{label:'Jurnal',topics:[['evenimente','Evenimente','#systemJournal',''],['pompa','Pompa','#hydroHistoryDetails','']]}
+  hidrofor:{label:'Hidrofor',topics:[['stare','Stare',null],['activitate','Activitate','#hydroHistoryDetails']]},
+  central:{label:'Centrală',topics:[['citiri','Citiri',null],['sistem','Sistem','#centralTechServiceDetails'],['istoric','Istoric','#centralHourlyServiceDetails']]},
+  sera1:{label:'Seră 1',topics:[['citiri','Citiri',null],['semnal','Semnal','#greenhouseDiagnostics']]},
+  sera2:{label:'Seră 2',topics:[['citiri','Citiri',null],['semnal','Semnal','#greenhouseDiagnostics']]},
+  eeprom:{label:'EEPROM',topics:[['stare','Stare','.system-metrics'],['detalii','Diagnostic','.system-eeprom'],['export','Export','#serviceExportDetails']]},
+  jurnal:{label:'Jurnal',topics:[['evenimente','Evenimente','#systemJournal'],['pompa','Pompa','#hydroHistoryDetails']]}
 };
 const sv2ControlModels = [
-  ['test','Test pompă','.service-test-panel',''],
-  ['rtc','Ceas RTC','.r13-rtc-maintenance',''],
-  ['ota','Firmware','.system-ota',''],
-  ['logs','Jurnale','.service-log-maintenance',''],
-  ['demo','Simulator','#mockTools','']
+  ['test','Test pompă','.service-test-panel'],
+  ['rtc','Ceas RTC','.r13-rtc-maintenance'],
+  ['ota','Firmware','.system-ota'],
+  ['logs','Jurnale','.service-log-maintenance']
 ];
 const sv2State = {ready:false,source:'hidrofor',topic:'stare',control:'test',modules:[],activeDiagnostic:null,activeControl:null};
 const sv2ChoiceButton = (value,label,active) => '<button type="button" class="sv2-choice" data-sv2-choice="' +
@@ -13477,7 +13417,6 @@ const sv2Render = () => {
   const topics=$('sv2Topics');if(topics)topics.innerHTML=model.topics.map(t=>sv2ChoiceButton(t[0],t[1],t[0]===sv2State.topic)).join('');
   setText('sv2Breadcrumb',model.label.toUpperCase()+' / '+active[1].toUpperCase());
   setText('sv2DisplayTitle',active[1]+' · '+model.label);
-  setText('sv2DisplayDescription',active[3]);
   setText('sv2LiveTag',forceMock()?'DEMO':'DATE API');
   const readout=$('sv2Readout');
   if(readout)readout.hidden=!!active[2];
@@ -13511,11 +13450,11 @@ const sv2Select = (source,topic) => {
 };
 const sv2RenderControl = () => {
   if(!sv2State.ready)return;
-  const models=forceMock()?sv2ControlModels:sv2ControlModels.filter(m=>m[0]!=='demo');
+  const models=sv2ControlModels;
   const selected=models.find(m=>m[0]===sv2State.control)||models[0];
   sv2State.control=selected[0];
   const chips=$('sv2ControlChoices');if(chips)chips.innerHTML=models.map(m=>sv2ChoiceButton(m[0],m[1],m[0]===sv2State.control)).join('');
-  setText('sv2ControlTitle',selected[1]);setText('sv2ControlDescription',selected[3]);
+  setText('sv2ControlTitle',selected[1]);
   const selectedNode=document.querySelector('#sv2ControlStage '+selected[2]);
   for(const node of sv2State.modules){
     if(node.closest('#sv2ControlStage')){
@@ -14215,48 +14154,62 @@ const i3Panic = async () => {
   }
 };
 
-const clearData = async (type) => {
-  const confirmConfig = {
+const logClearSelector = "[data-clear], [data-clear-hydro]";
+let logClearBusy = false;
+const clearData = async (type, button) => {
+  const demo = forceMock();
+  const actions = {
     commands: {
-      title: "Stergi comenzile recente?",
-      text: "Lista de comenzi va fi golita. Evenimentele importante raman pastrate.",
-      actionText: "Sterge comenzi",
+      url: "/api/clear-commands",
+      title: "Ștergi jurnalul de comenzi?",
+      text: "Vor fi șterse comenzile din toate sursele.",
+      actionText: "Șterge comenzi",
     },
     events: {
-      title: "Stergi evenimentele importante?",
-      text: "Jurnalul de evenimente va fi golit. Comenzile recente raman pastrate.",
-      actionText: "Sterge evenimente",
+      url: "/api/clear-events",
+      title: "Ștergi jurnalul de evenimente?",
+      text: "Vor fi șterse evenimentele din toate sursele.",
+      actionText: "Șterge evenimente",
     },
     all: {
-      title: "Stergi toate logurile?",
-      text: "Vor fi sterse comenzile si evenimentele disponibile in jurnal.",
-      actionText: "Sterge tot",
+      url: "/api/clear-logs",
+      title: "Ștergi toate jurnalele?",
+      text: demo ? "Vor fi șterse comenzile și evenimentele din simulare." :
+        "Vor fi șterse comenzile, evenimentele și istoricul orar din memoria centralei.",
+      actionText: "Șterge tot",
     },
   };
-  const confirmed = await askConfirm(
-    confirmConfig[type] || {
-      title: "Stergi datele?",
-      text: "Actiunea nu poate fi anulata din interfata.",
-      actionText: "Sterge",
-    },
-  );
-  if (!confirmed) return;
+  if (!Object.hasOwn(actions, type) || logClearBusy) return;
+  const action = actions[type];
+  if (!await askConfirm(action) || logClearBusy) return;
 
+  logClearBusy = true;
+  const buttons = Array.from(document.querySelectorAll(logClearSelector), control => [control, control.disabled]);
+  const label = button.textContent;
+  buttons.forEach(([control]) => { control.disabled = true; });
+  button.textContent = "Se șterge…";
+  button.setAttribute("aria-busy", "true");
   try {
-    if (type === "commands") {
-      await apiFetch("/api/clear-commands", { method: "POST" });
-    } else if (type === "events") {
-      await apiFetch("/api/clear-events", { method: "POST" });
-    } else {
-      try {
-        await apiFetch("/api/clear-logs", { method: "POST" });
-      } catch (error) {
-        await apiFetch("/sterge-jurnale", { method: "POST" });
-      }
-    }
+    const response = await apiFetch(action.url, { method: "POST" });
+    if (!response.ok) throw new Error((await response.text()).trim());
     await Promise.all([loadCommands(), loadEvents(), loadStorage()]);
+    showAutoToast(demo ? "Jurnalul simulat a fost golit." : "Ștergerea a fost confirmată.");
   } catch (error) {
-    showAutoToast("Nu am putut sterge logurile");
+    const reason = String(error.message || "");
+    const messages = {
+      EEPROM_ERROR: "Centrala nu a putut scrie în memoria jurnalelor.",
+      STORAGE_NOT_READY: "Memoria jurnalelor este indisponibilă.",
+      LOG_CLEAR_PUMP_BUSY: "Așteaptă încheierea udării sau a comenzii pompei.",
+    };
+    showAutoToast(Object.hasOwn(messages, reason) ? messages[reason] :
+      reason.startsWith("ESP32_TIMEOUT") ? "Centrala nu a confirmat ștergerea. Verifică jurnalul înainte să reîncerci." :
+      reason.startsWith("HTTP_AUTH_401") ? "Conectează-te la Cont operator, apoi repetă ștergerea." :
+      "Ștergerea nu a fost confirmată. " + reason.slice(0, 80));
+  } finally {
+    button.removeAttribute("aria-busy");
+    button.textContent = label;
+    buttons.forEach(([control, disabled]) => { control.disabled = disabled; });
+    logClearBusy = false;
   }
 };
 
@@ -14630,14 +14583,14 @@ const bindEvents = () => {
   });
 
   document.querySelectorAll("[data-clear]").forEach((btn) => {
-    btn.addEventListener("click", () => clearData(btn.dataset.clear));
+    btn.addEventListener("click", () => clearData(btn.dataset.clear, btn));
   });
 
   document.querySelectorAll("[data-clear-hydro]").forEach((btn) => {
     btn.addEventListener("click", (event) => {
       event.preventDefault();
       event.stopPropagation();
-      clearData(btn.dataset.clearHydro);
+      clearData(btn.dataset.clearHydro, btn);
     });
   });
 
@@ -14732,20 +14685,6 @@ const bindEvents = () => {
     mockWritePath(path, value);
     paintMockControls();
     loadLive();
-  });
-
-  $("mockRandomize")?.addEventListener("click", () => {
-    mockTick();
-    paintMockControls();
-    loadLive();
-    loadPageData(uiState.page);
-  });
-
-  $("mockToggleRun")?.addEventListener("click", (event) => {
-    mockState.running = !mockState.running;
-    event.target.textContent = mockState.running
-      ? "Pauza simulare"
-      : "Porneste simulare";
   });
 
   document.addEventListener("click", async (event) => {
@@ -15019,12 +14958,6 @@ window.addEventListener("DOMContentLoaded", () => {
     }),
   );
   $("homeStop").addEventListener("click", () => panicStopHydro());
-  document.querySelectorAll(".ota-shortcuts a").forEach((el) =>
-    el.addEventListener("click", (e) => {
-      e.preventDefault();
-      showAutoToast("Actualizările se fac din interfața ESP32.");
-    }),
-  );
   setInterval(() => {
     renderHome();
     wellRender();
@@ -15764,7 +15697,7 @@ window.addEventListener("DOMContentLoaded", () => {
     "#autoSavePreset", "#autoResetPreset", "#autoTimerDec", "#autoTimerInc",
     "#autoTimerInput", "#autoScheduleMinutes", "#r18ScheduleMinutes", "#autoScheduleTime", "#autoScheduleRepeat",
     "#wellStart", "#wellStop", "#wellDuration", "#wellDelay", "#wellPolarity",
-    "[data-well-signal]", "[data-clear]", "[data-clear-hydro]"
+    "[data-well-signal]"
   ].join(",")).forEach(el => {
     el.disabled = true;
     el.setAttribute("aria-disabled", "true");

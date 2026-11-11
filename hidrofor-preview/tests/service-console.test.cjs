@@ -35,12 +35,12 @@ function setup(){
   const ctl=element('service-control','service-section-panel',page);
   const diag=element('service-diagnostic','service-section-panel',page);
   const ctlStage=element('sv2ControlStage','',ctl),diagStage=element('sv2DiagnosticStage','',diag);
-  ['sv2Source','sv2Topics','sv2Breadcrumb','sv2DisplayTitle','sv2DisplayDescription','sv2LiveTag'].forEach(id=>element(id,'',diag));
+  ['sv2Source','sv2Topics','sv2Breadcrumb','sv2DisplayTitle','sv2LiveTag'].forEach(id=>element(id,'',diag));
   element('sv2Readout','',diagStage);
-  ['sv2ControlChoices','sv2ControlTitle','sv2ControlDescription'].forEach(id=>element(id,'',ctl));
+  ['sv2ControlChoices','sv2ControlTitle'].forEach(id=>element(id,'',ctl));
   const entries=[
     ['serviceTestDetails','service-test-panel',ctl],['rtc','r13-rtc-maintenance',ctl],
-    ['ota','system-ota',ctl],['adminLogs','service-log-maintenance',ctl],['mockTools','mock-tools',ctl],
+    ['ota','system-ota',ctl],['adminLogs','service-log-maintenance',ctl],
     ['link','service-links',diag],['serviceSensorDetails','service-sensors',diag],
     ['serviceCalibrationDetails','service-calibration',diag],['serviceUsageDetails','service-usage',diag],
     ['serviceExportDetails','service-export',diag],['hydroHistoryDetails','accordion',diag],
@@ -85,12 +85,19 @@ test('Consola are doi selectori și un singur spațiu de lucru pe secțiune',()=
 });
 test('Modulele existente sunt mutate o singură dată, cu sortarea accesibilă',()=>{
   const {api,nodes,ctlStage,diagStage}=setup();
-  assert.equal(ctlStage.children.length,5);
+  assert.equal(ctlStage.children.length,4);
   assert.equal(diagStage.children.length,13); // 12 module + readout
   assert.equal(nodes.hydroHistorySort.parent.id,'historyActions');
   api.sv2Init();
-  assert.equal(ctlStage.children.length,5);
+  assert.equal(ctlStage.children.length,4);
   assert.equal(diagStage.children.length,13);
+});
+test('Instrumentele afișează direct acțiunile RTC și Firmware',()=>{
+  const {nodes}=setup();
+  assert.doesNotMatch(nodes.sv2ControlChoices.innerHTML,/Simulator/);
+  assert.doesNotMatch(html,/sv2(?:Control|Display)Description/);
+  assert.match(html,/id="i9ScheduleSync"[\s\S]*?<div class="r13-rtc-warning">\s*<span[^>]*>!<\/span>/);
+  assert.match(html,/class="action-link firmware-ota-link" href="http:\/\/192\.168\.4\.1\/ota"/);
 });
 test('În EEPROM, fiecare categorie arată doar panoul aferent',()=>{
   const {api,nodes}=setup();
